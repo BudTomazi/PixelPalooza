@@ -1,0 +1,95 @@
+<html>
+    <head></head>
+    <body>
+        <h1>Dynamic Point-Cloud Based Pixel Rendering Simulation</h1>
+        <h2>Summary</h2>
+        <p>
+            In this project, we will generate real-time animated meshes by applying the point cloud to mesh algorithm to a particle simulation. 
+            We will then run this result through a custom rasterizer to generate fluid pixel art animations.
+        </p>
+        <h2>Team Members</h2>
+        <ul>
+            <li>Nicholas Nolte</li>
+            <li>Danny Yu</li>
+            <li>Cindy Wang</li>
+            <li>Nathan Jew</li>
+        </ul>
+        <h2>Problem Description</h2>
+        <p>
+            Making high quality pixel art is incredibly difficult and time consuming, and to animate it frame by frame traditionally requires 
+            exponentially more effort and a level of artistry that we do not have. 3D animations are potentially more approachable, as they can 
+            be represented using motion curves or kinematics. But to have a truly dynamic rendering, we thought it would be appropriate to 
+            generate our meshes using particle simulations. Notably, we opted to rasterize meshes instead of the particle simulation itself so 
+            that we could still experiment with a cel-shaded look, common in traditional pixel art.
+        </p>
+        <h2>Goals and Deliverables</h2>
+        <h3>Plan to deliver:</h3>
+        <p>
+            At the most basic level, we will apply the point cloud to mesh algorithm on predetermined point cloud data, resulting in a 
+            dynamically generated mesh which can be shaded and lit (though not necessarily generated in real-time). From there, we would 
+            render it using the custom rasterizer to create a final output video of the mesh being animated using basic transformations, 
+            which would showcase a fluid pixel art animation. Our metrics for success (and the points we want to analyse) are the fluidity 
+            of the animation, avoiding noise in the pixel rendering (but not necessarily avoiding aliasing since pixel art tends to have 
+            sharp edges), and having smooth shading on the mesh output from the point cloud algorithm. Our hope is that by removing the 
+            real-time element and ignoring the particle simulation input, we can dedicate our efforts to making an effective point cloud 
+            to mesh algorithm which generates “smooth” surfaces for our pixel rasterizer to render. 
+        </p>
+        <h3>Hope to deliver:</h3>
+        <p>
+            If we are able to, we believe that having the point cloud input data be generated dynamically using a particle simulation would 
+            make for a much more interesting animation, although it would work best if the particle simulation was realistic and abided by 
+            some natural physical properties (presumably including some degree of cohesion), in order for the mesh to remain smooth. Given 
+            the setup of the project, the particle simulation aspect is completely independent from the rendering, which is why we are 
+            willing to forgo this aspect if the point cloud to mesh aspect proves to be too time consuming. 
+        </p>
+        <h2>Schedule</h2>
+        <h3>Tasks</h3>
+        <ul>
+            <li>Point Mesh
+                <ul>
+                    <li>Reading point files into C++</li>
+                    <li>Algorithm development
+                        <ul>
+                            <li>Understanding the algorithm in the paper</li>
+                            <li>Considering about improvements / other algorithms</li>
+                        </ul>
+                    </li>
+                    <li>Rendering triangles without writing to .dae</li>
+                    <li>(Hope for) generating point clouds via simulation</li>
+                </ul>
+            </li>
+            <li>Pixel Rendering
+                <ul>
+                    <li>Implementing rendering with cel-shading</li>
+                    <li>Turn off anti-aliasing</li>
+                    <li>Find proper render settings for image size and perspective</li>
+                </ul>
+            </li>
+            <li>
+                Optimizations
+                <ul>
+                    <li>Speeding up point-to-mesh algorithm</li>
+                </ul>
+            </li>
+        </ul>
+        <p>
+            Week 1: rewriting proj4 to support pixel thing and preparation for point cloud instead of cloth
+        </p>
+        <p>
+            Week 2: implement point cloud to mesh
+        </p>
+        <p>
+            Week 3: optimizing
+        </p>
+        <p>
+            Week 4: we’re done (particle simulaiton?)
+        </p>
+        <h2>Resources</h2>
+        <ul>
+            <li>https://vgc.poly.edu/~csilva/papers/tvcg99.pdf</li>
+            <li>https://hhoppe.com/poissonrecon.pdf</li>
+            <li>https://yinan-chen.github.io/CS284a_Report/</li>
+            <li>https://youtu.be/zg3f9hQj0hI</li>
+        </ul>
+    </body>
+</hmtl>
