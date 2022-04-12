@@ -1,7 +1,7 @@
 <html>
     <head></head>
     <body>
-        <h1>Dynamic Point-Cloud Based Pixel Rendering Simulation</h1>
+        <h1 align="center">Dynamic Point-Cloud Based Pixel Rendering Simulation</h1>
         <h2>Summary</h2>
         <p>
             Our goal is to create unique pixel art graphics via a custom rendering pipeline.  First we will create a general simulator for mixed fluids with different properties, and apply marching cubes to create a mesh.  This then feeds into a cel-shading algorithm, which cel-shades the mesh for a low res render without antialiasing.  This pixelating process is inspired by the graphics of dead cells, a video game with amazing pixel graphics and a cool way of making them.
@@ -65,19 +65,30 @@
         <h2>Resources</h2>
         <ul>
 
-<li>For our aspirational goals we would like to be able to use this project as a graphics pipeline for cool 2d pixel art effects.. Here is a <a href="https://youtu.be/zg3f9hQj0hI"> video </a> demonstrating the style we would be going for.</li>
+<li>For our aspirational goals we would like to be able to use this project as a graphics pipeline for cool 2d pixel art effects. Here is a <a href="https://youtu.be/zg3f9hQj0hI"> video</a> demonstrating the style we would be going for.</li>
 
 
 <li>A large inspiration for our aspirational goal in this project is the graphics of the video game Dead Cells by Motion Twin.  In this game they found that doing traditional animation in pixel art was too time consuming to accommodate the scale they were hoping for.  Their solution was to do the animations in 3d, and render them using a custom script as described in this <a href="https://www.gamedeveloper.com/production/art-design-deep-dive-using-a-3d-pipeline-for-2d-animation-in-i-dead-cells-i-"> article</a>.</li>
-<img src="images/1_Model3DS.gif" alt="The 3D animation">
 </br>
-<img src="images/2_Cruncher.gif" alt="The 2D animation">
+
+<table align="center" style="width=100%">
+<tr>
+    <td>
+        <img src="images/1_Model3DS.gif" alt="The 3D animation" height="250px">
+    </td>
+    <td>
+        <img src="images/2_Cruncher.gif" alt="The 2D animation" height="250px">
+    </td>
+    <td>
+        <img src="images/4_AttackAnim.gif" alt="Art in game" height="250px">
+    </td>
+</table>
+
 </br>
-<img src="images/4_AttackAnim.gif" alt="Art in game">
 
-<li>One source of inspiration for the idea of turning arbitrary particle systems into meshes was this <a href="https://youtu.be/buBhdojowAQ"> video </a> (clipped from the YouTube channel “Corridor Crew”). In it, the artist has used smoke and explosion particles to generate unusual trees and plants, which have solid shape and colorful shading.</li>
+<li>One source of inspiration for the idea of turning arbitrary particle systems into meshes was this <a href="https://youtu.be/buBhdojowAQ"> video</a> (clipped from the YouTube channel “Corridor Crew”). In it, the artist has used smoke and explosion particles to generate unusual trees and plants, which have solid shape and colorful shading.</li>
 
-<li>The idea to use marching cubes to generate the surface mesh came partially from this <a href="http://paulbourke.net/geometry/polygonise/"> article </a>. This method specializes in speed due to its reliance on lookup tables, since the positions of the particles within a given “voxel” can be reduced to a countable number of configurations.</li>
+<li>The idea to use marching cubes to generate the surface mesh came partially from this <a href="http://paulbourke.net/geometry/polygonise/"> article</a>. This method specializes in speed due to its reliance on lookup tables, since the positions of the particles within a given “voxel” can be reduced to a countable number of configurations.</li>
         </ul>
     </body>
 </hmtl>
