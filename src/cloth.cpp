@@ -357,7 +357,7 @@ void Cloth::buildClothMesh() {
     }*/
 
     // For each triangle in row-order, create 3 edges and 3 internal halfedges
-    /*for (int i = 0; i < triangles.size(); i++) {
+    for (int i = 0; i < triangles.size(); i++) {
         Triangle* t = triangles[i];
 
         // Allocate new halfedges on heap
@@ -393,7 +393,7 @@ void Cloth::buildClothMesh() {
         h3->next = h1;
         h3->pm = t->pm3;
         h3->triangle = t;
-    }*/
+    }
 
     // Go back through the cloth mesh and link triangles together using halfedge
     // twin pointers
