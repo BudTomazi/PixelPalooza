@@ -1,18 +1,15 @@
 #include <iostream>
-#include <math.h>
-#include <random>
 #include <vector>
-#include "MarchingCubes.h"
 
-#include "cloth.h"
+#include <CGL/vector3D.h>
+#include <CGL/vector4D.h>
+#include "marchingCubes.h"
 
-Vector3D LinearInterp(Vector4D p1, Vector4D p2, float value) {
-	Vector3D p;
-	if (p1.w != p2[3])
-		p = (Vector3D)p1 + ((Vector3D)p2 - (Vector3D)p1) / (p2.w - p1.w) * (value - p1.w);
+Vector3D LinearInterp(ScalarLoc p1, ScalarLoc p2, float value) {
+	if (p1.value != p2.value)
+		return p1.pos + (p2.pos - p1.pos) / (p2.value - p1.value) * (value - p1.value);
 	else
-		p = (Vector3D)p1;
-	return p;
+		return p1.pos;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -20,11 +17,10 @@ Vector3D LinearInterp(Vector4D p1, Vector4D p2, float value) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //  VERSION  1  //
-TRIANGLE* MarchingCubesCross(int ncellsX, int ncellsY, int ncellsZ,
-	float minValue, Vector4D* points, int& numTriangles)
+MeshTriangle* MarchingCubesCross(int ncellsX, int ncellsY, int ncellsZ, float minValue, ScalarLoc* points, int& numTriangles)
 {
 	//this should be enough space, if not change 3 to 4
-	TRIANGLE* triangles = new TRIANGLE[3 * ncellsX * ncellsY * ncellsZ];
+    MeshTriangle* triangles = new MeshTriangle[3 * ncellsX * ncellsY * ncellsZ];
 	numTriangles = int(0);
 
 	int YtimeZ = (ncellsY + 1) * (ncellsZ + 1);	//for little extra speed
@@ -38,7 +34,7 @@ TRIANGLE* MarchingCubesCross(int ncellsX, int ncellsY, int ncellsZ,
 			for (int k = 0; k < ncellsZ; k++)	//z axis
 			{
 				//initialize vertices
-				Vector4D verts[8];
+				ScalarLoc verts[8];
 				int ind = ni + nj + k;
 				/*(step 3)*/ verts[0] = points[ind];
 				verts[1] = points[ind + YtimeZ];
@@ -52,7 +48,7 @@ TRIANGLE* MarchingCubesCross(int ncellsX, int ncellsY, int ncellsZ,
 				//get the index
 				int cubeIndex = int(0);
 				for (int n = 0; n < 8; n++)
-					/*(step 4)*/		if (verts[n].w <= minValue) cubeIndex |= (1 << n);
+					/*(step 4)*/		if (verts[n].value <= minValue) cubeIndex |= (1 << n);
 
 				//check if its completely inside or outside
 				/*(step 5)*/ if (!edgeTable[cubeIndex]) continue;
@@ -78,9 +74,9 @@ TRIANGLE* MarchingCubesCross(int ncellsX, int ncellsY, int ncellsZ,
 					triangles[numTriangles].p[1] = intVerts[triTable[cubeIndex][n + 1]];
 					triangles[numTriangles].p[2] = intVerts[triTable[cubeIndex][n]];
 					//Computing normal as cross product of triangle's edges
-					/*(step 8)*/ 	triangles[numTriangles].norm = ((triangles[numTriangles].p[1] -
-						triangles[numTriangles].p[0]).Cross(triangles[numTriangles].p[2] -
-							triangles[numTriangles].p[0])).Normalize();
+					/*(step 8)*/ 	triangles[numTriangles].norm = (triangles[numTriangles].p[1] -
+						cross(triangles[numTriangles].p[0], triangles[numTriangles].p[2] -
+							triangles[numTriangles].p[0])).unit();
 					numTriangles++;
 				}
 
@@ -89,7 +85,7 @@ TRIANGLE* MarchingCubesCross(int ncellsX, int ncellsY, int ncellsZ,
 	}	//END OF X FOR LOOP
 
 	//free all the wasted space
-	TRIANGLE* retTriangles = new TRIANGLE[numTriangles];
+    MeshTriangle* retTriangles = new MeshTriangle[numTriangles];
 	for (int i = 0; i < numTriangles; i++)
 		retTriangles[i] = triangles[i];
 	delete[] triangles;
@@ -97,31 +93,3 @@ TRIANGLE* MarchingCubesCross(int ncellsX, int ncellsY, int ncellsZ,
 	return retTriangles;
 }
 
-
-//	VERSION  2  //
-TRIANGLE* MarchingCubesCross(float mcMinX, float mcMaxX, float mcMinY, float mcMaxY, float mcMinZ, float mcMaxZ,
-	int ncellsX, int ncellsY, int ncellsZ, float minValue,
-	FORMULA formula, int& numTriangles)
-{
-	//space is already defined and subdivided (mcMinX,...), staring with step 3
-	//first initialize the points
-	Vector4D* mcDataPoints = new Vector4D[(ncellsX + 1) * (ncellsY + 1) * (ncellsZ + 1)];
-	Vector3D stepSize((mcMaxX - mcMinX) / ncellsX, (mcMaxY - mcMinY) / ncellsY, (mcMaxZ - mcMinZ) / ncellsZ);
-
-	int YtimesZ = (ncellsY + 1) * (ncellsZ + 1);		//for little extra speed
-	for (int i = 0; i < ncellsX + 1; i++) {
-		int ni = i * YtimesZ;						//for little extra speed
-		float vertX = mcMinX + i * stepSize.x;
-		for (int j = 0; j < ncellsY + 1; j++) {
-			int nj = j * (ncellsZ + 1);				//for little extra speed
-			float vertY = mcMinY + j * stepSize.y;
-			for (int k = 0; k < ncellsZ + 1; k++) {
-				Vector4D vert(vertX, vertY, mcMinZ + k * stepSize.z, 0);
-				vert.w = formula((Vector3D)vert);
-				/*(step 3)*/ mcDataPoints[ni + nj + k] = vert;
-			}
-		}
-	}
-	//then run Marching Cubes (version 1) on the data
-	return MarchingCubesCross(ncellsX, ncellsY, ncellsZ, minValue, mcDataPoints, numTriangles);
-}

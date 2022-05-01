@@ -7,6 +7,8 @@
 #include "collision/plane.h"
 #include "collision/sphere.h"
 
+#include "marchingCubes.h"
+
 //#include <nanoflann.hpp>
 
 using namespace std;
@@ -250,6 +252,32 @@ void Cloth::reset() {
     }
 }
 
+MeshTriangle* Cloth::getMarchingCubeMesh() {
+    double c = 0.1;
+    int sizeX = 20 + 1;
+    int sizeY = 20 + 1;
+    int sizeZ = 20 + 1;
+    int yz = sizeY * sizeZ;        //for little extra speed
+    
+    int numChunks = sizeX * sizeY * sizeZ;
+    ScalarLoc* chunks  = new ScalarLoc[numChunks];
+    
+    for (int i = 0; i < numChunks; i++) {
+        ScalarLoc fieldPoint;
+        fieldPoint.pos = Vector3D(i / yz, i/sizeZ, i%sizeZ);
+        fieldPoint.value = 0;
+        chunks[i] = fieldPoint;
+    }
+    
+    for (int i = 0; i < point_masses.size(); i += 3) {
+        Vector3D pos = point_masses[i].position;
+        chunks[(int)(floor(pos.x/c) * yz + floor(pos.y/c) * sizeZ + floor(pos.z/c))].value += 1;
+    }
+
+    int numTriangles = 0;
+    return MarchingCubesCross(sizeX - 1, sizeY - 1, sizeZ - 1, 0.1f, chunks, numTriangles);
+}
+
 void Cloth::buildClothMesh() {
     if (point_masses.size() == 0) return;
 
@@ -312,7 +340,7 @@ void Cloth::buildClothMesh() {
     }*/
 
     // For each triangle in row-order, create 3 edges and 3 internal halfedges
-    for (int i = 0; i < triangles.size(); i++) {
+    /*for (int i = 0; i < triangles.size(); i++) {
         Triangle* t = triangles[i];
 
         // Allocate new halfedges on heap
@@ -348,7 +376,7 @@ void Cloth::buildClothMesh() {
         h3->next = h1;
         h3->pm = t->pm3;
         h3->triangle = t;
-    }
+    }*/
 
     // Go back through the cloth mesh and link triangles together using halfedge
     // twin pointers

@@ -10,6 +10,7 @@
 #include "clothMesh.h"
 #include "collision/collisionObject.h"
 #include "spring.h"
+#include "marchingCubes.h"
 
 using namespace CGL;
 using namespace std;
@@ -61,6 +62,8 @@ struct Cloth {
     void build_spatial_map();
     void self_collide(PointMass& pm, double simulation_steps);
     float hash_position(Vector3D pos);
+    
+    MeshTriangle* getMarchingCubeMesh();
 
     // Cloth properties
     double width;

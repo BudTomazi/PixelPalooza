@@ -13,6 +13,9 @@ set(PIXELPALOOZA_VIEWER_SOURCE
     # Application
     main.cpp
     clothSimulator.cpp
+    
+    # Marching cubes
+    marchingCubes.cpp
 
     # Miscellaneous
     # png.cpp

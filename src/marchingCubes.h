@@ -1,22 +1,30 @@
 #ifndef MARCHINGCUBES_H_
 #define MARCHINGCUBES_H_
 
-#include "mpVector.h"		//vector operations
+#include <vector>
+#include "CGL/CGL.h"
 #include "MCTable.h"		//tables used by Marching Cubes (edgeTable and triTable)
+
+using namespace CGL;
 
 //used to save triangles - 3 vertices and a normal vector
 typedef struct {
-	mpVector p[3];
-	mpVector norm;
-} TRIANGLE;
+	Vector3D p[3];
+    Vector3D norm;
+} MeshTriangle;
+
+typedef struct {
+    Vector3D pos;
+    float value;
+} ScalarLoc;
 
 //does Linear Interpolation between points p1 and p2 (they already contain their computed values)
-mpVector LinearInterp(mp4Vector p1, mp4Vector p2, float value);
+Vector3D LinearInterp(ScalarLoc p1, ScalarLoc p2, float value);
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //POINTERS TO FUNCTIONS																////
 //pointer to function which computes the value at a point							////
-typedef float (*FORMULA)(mpVector);													////
+typedef float (*FORMULA)(Vector3D);													////
 ////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -33,8 +41,7 @@ typedef float (*FORMULA)(mpVector);													////
 //       for loop, have indexes i, j, k for x, y, z respectively, then to get the point you will have to make the
 //		 following index: i*(ncellsY+1)*(ncellsZ+1) + j*(ncellsZ+1) + k .
 //		Also, the array starts at the minimum on all axes. (point at indices (i,j,k) is the minimum)
-TRIANGLE* MarchingCubesCross(int ncellsX, int ncellsY, int ncellsZ,
-	float minValue, mp4Vector* points, int& numTriangles);
+MeshTriangle* MarchingCubesCross(int ncellsX, int ncellsY, int ncellsZ, float minValue, ScalarLoc* points, int& numTriangles);
 
 //	Version 2
 //First computes the 3D array of coordintes and values and then runs the above function on the data
@@ -45,7 +52,7 @@ TRIANGLE* MarchingCubesCross(int ncellsX, int ncellsY, int ncellsZ,
 //  point of intersection of the surface and the edge between points p1 and p2
 // saves number of triangles in numTriangles and the pointer to them is returned
 // (note: mins' and maxs' are included in the algorithm)
-TRIANGLE* MarchingCubesCross(float mcMinX, float mcMaxX, float mcMinY, float mcMaxY, float mcMinZ, float mcMaxZ,
+MeshTriangle* MarchingCubesCross(float mcMinX, float mcMaxX, float mcMinY, float mcMaxY, float mcMinZ, float mcMaxZ,
 	int ncellsX, int ncellsY, int ncellsZ, float minValue,
 	FORMULA formula, int& numTriangles);
 #endif
