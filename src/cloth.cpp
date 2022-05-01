@@ -154,10 +154,10 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
             forces += dir * (curInteractionProperties->attract / distSqr);
             forces -= dir * (curInteractionProperties->repel / (distSqr * distSqr));
 
-            collDist = (otherParticleProperties->radius) + (curParticleProperties->radius);
+            /*collDist = (otherParticleProperties->radius) + (curParticleProperties->radius);
             if (distSqr < (collDist * collDist) && curMass->particle_type == otherMass->particle_type) {
                 curMass->particle_type = (curMass->particle_type + 1) % 2;
-            }
+            }*/
         }
 
         curMass->forces = forces;
