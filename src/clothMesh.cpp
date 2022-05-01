@@ -6,6 +6,8 @@ using namespace std;
 
 Vector3D PointMass::normal() {
   Vector3D n(0, 0, 0);
+    
+    return Vector3D(0, 1, 0);
 
   Halfedge *start = halfedge;
   Halfedge *iter = start;
