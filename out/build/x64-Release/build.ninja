@@ -1150,6 +1150,15 @@ build src\CMakeFiles\pixelpalooza.dir\clothSimulator.cpp.obj: CXX_COMPILER__pixe
   TARGET_COMPILE_PDB = src\CMakeFiles\pixelpalooza.dir\
   TARGET_PDB = pixelpalooza.pdb
 
+build src\CMakeFiles\pixelpalooza.dir\marchingCubes.cpp.obj: CXX_COMPILER__pixelpalooza_Release C$:\Users\budto\source\repos\PixelPalooza\src\marchingCubes.cpp || cmake_object_order_depends_target_pixelpalooza
+  DEFINES = -DEIGEN_DONT_ALIGN -DGLAD_GLAPI_EXPORT -DNANOGUI_GLAD -DNANOGUI_SHARED -DNVG_SHARED
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc -std=gnu++11 /MD /O2 /Ob2 /DNDEBUG
+  INCLUDES = -IC:\Users\budto\source\repos\PixelPalooza\ext\nanogui\include -IC:\Users\budto\source\repos\PixelPalooza\CGL\include -IC:\Users\budto\source\repos\PixelPalooza\CGL\deps\freetype\include -IC:\Users\budto\source\repos\PixelPalooza\CGL\deps\freetype\include\freetype2 -IC:\Users\budto\source\repos\PixelPalooza\ext\nanogui\ext\glad\include -IC:\Users\budto\source\repos\PixelPalooza\ext\nanogui\ext\glfw\include -IC:\Users\budto\source\repos\PixelPalooza\ext\nanogui\ext\nanovg\src -IC:\Users\budto\source\repos\PixelPalooza\ext\nanogui\ext\eigen
+  OBJECT_DIR = src\CMakeFiles\pixelpalooza.dir
+  OBJECT_FILE_DIR = src\CMakeFiles\pixelpalooza.dir
+  TARGET_COMPILE_PDB = src\CMakeFiles\pixelpalooza.dir\
+  TARGET_PDB = pixelpalooza.pdb
+
 build src\CMakeFiles\pixelpalooza.dir\misc\sphere_drawing.cpp.obj: CXX_COMPILER__pixelpalooza_Release C$:\Users\budto\source\repos\PixelPalooza\src\misc\sphere_drawing.cpp || cmake_object_order_depends_target_pixelpalooza
   DEFINES = -DEIGEN_DONT_ALIGN -DGLAD_GLAPI_EXPORT -DNANOGUI_GLAD -DNANOGUI_SHARED -DNVG_SHARED
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc -std=gnu++11 /MD /O2 /Ob2 /DNDEBUG
@@ -1194,7 +1203,7 @@ build src\CMakeFiles\pixelpalooza.dir\misc\getopt.c.obj: C_COMPILER__pixelpalooz
 #############################################
 # Link the executable pixelpalooza.exe
 
-build pixelpalooza.exe: CXX_EXECUTABLE_LINKER__pixelpalooza_Release src\CMakeFiles\pixelpalooza.dir\cloth.cpp.obj src\CMakeFiles\pixelpalooza.dir\clothMesh.cpp.obj src\CMakeFiles\pixelpalooza.dir\collision\sphere.cpp.obj src\CMakeFiles\pixelpalooza.dir\collision\plane.cpp.obj src\CMakeFiles\pixelpalooza.dir\main.cpp.obj src\CMakeFiles\pixelpalooza.dir\clothSimulator.cpp.obj src\CMakeFiles\pixelpalooza.dir\misc\sphere_drawing.cpp.obj src\CMakeFiles\pixelpalooza.dir\misc\file_utils.cpp.obj src\CMakeFiles\pixelpalooza.dir\camera.cpp.obj src\CMakeFiles\pixelpalooza.dir\misc\getopt.c.obj | CGL\src\CGL.lib ext\nanogui\nanogui.lib || CGL\src\CGL.lib nanogui.dll
+build pixelpalooza.exe: CXX_EXECUTABLE_LINKER__pixelpalooza_Release src\CMakeFiles\pixelpalooza.dir\cloth.cpp.obj src\CMakeFiles\pixelpalooza.dir\clothMesh.cpp.obj src\CMakeFiles\pixelpalooza.dir\collision\sphere.cpp.obj src\CMakeFiles\pixelpalooza.dir\collision\plane.cpp.obj src\CMakeFiles\pixelpalooza.dir\main.cpp.obj src\CMakeFiles\pixelpalooza.dir\clothSimulator.cpp.obj src\CMakeFiles\pixelpalooza.dir\marchingCubes.cpp.obj src\CMakeFiles\pixelpalooza.dir\misc\sphere_drawing.cpp.obj src\CMakeFiles\pixelpalooza.dir\misc\file_utils.cpp.obj src\CMakeFiles\pixelpalooza.dir\camera.cpp.obj src\CMakeFiles\pixelpalooza.dir\misc\getopt.c.obj | CGL\src\CGL.lib ext\nanogui\nanogui.lib || CGL\src\CGL.lib nanogui.dll
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc -std=gnu++11 /MD /O2 /Ob2 /DNDEBUG
   LINK_FLAGS = /machine:x64 /INCREMENTAL:NO /subsystem:console
   LINK_LIBRARIES = CGL\src\CGL.lib  ext\nanogui\nanogui.lib  opengl32.lib  freetype28.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib

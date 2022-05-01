@@ -254,10 +254,10 @@ void Cloth::reset() {
 }
 
 MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
-    double c = 0.25;
-    int sizeX = 40 + 1;
-    int sizeY = 40 + 1;
-    int sizeZ = 40 + 1;
+    double c = 0.125;
+    int sizeX = 80 + 1;
+    int sizeY = 80 + 1;
+    int sizeZ = 80 + 1;
     int yz = sizeY * sizeZ;        //for little extra speed
     
     int numChunks = sizeX * sizeY * sizeZ;
@@ -270,12 +270,23 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         chunks[i] = fieldPoint;
     }
     
-    for (int i = 0; i < point_masses.size(); i += 3) {
+    /*for (int i = 0; i < point_masses.size(); i += 3) {
         Vector3D pos = point_masses[i].position;
         int index = (int)(floor(pos.x/c) * yz + floor(pos.y/c) * sizeZ + floor(pos.z/c));
         if (index < 0) continue;
         
         chunks[index].value += 0.06;
+    }*/
+
+    for (int i = 0; i < point_masses.size(); i += 3) {
+        for (int j = 0; j < point_masses.size(); j += 3) {
+            if (i == j) continue;
+            Vector3D pos = 0.5 * (point_masses[i].position + point_masses[j].position);
+            int index = (int)(floor(pos.x / c) * yz + floor(pos.y / c) * sizeZ + floor(pos.z / c));
+            if (index < 0) continue;
+
+            chunks[index].value += 0.01;
+        }
     }
     
     MeshTriangle* triangles = MarchingCubesCross(sizeX - 1, sizeY - 1, sizeZ - 1, 0.1f, chunks, numTriangles);

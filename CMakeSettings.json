@@ -14,8 +14,8 @@
     {
       "name": "x64-Release",
       "generator": "Ninja",
-      "configurationType": "RelWithDebInfo",
-      "buildRoot": "C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release\\",
+      "configurationType": "Release",
+      "buildRoot": "C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release",
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
