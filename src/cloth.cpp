@@ -269,10 +269,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     Vector3D bottomLeft = Vector3D(min);
     
     for (int i = 0; i < numCells; i++) {
-        ScalarLoc fieldPoint;
-        fieldPoint.pos = c * Vector3D(i / yz, (i / n) % n, i % n) + bottomLeft;
-        fieldPoint.value = 0;
-        cells[i] = fieldPoint;
+        cells[i] = ScalarLoc(c * Vector3D(i / yz, (i / n) % n, i % n) + bottomLeft, 0);
     }
     
     /*for (int i = 0; i < point_masses.size(); i += 3) {

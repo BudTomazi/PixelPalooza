@@ -13,10 +13,16 @@ typedef struct {
     Vector3D norm;
 } MeshTriangle;
 
-typedef struct {
+struct ScalarLoc {
     Vector3D pos;
     float value;
-} ScalarLoc;
+    
+    ScalarLoc() : pos(Vector3D(0)), value(0) { }
+    
+    ScalarLoc(double x, double y, double z, double value) : pos(Vector3D(x, y, z)), value(value) { }
+    
+    ScalarLoc(Vector3D pos, double value) : pos(pos), value(value) { }
+};
 
 //does Linear Interpolation between points p1 and p2 (they already contain their computed values)
 Vector3D LinearInterp(ScalarLoc p1, ScalarLoc p2, float value);
