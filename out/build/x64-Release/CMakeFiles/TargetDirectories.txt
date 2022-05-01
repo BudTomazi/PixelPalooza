@@ -38,7 +38,7 @@ C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/CGL/src/CMakeFile
 C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/CGL/src/CMakeFiles/edit_cache.dir
 C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/CGL/src/CMakeFiles/rebuild_cache.dir
 C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/CGL/src/CMakeFiles/list_install_components.dir
-C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/src/CMakeFiles/clothsim.dir
+C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/src/CMakeFiles/pixelpalooza.dir
 C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/src/CMakeFiles/install/local.dir
 C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/src/CMakeFiles/install.dir
 C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/src/CMakeFiles/edit_cache.dir

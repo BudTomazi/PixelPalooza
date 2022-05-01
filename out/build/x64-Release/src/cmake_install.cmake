@@ -34,13 +34,13 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "C:/Users/budto/source/repos/PixelPalooza/clothsim.exe")
+   "C:/Users/budto/source/repos/PixelPalooza/pixelpalooza.exe")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "C:/Users/budto/source/repos/PixelPalooza" TYPE EXECUTABLE FILES "C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/clothsim.exe")
+  file(INSTALL DESTINATION "C:/Users/budto/source/repos/PixelPalooza" TYPE EXECUTABLE FILES "C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/pixelpalooza.exe")
 endif()
 
