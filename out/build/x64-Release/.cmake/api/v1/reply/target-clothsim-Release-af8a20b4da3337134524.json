@@ -1,0 +1,405 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "clothsim.exe"
+		},
+		{
+			"path" : "clothsim.pdb"
+		}
+	],
+	"backtrace" : 2,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"_add_executable",
+			"add_executable",
+			"install",
+			"link_directories",
+			"target_link_libraries",
+			"add_definitions",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"C:/Users/budto/source/repos/vcpkg/scripts/buildsystems/vcpkg.cmake",
+			"src/CMakeLists.txt",
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 69,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 540,
+				"parent" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 90,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 1,
+				"line" : 61,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 1,
+				"line" : 71,
+				"parent" : 0
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 47,
+				"parent" : 0
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 6,
+				"file" : 2,
+				"line" : 172,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 2,
+				"line" : 206,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 52,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc -std=gnu++11 /MD /O2 /Ob2 /DNDEBUG"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"define" : "EIGEN_DONT_ALIGN"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "GLAD_GLAPI_EXPORT"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "NANOGUI_GLAD"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "NANOGUI_SHARED"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "NVG_SHARED"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 8,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/ext/nanogui/include"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/CGL/include"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/CGL/deps/freetype/include"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/CGL/deps/freetype/include/freetype2"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/ext/nanogui/ext/glad/include"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/ext/nanogui/ext/glfw/include"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/ext/nanogui/ext/nanovg/src"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/ext/nanogui/ext/eigen"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8
+			]
+		},
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"define" : "EIGEN_DONT_ALIGN"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "GLAD_GLAPI_EXPORT"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "NANOGUI_GLAD"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "NANOGUI_SHARED"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "NVG_SHARED"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 8,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/ext/nanogui/include"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/CGL/include"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/CGL/deps/freetype/include"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/CGL/deps/freetype/include/freetype2"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/ext/nanogui/ext/glad/include"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/ext/nanogui/ext/glfw/include"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/ext/nanogui/ext/nanovg/src"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "C:/Users/budto/source/repos/PixelPalooza/ext/nanogui/ext/eigen"
+				}
+			],
+			"language" : "C",
+			"sourceIndexes" : 
+			[
+				9
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 5,
+			"id" : "nanogui::@f32fc89d7586c0a8572c"
+		},
+		{
+			"backtrace" : 5,
+			"id" : "CGL::@471a8420bb23f6744067"
+		}
+	],
+	"id" : "clothsim::@145eef247bfb46b6828c",
+	"install" : 
+	{
+		"destinations" : 
+		[
+			{
+				"backtrace" : 3,
+				"path" : "C:/Users/budto/source/repos/PixelPalooza"
+			}
+		],
+		"prefix" : 
+		{
+			"path" : "C:/Users/budto/source/repos/PixelPalooza/out/install/x64-Release"
+		}
+	},
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc -std=gnu++11 /MD /O2 /Ob2 /DNDEBUG",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "/machine:x64 /INCREMENTAL:NO /subsystem:console",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "-LIBPATH:C:\\Users\\budto\\source\\repos\\PixelPalooza\\CGL\\deps\\freetype\\lib",
+				"role" : "libraryPath"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "CGL\\src\\CGL.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "ext\\nanogui\\nanogui.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "opengl32.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "freetype28.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "clothsim",
+	"nameOnDisk" : "clothsim.exe",
+	"paths" : 
+	{
+		"build" : "src",
+		"source" : "src"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "src/cloth.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "src/clothMesh.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "src/collision/sphere.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "src/collision/plane.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "src/main.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "src/clothSimulator.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "src/misc/sphere_drawing.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "src/misc/file_utils.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "src/camera.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 1,
+			"path" : "src/misc/getopt.c",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

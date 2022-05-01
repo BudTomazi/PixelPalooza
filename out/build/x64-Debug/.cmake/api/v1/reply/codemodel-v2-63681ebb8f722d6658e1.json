@@ -1,0 +1,260 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						4,
+						7
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "ext/nanogui",
+					"childIndexes" : 
+					[
+						2
+					],
+					"jsonFile" : "directory-ext.nanogui-Debug-e4c24d99fccb3f0de03a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "ext/nanogui",
+					"targetIndexes" : 
+					[
+						4,
+						5
+					]
+				},
+				{
+					"build" : "ext/nanogui/ext_build/glfw",
+					"childIndexes" : 
+					[
+						3
+					],
+					"jsonFile" : "directory-ext.nanogui.ext_build.glfw-Debug-e84cd2ceb7c1476b8c55.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.11.2"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 2,
+					"source" : "ext/nanogui/ext/glfw"
+				},
+				{
+					"build" : "ext/nanogui/ext_build/glfw/src",
+					"jsonFile" : "directory-ext.nanogui.ext_build.glfw.src-Debug-d5bc5c4008ac189b2ce8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.11.2"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 2,
+					"source" : "ext/nanogui/ext/glfw/src",
+					"targetIndexes" : 
+					[
+						2,
+						3
+					]
+				},
+				{
+					"build" : "CGL",
+					"childIndexes" : 
+					[
+						5,
+						6
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-CGL-Debug-11ee1ce43757d7d9e5f1.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 3,
+					"source" : "CGL"
+				},
+				{
+					"build" : "CGL/deps/freetype",
+					"jsonFile" : "directory-CGL.deps.freetype-Debug-77fadadc91cd2f318e26.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8"
+					},
+					"parentIndex" : 4,
+					"projectIndex" : 3,
+					"source" : "CGL/deps/freetype"
+				},
+				{
+					"build" : "CGL/src",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-CGL.src-Debug-a7de53dbe7ce13c97001.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8"
+					},
+					"parentIndex" : 4,
+					"projectIndex" : 3,
+					"source" : "CGL/src",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "src",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-src-Debug-112278f2f46b853b7998.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "src",
+					"targetIndexes" : 
+					[
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						3
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						7
+					],
+					"name" : "ClothSim",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						2
+					],
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "NanoGUI",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						4,
+						5
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2,
+						3
+					],
+					"name" : "GLFW",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						2,
+						3
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4,
+						5,
+						6
+					],
+					"name" : "CGL",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 6,
+					"id" : "CGL::@471a8420bb23f6744067",
+					"jsonFile" : "target-CGL-Debug-6f2d5390cfe32c31907a.json",
+					"name" : "CGL",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "clothsim::@145eef247bfb46b6828c",
+					"jsonFile" : "target-clothsim-Debug-aaa353778db0b9b52a3c.json",
+					"name" : "clothsim",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "glfw::@05f448bf7d78af58ae8d",
+					"jsonFile" : "target-glfw-Debug-ca0d296c8ff84783a100.json",
+					"name" : "glfw",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "glfw_objects::@05f448bf7d78af58ae8d",
+					"jsonFile" : "target-glfw_objects-Debug-46e15cd6fc8d4593623f.json",
+					"name" : "glfw_objects",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "nanogui::@f32fc89d7586c0a8572c",
+					"jsonFile" : "target-nanogui-Debug-73cc0be63b7322f0075a.json",
+					"name" : "nanogui",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "nanogui-obj::@f32fc89d7586c0a8572c",
+					"jsonFile" : "target-nanogui-obj-Debug-648e337668412820c13b.json",
+					"name" : "nanogui-obj",
+					"projectIndex" : 1
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Debug",
+		"source" : "C:/Users/budto/source/repos/PixelPalooza"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}
