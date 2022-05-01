@@ -59,10 +59,11 @@ void Cloth::buildGrid() {
 
     for (int y = 0; y < num_height_points; y++) {
         for (int x = 0; x < num_width_points; x++) {
-            Vector3D pos = Vector3D(0, 1, 0);
+            Vector3D pos = Vector3D(5, 5, 5);
             int particleType = rand() % 2;
 
-            pos += Vector3D(2 * (particleType % 2) + rand() % 100 / 100.0 - 0.5, rand() % 100 / 100.0 - 0.5, rand() % 100 / 100.0 - 0.5);
+//            pos += Vector3D(2 * (particleType % 2) + rand() % 100 / 100.0 - 0.5, rand() % 100 / 100.0 - 0.5, rand() % 100 / 100.0 - 0.5);
+            pos += Vector3D(0.5 * (rand() % 100 / 100.0), 0.5 * (rand() % 100 / 100.0), 1.0 * (rand() % 100 / 100.0));
 
             double radius = particleProperties[particleType].radius;
 
@@ -148,7 +149,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
             distSqr = dir.norm2();
             dir = dir.unit();
 
-            if (distSqr <= 0.0005) continue;
+            if (distSqr <= 0.005) continue;
 
             curInteractionProperties = &interactionProperties[curMass->particle_type][otherMass->particle_type];
             if (!curInteractionProperties->isActive) continue;
@@ -252,30 +253,35 @@ void Cloth::reset() {
     }
 }
 
-MeshTriangle* Cloth::getMarchingCubeMesh() {
-    double c = 0.1;
-    int sizeX = 20 + 1;
-    int sizeY = 20 + 1;
-    int sizeZ = 20 + 1;
+MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
+    double c = 0.25;
+    int sizeX = 40 + 1;
+    int sizeY = 40 + 1;
+    int sizeZ = 40 + 1;
     int yz = sizeY * sizeZ;        //for little extra speed
     
     int numChunks = sizeX * sizeY * sizeZ;
-    ScalarLoc* chunks  = new ScalarLoc[numChunks];
+    ScalarLoc* chunks = new ScalarLoc[numChunks];
     
     for (int i = 0; i < numChunks; i++) {
         ScalarLoc fieldPoint;
-        fieldPoint.pos = Vector3D(i / yz, i/sizeZ, i%sizeZ);
+        fieldPoint.pos = c * Vector3D(i / yz, (i / sizeZ) % sizeY, i % sizeZ);
         fieldPoint.value = 0;
         chunks[i] = fieldPoint;
     }
     
     for (int i = 0; i < point_masses.size(); i += 3) {
         Vector3D pos = point_masses[i].position;
-        chunks[(int)(floor(pos.x/c) * yz + floor(pos.y/c) * sizeZ + floor(pos.z/c))].value += 1;
+        int index = (int)(floor(pos.x/c) * yz + floor(pos.y/c) * sizeZ + floor(pos.z/c));
+        if (index < 0) continue;
+        
+        chunks[index].value += 0.06;
     }
-
-    int numTriangles = 0;
-    return MarchingCubesCross(sizeX - 1, sizeY - 1, sizeZ - 1, 0.1f, chunks, numTriangles);
+    
+    MeshTriangle* triangles = MarchingCubesCross(sizeX - 1, sizeY - 1, sizeZ - 1, 0.1f, chunks, numTriangles);
+    delete[] chunks;
+    
+    return triangles;
 }
 
 void Cloth::buildClothMesh() {

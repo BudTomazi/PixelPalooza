@@ -363,24 +363,24 @@ void ClothSimulator::drawWireframe(GLShader& shader) {
 }
 
 void ClothSimulator::drawNormals(GLShader& shader) {
-    int num_tris = cloth->clothMesh->triangles.size();
+    int num_tris;
+    MeshTriangle* triangles = cloth->getMarchingCubeMesh(num_tris);
+//    int num_tris = cloth->clothMesh->triangles.size();
 
     MatrixXf positions(4, num_tris * 3);
     MatrixXf normals(4, num_tris * 3);
     MatrixXf colors(4, num_tris * 3);
 
     for (int i = 0; i < num_tris; i++) {
-        Triangle* tri = cloth->clothMesh->triangles[i];
+        Vector3D p1 = triangles[i].p[0];
+        Vector3D p2 = triangles[i].p[1];
+        Vector3D p3 = triangles[i].p[2];
 
-        Vector3D p1 = tri->pm1->position;
-        Vector3D p2 = tri->pm2->position;
-        Vector3D p3 = tri->pm3->position;
+        Vector3D n1 = triangles[i].norm; //tri->pm1->normal();
+        Vector3D n2 = triangles[i].norm; //tri->pm2->normal();
+        Vector3D n3 = triangles[i].norm; //tri->pm3->normal();
 
-        Vector3D n1 = tri->pm1->normal();
-        Vector3D n2 = tri->pm2->normal();
-        Vector3D n3 = tri->pm3->normal();
-
-        Vector3D color = cloth->particleColors[tri->pm1->particle_type];
+        Vector3D color = cloth->particleColors[0]; //tri->pm1->particle_type];
 
         positions.col(i * 3) << p1.x, p1.y, p1.z, 1.0;
         positions.col(i * 3 + 1) << p2.x, p2.y, p2.z, 1.0;
@@ -394,12 +394,14 @@ void ClothSimulator::drawNormals(GLShader& shader) {
         colors.col(i * 3 + 1) << color.x, color.y, color.z, 0.0;
         colors.col(i * 3 + 2) << color.x, color.y, color.z, 0.0;
     }
-
+        
     shader.uploadAttrib("in_position", positions, false);
     shader.uploadAttrib("in_normal", normals, false);
     shader.uploadAttrib("in_color", colors, false);
 
     shader.drawArray(GL_TRIANGLES, 0, num_tris * 3);
+    
+    delete[] triangles;
 }
 
 void ClothSimulator::drawPhong(GLShader& shader) {

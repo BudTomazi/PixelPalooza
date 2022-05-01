@@ -63,7 +63,7 @@ struct Cloth {
     void self_collide(PointMass& pm, double simulation_steps);
     float hash_position(Vector3D pos);
     
-    MeshTriangle* getMarchingCubeMesh();
+    MeshTriangle* getMarchingCubeMesh(int& numTriangles);
 
     // Cloth properties
     double width;
