@@ -59,7 +59,7 @@ void Cloth::buildGrid() {
 
     for (int y = 0; y < num_height_points; y++) {
         for (int x = 0; x < num_width_points; x++) {
-            Vector3D pos = Vector3D(5, 5, 5);
+            Vector3D pos = Vector3D(0, 1, 0);
             int particleType = rand() % 2;
 
 //            pos += Vector3D(2 * (particleType % 2) + rand() % 100 / 100.0 - 0.5, rand() % 100 / 100.0 - 0.5, rand() % 100 / 100.0 - 0.5);
@@ -254,20 +254,25 @@ void Cloth::reset() {
 }
 
 MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
-    double c = 0.125;
-    int sizeX = 80 + 1;
-    int sizeY = 80 + 1;
-    int sizeZ = 80 + 1;
-    int yz = sizeY * sizeZ;        //for little extra speed
+    int size = 80; // number of cells along one side
+    double width = 10; // how big the box is
     
-    int numChunks = sizeX * sizeY * sizeZ;
-    ScalarLoc* chunks = new ScalarLoc[numChunks];
+    double c = width / size;
     
-    for (int i = 0; i < numChunks; i++) {
+    int n = size + 1; // how many points? TODO: do we need to do this
+    int yz = n * n;        //for little extra speed
+    
+    double min = -width / 2.0; // centers the entire grid
+    
+    int numCells = n * n * n;
+    ScalarLoc* cells = new ScalarLoc[numCells];
+    Vector3D bottomLeft = Vector3D(min);
+    
+    for (int i = 0; i < numCells; i++) {
         ScalarLoc fieldPoint;
-        fieldPoint.pos = c * Vector3D(i / yz, (i / sizeZ) % sizeY, i % sizeZ);
+        fieldPoint.pos = c * Vector3D(i / yz, (i / n) % n, i % n) + bottomLeft;
         fieldPoint.value = 0;
-        chunks[i] = fieldPoint;
+        cells[i] = fieldPoint;
     }
     
     /*for (int i = 0; i < point_masses.size(); i += 3) {
@@ -282,15 +287,15 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         for (int j = 0; j < point_masses.size(); j += 3) {
             if (i == j) continue;
             Vector3D pos = 0.5 * (point_masses[i].position + point_masses[j].position);
-            int index = (int)(floor(pos.x / c) * yz + floor(pos.y / c) * sizeZ + floor(pos.z / c));
-            if (index < 0) continue;
+            int index = (int)(floor((pos.x - min) / c) * yz + floor((pos.y - min) / c) * n + floor((pos.z - min) / c));
+            if (index < 0 || index >= numCells) continue;
 
-            chunks[index].value += 0.01;
+            cells[index].value += 0.01;
         }
     }
     
-    MeshTriangle* triangles = MarchingCubesCross(sizeX - 1, sizeY - 1, sizeZ - 1, 0.1f, chunks, numTriangles);
-    delete[] chunks;
+    MeshTriangle* triangles = MarchingCubesCross(size, size, size, 0.1f, cells, numTriangles);
+    delete[] cells;
     
     return triangles;
 }
