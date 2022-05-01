@@ -149,7 +149,7 @@ void ClothSimulator::load_shaders() {
 
     // Assuming that it's there, use "Wireframe" by default
     for (size_t i = 0; i < shaders_combobox_names.size(); ++i) {
-        if (shaders_combobox_names[i] == "Wireframe") {
+        if (shaders_combobox_names[i] == "Normal") {
             active_shader_idx = i;
             break;
         }

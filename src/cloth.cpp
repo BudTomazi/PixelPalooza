@@ -59,7 +59,7 @@ void Cloth::buildGrid() {
 
     for (int y = 0; y < num_height_points; y++) {
         for (int x = 0; x < num_width_points; x++) {
-            Vector3D pos = Vector3D(0, 1, 0);
+            Vector3D pos = Vector3D(0, 0, 0);
             int particleType = rand() % 2;
 
 //            pos += Vector3D(2 * (particleType % 2) + rand() % 100 / 100.0 - 0.5, rand() % 100 / 100.0 - 0.5, rand() % 100 / 100.0 - 0.5);

@@ -74,9 +74,9 @@ MeshTriangle* MarchingCubesCross(int ncellsX, int ncellsY, int ncellsZ, float mi
 					triangles[numTriangles].p[1] = intVerts[triTable[cubeIndex][n + 1]];
 					triangles[numTriangles].p[2] = intVerts[triTable[cubeIndex][n]];
 					//Computing normal as cross product of triangle's edges
-					/*(step 8)*/ 	triangles[numTriangles].norm = (triangles[numTriangles].p[1] -
-						cross(triangles[numTriangles].p[0], triangles[numTriangles].p[2] -
-							triangles[numTriangles].p[0])).unit();
+					/*(step 8)*/ 	triangles[numTriangles].norm =
+						cross(triangles[numTriangles].p[1] - triangles[numTriangles].p[0], triangles[numTriangles].p[2] -
+							triangles[numTriangles].p[0]).unit();
 					numTriangles++;
 				}
 
