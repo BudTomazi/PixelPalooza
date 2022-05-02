@@ -13,7 +13,8 @@ void Sphere::collide(PointMass &pm) {
 
 	if (offset.norm() <= radius) {
 		Vector3D correction = (pm.last_position - origin).unit() * radius + origin - pm.last_position;
-		pm.position = pm.last_position + (correction) * (1 - friction);
+		pm.forces -= dot(pm.forces, offset.unit());
+		//pm.position = pm.last_position + (correction) * (1 - friction);
 	}
 
 }

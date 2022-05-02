@@ -181,12 +181,19 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
 
         if (!curMass->pinned) {
             curMass->forces = forces;
-            curMass->forces += 0.3* cross(curMass->position, Vector3D(1.0, 0.0, 0.0));
+            //curMass->forces += 0.3* cross(curMass->position, Vector3D(1.0, 0.0, 0.0));
+            curMass->forces += Vector3D(0.0, -0.7, 0.0);
         }
         centroid += curMass->position;
     }
 
     centroid /= (point_masses.size() / 3);
+
+    for (auto p = point_masses.begin(); p != point_masses.end(); p++) {
+        for (auto prim = collision_objects->begin(); prim != collision_objects->end(); prim++) {
+            (*prim)->collide(*p);
+        }
+    }
 
     Vector3D curPos;
     Vector3D newPos;
@@ -217,6 +224,13 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
         point_masses[i + 1].position = newPos + orthogonal * curParticleProperties->radius;
         point_masses[i + 2].position = newPos + cross(orthogonal, normal) * curParticleProperties->radius;
     }
+
+    /*for (auto p = point_masses.begin(); p != point_masses.end(); p++) {
+        if (p->pinned) continue;
+        self_collide(*p, simulation_steps);
+    }*/
+
+    
 }
 
 void Cloth::build_spatial_map() {
@@ -272,15 +286,15 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         cells[i] = ScalarLoc(c * Vector3D(i / yz, (i / n) % n, i % n) + bottomLeft, 0);
     }
     
-    /*for (int i = 0; i < point_masses.size(); i += 3) {
-        Vector3D pos = point_masses[i].position;
-        int index = (int)(floor(pos.x/c) * yz + floor(pos.y/c) * sizeZ + floor(pos.z/c));
-        if (index < 0) continue;
-        
-        chunks[index].value += 0.06;
-    }*/
-
     for (int i = 0; i < point_masses.size(); i += 3) {
+        Vector3D pos = point_masses[i].position;
+
+        int index = (int)(floor((pos.x - min) / c) * yz + floor((pos.y - min) / c) * n + floor((pos.z - min) / c));
+        if (index < 0 || index >= numCells) continue;
+        cells[index].value += 0.3;
+    }
+
+    /*for (int i = 0; i < point_masses.size(); i += 3) {
         for (int j = 0; j < point_masses.size(); j += 3) {
             if (i == j) continue;
             Vector3D pos = 0.5 * (point_masses[i].position + point_masses[j].position);
@@ -289,7 +303,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
 
             cells[index].value += 0.01;
         }
-    }
+    }*/
     
     MeshTriangle* triangles = MarchingCubesCross(size, size, size, 0.1f, cells, numTriangles);
     delete[] cells;
