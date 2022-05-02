@@ -24,12 +24,12 @@
 //#include "CGL/vector4D.h"
 //
 ////Linear Interpolation between two points
-//Vector3D LinearInterp(ScalarLoc p1, ScalarLoc p2, float value)
+//Vector3D LinearInterp(Vector4D p1, Vector4D p2, float value)
 //{
-//    if (abs(p1.value - p2.value) > 0.00001)
-//        return p1.pos + (p2.pos - p1.pos) / (p2.value - p1.value) * (value - p1.value);
+//    if (abs(p1.w - p2.w) > 0.00001)
+//        return p1.to3D() + (p2.to3D() - p1.to3D()) / (p2.w - p1.w) * (value - p1.w);
 //    else
-//        return p1.pos;
+//        return p1.to3D();
 //}
 //
 //
@@ -38,7 +38,7 @@
 ////can be verts or *verts if done by reference
 //#define CALC_GRAD_VERT_0(verts) Vector4D(points[ind-YtimeZ].value-(verts[1]).value,points[ind-pointsZ].value-(verts[4]).value,points[ind-1].value-(verts[3]).value, (verts[0]).value);
 //#define CALC_GRAD_VERT_1(verts) Vector4D((verts[0]).value-points[ind+2*YtimeZ].value,points[ind+YtimeZ-pointsZ].value-(verts[5]).value,points[ind+YtimeZ-1].value-(verts[2]).value, (verts[1]).value);
-//#define CALC_GRAD_VERT_2(verts) Vector4D((verts[3]).value-points[ind+2*YtimeZ+1].value,points[ind+YtimeZ-ncellsZ].value-(verts[6]).val,(verts[1]).value-points[ind+YtimeZ+2].value, (verts[2]).value);
+//#define CALC_GRAD_VERT_2(verts) Vector4D((verts[3]).value-points[ind+2*YtimeZ+1].value,points[ind+YtimeZ-ncellsZ].value-(verts[6]).value,(verts[1]).value-points[ind+YtimeZ+2].value, (verts[2]).value);
 //#define CALC_GRAD_VERT_3(verts) Vector4D(points[ind-YtimeZ+1].value-(verts[2]).value,points[ind-ncellsZ].value-(verts[7]).value,(verts[0]).value-points[ind+2].value, (verts[3]).value);
 //#define CALC_GRAD_VERT_4(verts) Vector4D(points[ind-YtimeZ+ncellsZ+1].value-(verts[5]).value,(verts[0]).value-points[ind+2*pointsZ].value,points[ind+ncellsZ].value-(verts[7]).value, (verts[4]).value);
 //#define CALC_GRAD_VERT_5(verts) Vector4D((verts[4]).value-points[ind+2*YtimeZ+ncellsZ+1].value,(verts[1]).value-points[ind+YtimeZ+2*pointsZ].value,points[ind+YtimeZ+ncellsZ].value-(verts[6]).value, (verts[5]).value);
@@ -133,7 +133,7 @@
 //                        indGrad |= 2;
 //                    }
 //                    if(i != lastX-1 && j != 0 && k != 0) gradVerts[2] = CALC_GRAD_VERT_2(*verts)
-//                    else gradVerts[2] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                    else gradVerts[2] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                    indGrad |= 4;
 //                    grads[1] = LinearInterp(gradVerts[1], gradVerts[2], minValue);
 //                    grads[1].x *= factor.x; grads[1].y *= factor.y; grads[1].z *= factor.z;
@@ -142,11 +142,11 @@
 //                    intVerts[2] = LinearInterp(*verts[2], *verts[3], minValue);
 //                    if(! (indGrad & 4)) {
 //                        if(i != lastX-1 && j != 0 && k != 0) gradVerts[2] = CALC_GRAD_VERT_2(*verts)
-//                        else gradVerts[2] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[2] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 4;
 //                    }
 //                    if(i != 0 && j != 0 && k != lastZ-1) gradVerts[3] = CALC_GRAD_VERT_3(*verts)
-//                    else gradVerts[3] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                    else gradVerts[3] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                    indGrad |= 8;
 //                    grads[2] = LinearInterp(gradVerts[2], gradVerts[3], minValue);
 //                    grads[2].x *= factor.x; grads[2].y *= factor.y; grads[2].z *= factor.z;
@@ -155,12 +155,12 @@
 //                    intVerts[3] = LinearInterp(*verts[3], *verts[0], minValue);
 //                    if(! (indGrad & 8)) {
 //                        if(i != 0 && j != 0 && k != lastZ-1) gradVerts[3] = CALC_GRAD_VERT_3(*verts)
-//                        else gradVerts[3] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[3] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 8;
 //                    }
 //                    if(! (indGrad & 1)) {
 //                        if(i != 0 && j != 0 && k != 0) gradVerts[0] = CALC_GRAD_VERT_0(*verts)
-//                        else gradVerts[0] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[0] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 1;
 //                    }
 //                    grads[3] = LinearInterp(gradVerts[3], gradVerts[0], minValue);
@@ -170,10 +170,10 @@
 //                    intVerts[4] = LinearInterp(*verts[4], *verts[5], minValue);
 //
 //                    if(i != 0 && j != lastY-1 && k != 0) gradVerts[4] = CALC_GRAD_VERT_4(*verts)
-//                    else gradVerts[4] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                    else gradVerts[4] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //
 //                    if(i != lastX-1 && j != lastY-1 && k != 0) gradVerts[5] = CALC_GRAD_VERT_5(*verts)
-//                    else gradVerts[5] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                    else gradVerts[5] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //
 //                    indGrad |= 48;
 //                    grads[4] = LinearInterp(gradVerts[4], gradVerts[5], minValue);
@@ -183,12 +183,12 @@
 //                    intVerts[5] = LinearInterp(*verts[5], *verts[6], minValue);
 //                    if(! (indGrad & 32)) {
 //                        if(i != lastX-1 && j != lastY-1 && k != 0) gradVerts[5] = CALC_GRAD_VERT_5(*verts)
-//                        else gradVerts[5] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[5] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 32;
 //                    }
 //
 //                    if(i != lastX-1 && j != lastY-1 && k != lastZ-1) gradVerts[6] = CALC_GRAD_VERT_6(*verts)
-//                    else gradVerts[6] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                    else gradVerts[6] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                    indGrad |= 64;
 //                    grads[5] = LinearInterp(gradVerts[5], gradVerts[6], minValue);
 //                    grads[5].x *= factor.x; grads[5].y *= factor.y; grads[5].z *= factor.z;
@@ -197,12 +197,12 @@
 //                    intVerts[6] = LinearInterp(*verts[6], *verts[7], minValue);
 //                    if(! (indGrad & 64)) {
 //                        if(i != lastX-1 && j != lastY-1 && k != lastZ-1) gradVerts[6] = CALC_GRAD_VERT_6(*verts)
-//                        else gradVerts[6] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[6] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 64;
 //                    }
 //
 //                    if(i != 0 && j != lastY-1 && k != lastZ-1) gradVerts[7] = CALC_GRAD_VERT_7(*verts)
-//                    else gradVerts[7] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                    else gradVerts[7] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                    indGrad |= 128;
 //                    grads[6] = LinearInterp(gradVerts[6], gradVerts[7], minValue);
 //                    grads[6].x *= factor.x; grads[6].y *= factor.y; grads[6].z *= factor.z;
@@ -211,12 +211,12 @@
 //                    intVerts[7] = LinearInterp(*verts[7], *verts[4], minValue);
 //                    if(! (indGrad & 128)) {
 //                        if(i != 0 && j != lastY-1 && k != lastZ-1) gradVerts[7] = CALC_GRAD_VERT_7(*verts)
-//                        else gradVerts[7] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[7] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 128;
 //                    }
 //                    if(! (indGrad & 16)) {
 //                        if(i != 0 && j != lastY-1 && k != 0) gradVerts[4] = CALC_GRAD_VERT_4(*verts)
-//                        else gradVerts[4] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[4] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 16;
 //                    }
 //                    grads[7] = LinearInterp(gradVerts[7], gradVerts[4], minValue);
@@ -226,12 +226,12 @@
 //                    intVerts[8] = LinearInterp(*verts[0], *verts[4], minValue);
 //                    if(! (indGrad & 1)) {
 //                        if(i != 0 && j != 0 && k != 0) gradVerts[0] = CALC_GRAD_VERT_0(*verts)
-//                        else gradVerts[0] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[0] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 1;
 //                    }
 //                    if(! (indGrad & 16)) {
 //                        if(i != 0 && j != lastY-1 && k != 0) gradVerts[4] = CALC_GRAD_VERT_4(*verts)
-//                        else gradVerts[4] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[4] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 16;
 //                    }
 //                    grads[8] = LinearInterp(gradVerts[0], gradVerts[4], minValue);
@@ -241,12 +241,12 @@
 //                    intVerts[9] = LinearInterp(*verts[1], *verts[5], minValue);
 //                    if(! (indGrad & 2)) {
 //                        if(i != lastX-1 && j != 0 && k != 0) gradVerts[1] = CALC_GRAD_VERT_1(*verts)
-//                        else gradVerts[1] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[1] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 2;
 //                    }
 //                    if(! (indGrad & 32)) {
 //                        if(i != lastX-1 && j != lastY-1 && k != 0) gradVerts[5] = CALC_GRAD_VERT_5(*verts)
-//                        else gradVerts[5] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[5] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 32;
 //                    }
 //                    grads[9] = LinearInterp(gradVerts[1], gradVerts[5], minValue);
@@ -256,12 +256,12 @@
 //                    intVerts[10] = LinearInterp(*verts[2], *verts[6], minValue);
 //                    if(! (indGrad & 4)) {
 //                        if(i != lastX-1 && j != 0 && k != 0) gradVerts[2] = CALC_GRAD_VERT_2(*verts)
-//                        else gradVerts[5] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[5] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 4;
 //                    }
 //                    if(! (indGrad & 64)) {
 //                        if(i != lastX-1 && j != lastY-1 && k != lastZ-1) gradVerts[6] = CALC_GRAD_VERT_6(*verts)
-//                        else gradVerts[6] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[6] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 64;
 //                    }
 //                    grads[10] = LinearInterp(gradVerts[2], gradVerts[6], minValue);
@@ -271,12 +271,12 @@
 //                    intVerts[11] = LinearInterp(*verts[3], *verts[7], minValue);
 //                    if(! (indGrad & 8)) {
 //                        if(i != 0 && j != 0 && k != lastZ-1) gradVerts[3] = CALC_GRAD_VERT_3(*verts)
-//                        else gradVerts[3] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[3] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 8;
 //                    }
 //                    if(! (indGrad & 128)) {
 //                        if(i != 0 && j != lastY-1 && k != lastZ-1) gradVerts[7] = CALC_GRAD_VERT_7(*verts)
-//                        else gradVerts[7] = mp4Vector(1.0, 1.0, 1.0, 1.0);
+//                        else gradVerts[7] = Vector4D(1.0, 1.0, 1.0, 1.0);
 //                        indGrad |= 128;
 //                    }
 //                    grads[11] = LinearInterp(gradVerts[3], gradVerts[7], minValue);
@@ -301,7 +301,7 @@
 //    //DebugWrite("3");
 //
 //    //free all wasted space
-//    TRIANGLE * retTriangles = new TRIANGLE[numTriangles];
+//    MeshTriangle* retTriangles = new MeshTriangle[numTriangles];
 //    for(int i=0; i < numTriangles; i++)
 //        retTriangles[i] = triangles[i];
 //    delete [] triangles;
@@ -480,12 +480,12 @@
 //
 //// RECURSIVE Marching Cubes Function - cubes at indexes ii, jj, kk intersect the surface
 ////    Number of intersecting cubes = numCubes
-//TRIANGLE* MarchingCubesRec(int ncellsX, int ncellsY, int ncellsZ,
+//MeshTriangle* MarchingCubesRec(int ncellsX, int ncellsY, int ncellsZ,
 //                            float gradFactorX, float gradFactorY, float gradFactorZ,
 //                            int numCubes, int *ii, int *jj, int *kk,
-//                            float minValue, mp4Vector * points, int &numTriangles)
+//                            float minValue, ScalarLoc* points, int &numTriangles)
 //{
-//    TRIANGLE * triangles = new TRIANGLE[3*ncellsX*ncellsY*ncellsZ];
+//    MeshTriangle* triangles = new MeshTriangle[3*ncellsX*ncellsY*ncellsZ];
 //    numTriangles = int(0);
 //    //check if none of the starting points are on the outside perimeter
 //    for(int n=0; n < numCubes; n++) {
@@ -496,22 +496,22 @@
 //    //array stores which cubes have been marched through - initialized to FALSE
 //    int all = ncellsX*ncellsY*ncellsZ;
 //    bool* marchedCubes = new bool[all];
-//    for(int i=0; i < all; i++) marchedCubes[i] = FALSE;        //initialize
+//    for(int i=0; i < all; i++) marchedCubes[i] = false;        //initialize
 //
-//    mp4Vector verts[8];                //vertices of a starting cube
-//    mpVector intVerts[12];            //linearly interpolated vertices on each edge
+//    ScalarLoc* verts = new ScalarLoc[8];                //vertices of a starting cube
+//    Vector3D intVerts[12];            //linearly interpolated vertices on each edge
 //    int edgeIndex;                    //shows which edges are intersected
-//    mp4Vector gradVerts[8];            //gradients at each vertex of a cube
-//    mpVector grads[12];                //linearly interpolated gradients on each edge
+//    Vector4D gradVerts[8];            //gradients at each vertex of a cube
+//    Vector3D grads[12];                //linearly interpolated gradients on each edge
 //    int gradIndex;                    //show on which vertices gradients have been computed
 //    //initialize global variables - for speed - these would be used by all the recursive functions
 //    pointsZ = ncellsZ+1;
 //    YtimeZ = (ncellsY+1)*pointsZ;
 //    //arrays used to pass already computed values from this initial cube to the next ones
-//    mp4Vector prevVerts[4];            //passes vertices
-//    mpVector prevIntVerts[4];        //passes interpolated vertices on edges
-//    mp4Vector prevGradVerts[4];        //passes gradients at vertices
-//    mpVector prevGrads[4];            //passes interpolated gradients on edges
+//    ScalarLoc prevVerts[4];            //passes vertices
+//    Vector3D prevIntVerts[4];        //passes interpolated vertices on edges
+//    Vector4D prevGradVerts[4];        //passes gradients at vertices
+//    Vector3D prevGrads[4];            //passes interpolated gradients on edges
 //
 //    //two new indexes formed for each face
 //    int passEdgeIndex, passGradIndex;    //used to tell which vertices and which edges have been initialized
@@ -539,7 +539,7 @@
 //                            ind, i, j, k, minValue, points, triangles, numTriangles,
 //                            verts, intVerts, edgeIndex, gradVerts, grads, gradIndex);
 //            //this cube has been done:
-//            marchedCubes[ind] = TRUE;
+//            marchedCubes[ind] = true;
 //            //run M.C. on all 6 faces
 //            MC_FACE0
 //            MC_FACE1
@@ -550,7 +550,7 @@
 //        }
 //    }
 //    //free wasted space
-//    TRIANGLE * retTriangles = new TRIANGLE[numTriangles];
+//    MeshTriangle* retTriangles = new MeshTriangle[numTriangles];
 //    for(int i=0; i < numTriangles; i++) retTriangles[i] = triangles[i];
 //    delete [] triangles;
 //    delete [] marchedCubes;
@@ -558,7 +558,7 @@
 //}
 //
 ////SURFACE 0 - Cube ran on surface 0 of previous cube. Recieving side: 2.
-//TRIANGLE* MCFace0(int ncellsX, int ncellsY, int ncellsZ,
+//MeshTriangle* MCFace0(int ncellsX, int ncellsY, int ncellsZ,
 //                        float gradFactorX, float gradFactorY, float gradFactorZ,
 //                        int ind, int i, int j, int k,
 //                        float minValue, mp4Vector * points, TRIANGLE *triangles, int &numTriangles,
@@ -1130,7 +1130,7 @@
 //    return MarchingCubesRec(ncellsX, ncellsY, ncellsZ, gradFactorX, gradFactorY, gradFactorZ,
 //                            1, i, j, k, minValue, points, numTriangles);
 //}
-
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////// THE END ///////////////////////////////////////////////////////////////
 
