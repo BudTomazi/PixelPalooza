@@ -286,15 +286,17 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         cells[i] = ScalarLoc(c * Vector3D(i / yz, (i / n) % n, i % n) + bottomLeft, 0);
     }
     
-    for (int i = 0; i < point_masses.size(); i += 3) {
+    // "accurate" positions
+    /*for (int i = 0; i < point_masses.size(); i += 3) {
         Vector3D pos = point_masses[i].position;
 
         int index = (int)(floor((pos.x - min) / c) * yz + floor((pos.y - min) / c) * n + floor((pos.z - min) / c));
         if (index < 0 || index >= numCells) continue;
         cells[index].value += 0.3;
-    }
+    }*/
 
-    /*for (int i = 0; i < point_masses.size(); i += 3) {
+    // nick version
+    for (int i = 0; i < point_masses.size(); i += 3) {
         for (int j = 0; j < point_masses.size(); j += 3) {
             if (i == j) continue;
             Vector3D pos = 0.5 * (point_masses[i].position + point_masses[j].position);
@@ -303,9 +305,11 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
 
             cells[index].value += 0.01;
         }
-    }*/
+    }
+//
+    MeshTriangle* triangles = MarchingCubes(size, size, size, c, c, c, 0.1f, cells, numTriangles);
     
-    MeshTriangle* triangles = MarchingCubesCross(size, size, size, 0.1f, cells, numTriangles);
+//    MeshTriangle* triangles = MCRecFind(size, size, size, c, c, c, 0.1f, cells, numTriangles);
     delete[] cells;
     
     return triangles;
