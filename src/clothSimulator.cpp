@@ -412,9 +412,10 @@ void ClothSimulator::drawPhong(GLShader& shader) {
     MatrixXf uvs(2, num_tris * 3);
     MatrixXf tangents(4, num_tris * 3);
 
+    //cerr << "help";
     for (int i = 0; i < num_tris; i++) {
         Triangle* tri = cloth->clothMesh->triangles[i];
-
+        //cerr << "alive";
         Vector3D p1 = tri->pm1->position;
         Vector3D p2 = tri->pm2->position;
         Vector3D p3 = tri->pm3->position;

@@ -4,6 +4,7 @@
 #include "CGL/CGL.h"
 #include "CGL/misc.h"
 #include "CGL/vector3D.h"
+#include <vector>
 
 using namespace CGL;
 
@@ -27,6 +28,7 @@ struct PointMass {
     Vector3D position;
     Vector3D last_position;
     Vector3D forces;
+    bool pinned;
 
     int particle_type;
 
@@ -34,6 +36,7 @@ struct PointMass {
     Halfedge* halfedge;
 };
 
+typedef Vector3D (*f)(PointMass* p1, PointMass* p2);
 struct ParticleProperties {
     ParticleProperties(double mass, double radius, Vector3D color) :
         mass(mass), radius(radius), color(color) {}
@@ -41,22 +44,15 @@ struct ParticleProperties {
     double mass;
     double radius;
     Vector3D color;
+    bool external_forces;
+    bool primitive_collision;
+
+    //vector<f> forces;
+    //vector<float> strengths;
+    std::vector<f> force_laws;
+    std::vector<std::vector<float>> strengths;
     // external forces?
     // color
 };
-
-struct InteractionProperties {
-    InteractionProperties() : attract(0), repel(0), isActive(false) {}
-
-    InteractionProperties(double attract, double repel) :
-        attract(attract), repel(repel), isActive(true) {}
-    double attract;
-    double repel;
-    bool isActive;
-    // collision function?
-
-};
-
-
 
 #endif /* POINTMASS_H */

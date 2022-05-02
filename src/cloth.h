@@ -81,7 +81,6 @@ struct Cloth {
 
     // Particle properties
     vector<ParticleProperties> particleProperties;
-    vector<vector<InteractionProperties>> interactionProperties;
     vector<Vector3D> particleColors;
 
     // Spatial hashing
