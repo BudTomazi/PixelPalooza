@@ -205,15 +205,6 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         cells[i].value = 0;
         cells[i].color = Vector3D(0);
     }
-    
-    // "accurate" positions
-    /*for (int i = 0; i < particles.size(); i += 3) {
-        Vector3D pos = particles[i].position;
-
-        int index = (int)(floor((pos.x - min) / c) * yz + floor((pos.y - min) / c) * n + floor((pos.z - min) / c));
-        if (index < 0 || index >= numCells) continue;
-        cells[index].value += 0.3;
-    }*/
 
     // nick version
     /*Vector3D color;
@@ -302,16 +293,6 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
                 }
             }
         }
-        
-        
-//        for (int j = 0; j < particles.size(); j += 3) {
-//            if (i == j) continue;
-//            Vector3D pos = 0.5 * (particles[i].position + particles[j].position);
-//            int index = (int)(floor((pos.x - min) / c) * yz + floor((pos.y - min) / c) * n + floor((pos.z - min) / c));
-//            if (index < 0 || index >= numCells) continue;
-//
-//            cells[index].value += 0.01;
-//        }
     }
     
     double minValue = cellSize / 2;
