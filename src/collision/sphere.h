@@ -15,7 +15,7 @@ public:
         friction(friction), m_sphere_mesh(Misc::SphereMesh(num_lat, num_lon)) {}
 
   void render(GLShader &shader);
-  void collide(PointMass &pm);
+  void collide(Particle &pm);
 
 private:
   Vector3D origin;

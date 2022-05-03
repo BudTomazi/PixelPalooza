@@ -4,20 +4,20 @@
 #include <vector>
 
 #include "CGL/CGL.h"
-#include "pointMass.h"
+#include "particle.h"
 
 using namespace CGL;
 using namespace std;
 
-class Triangle {
+/*class Triangle {
 public:
   Triangle(PointMass *pm1, PointMass *pm2, PointMass *pm3, Vector3D uv1, Vector3D uv2, Vector3D uv3)
       : pm1(pm1), pm2(pm2), pm3(pm3), uv1(uv1), uv2(uv2), uv3(uv3) {}
 
   // Static references to constituent mesh objects
-  PointMass *pm1;
-  PointMass *pm2;
-  PointMass *pm3;
+    Particle *pm1;
+    Particle *pm2;
+    Particle *pm3;
   
   // UV values for each of the points.
   // Uses Vector3D for convenience. This means that the z dimension
@@ -48,6 +48,6 @@ public:
   ~ClothMesh() {}
 
   vector<Triangle *> triangles;
-}; // struct ClothMesh
+}; // struct ClothMesh*/
 
 #endif // CLOTH_MESH_H

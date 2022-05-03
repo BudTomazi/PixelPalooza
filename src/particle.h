@@ -11,8 +11,8 @@ using namespace CGL;
 // Forward declarations
 class Halfedge;
 
-struct PointMass {
-    PointMass(Vector3D position, int particle_type)
+struct Particle {
+    Particle(Vector3D position, int particle_type)
         : start_position(position), position(position),
         last_position(position), particle_type(particle_type), pinned(false) {}
 
@@ -36,7 +36,7 @@ struct PointMass {
     Halfedge* halfedge;
 };
 
-typedef Vector3D (*forceLaw)(PointMass* p1, PointMass* p2);
+typedef Vector3D (*forceLaw)(Particle* p1, Particle* p2);
 struct ParticleProperties {
     ParticleProperties() {}
     ParticleProperties(double mass, double radius, Vector3D color) :

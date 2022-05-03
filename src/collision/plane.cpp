@@ -10,7 +10,7 @@ using namespace CGL;
 
 #define SURFACE_OFFSET 0.0001
 
-void Plane::collide(PointMass &pm) {
+void Plane::collide(Particle &pm) {
   // TODO (Part 3): Handle collisions with planes.
     double last_side, curr_side;
     last_side = dot(pm.last_position - point, normal);

@@ -7,7 +7,7 @@
 using namespace nanogui;
 using namespace CGL;
 
-void Sphere::collide(PointMass &pm) {
+void Sphere::collide(Particle &pm) {
   // TODO (Part 3): Handle collisions with spheres.
 	Vector3D offset = pm.position - origin;
 

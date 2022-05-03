@@ -9,18 +9,17 @@
 #include "CGL/misc.h"
 #include "clothMesh.h"
 #include "collision/collisionObject.h"
-#include "spring.h"
 #include "marchingCubes.h"
-#include "pointMass.h"
+#include "particle.h"
 
 using namespace CGL;
 using namespace std;
 
 enum e_orientation { HORIZONTAL = 0, VERTICAL = 1 };
 
-Vector3D r2_law(PointMass* p1, PointMass* p2);
-Vector3D r4_law(PointMass* p1, PointMass* p2);
-Vector3D cross_law(PointMass* p1, PointMass* p2);
+Vector3D r2_law(Particle* p1, Particle* p2);
+Vector3D r4_law(Particle* p1, Particle* p2);
+Vector3D cross_law(Particle* p1, Particle* p2);
 
 struct ClothParameters {
     ClothParameters() {}
@@ -60,11 +59,11 @@ struct Cloth {
     void reset();
 
     void build_spatial_map();
-    void self_collide(PointMass& pm, double simulation_steps);
+    void self_collide(Particle& pm, double simulation_steps);
     float hash_position(Vector3D pos);
     
     // Cloth components
-    vector<PointMass> point_masses;
+    vector<Particle> particles;
 
     // Particle properties
     vector<ParticleProperties> particleProperties;
@@ -80,7 +79,7 @@ struct Cloth {
     MeshTriangle* getMarchingCubeMesh(int& numTriangles);
 
     // Spatial hashing
-    unordered_map<float, vector<PointMass*>*> map;
+    unordered_map<float, vector<Particle*>*> map;
 };
 
 #endif /* CLOTH_H */

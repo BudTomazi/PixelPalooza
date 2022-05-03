@@ -210,8 +210,8 @@ void ClothSimulator::init() {
 
     Vector3D avg_pm_position(0, 0, 0);
 
-    for (auto& pm : cloth->point_masses) {
-        avg_pm_position += pm.position / cloth->point_masses.size();
+    for (auto& pm : cloth->particles) {
+        avg_pm_position += pm.position / cloth->particles.size();
     }
 
     CGL::Vector3D target(avg_pm_position.x, avg_pm_position.y / 2,
