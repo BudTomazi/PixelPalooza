@@ -309,7 +309,7 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
 
       Sphere *s = new Sphere(origin, radius, friction, sphere_num_lat, sphere_num_lon);
       objects->push_back(s);
-    } else { // PLANE
+    } else if (key == PLANE) { // PLANE
       Vector3D point, normal;
       double friction;
 
@@ -338,6 +338,10 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
 
       Plane *p = new Plane(point, normal, friction);
       objects->push_back(p);
+    } else {
+        cout << "Unexpected type: " << key << endl;
+        exit(-1);
+        
     }
   }
 

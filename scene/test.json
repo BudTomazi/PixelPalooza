@@ -14,7 +14,7 @@
                 },
                 {
                     "law": "r4",
-                    "strengths": [ -0.2, -0.02 ]
+                    "strengths": [ -0.2, -0.2 ]
                 },
                 {
                     "law": "cross",
@@ -32,11 +32,11 @@
             "receivedForces": [
                 {
                     "law": "r2",
-                    "strengths": [ 10.0, 0.7 ]
+                    "strengths": [ 10.0, 1.0 ]
                 },
                 {
                     "law": "r4",
-                    "strengths": [ -0.002, -0.2 ]
+                    "strengths": [ -0.02, -0.2 ]
                 },
                 {
                     "law": "cross",
