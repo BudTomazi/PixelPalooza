@@ -82,8 +82,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
     double delta_t = 1.0f / frames_per_sec / simulation_steps;
     double distSqr;
     Vector3D dir;
-    ParticleProperties* curParticleProperties;
-    ParticleProperties* otherParticleProperties;
+    ParticleProperties* curProperties;
     PointMass* curMass;
     PointMass* otherMass;
     Vector3D forces;
@@ -93,14 +92,13 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
     //loop over all pairs of particles and compute forces
     for (int i = 0; i < point_masses.size(); i++) {
         curMass = &point_masses[i];
-        curParticleProperties = &particleProperties[curMass->particle_type];
+        curProperties = &particleProperties[curMass->particle_type];
         int cType = curMass->particle_type;
         for (int j = 0; j < point_masses.size(); j++) {
             if (i == j) continue;
             forces = Vector3D(0);
             otherMass = &point_masses[j];
             int oType = otherMass->particle_type;
-            otherParticleProperties = &particleProperties[otherMass->particle_type];
 
             dir = otherMass->position - curMass->position;
             distSqr = dir.norm2();
@@ -108,9 +106,9 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
 
             if (distSqr <= 0.000005) continue; //cancel computation if distance too small to avoid explosions
 
-            for (int k = 0; k < otherParticleProperties->force_laws.size(); k++) {
-                Vector3D force = -otherParticleProperties->force_laws[k](curMass, otherMass);
-                float factor = otherParticleProperties->strengths[k][cType];
+            for (int k = 0; k < curProperties->force_laws.size(); k++) {
+                Vector3D force = -curProperties->force_laws[k](curMass, otherMass);
+                float factor = curProperties->strengths[k][oType];
                 forces += factor * force;
             }
         }
@@ -142,10 +140,10 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
     //loop through and update particle positions via verlet integration
     for (int i = 0; i < point_masses.size(); i++) {
         curParticle = &point_masses[i];
-        curParticleProperties = &particleProperties[curParticle->particle_type];
+        curProperties = &particleProperties[curParticle->particle_type];
 
         curPos = curParticle->position;
-        newPos = curPos + dampingFactor * (curPos - curParticle->last_position) + ((curParticle->forces / curParticleProperties->mass) * delta_t_sqr);
+        newPos = curPos + dampingFactor * (curPos - curParticle->last_position) + ((curParticle->forces / curProperties->mass) * delta_t_sqr);
 
         // we cannot move farther than "delta" per timestep
         if ((curPos - newPos).norm2() > delta * delta) {
