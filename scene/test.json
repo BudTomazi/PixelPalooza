@@ -2,24 +2,24 @@
   "cloth": {
     "particles": [
       {
-        "num_points": 100,
-        "spawn_x": 0,
+        "num_points": 20,
+        "spawn_x": -3,
         "spawn_y": 0,
         "spawn_z": 0,
-        "spawnRadius": 2,
+        "spawnRadius": 1,
         "particleMasses": 0.1,
         "particleRadius": 0.5,
         "color_r": 1,
         "color_g": 0,
         "color_b": 0,
-        "num_forces": 3,
+        "num_forces": 3
       },
       {
-        "num_points": 120,
-        "spawn_x": 0,
+        "num_points": 20,
+        "spawn_x": 3,
         "spawn_y": 0,
         "spawn_z": 0,
-        "spawnRadius": 2,
+        "spawnRadius": 1,
         "particleMasses": 0.1,
         "particleRadius": 0.5,
         "color_r": 1,
@@ -33,6 +33,36 @@
         "particle_id": 0,
         "force_index": 0,
         "force_law": "r2",
+        "strengths": [ 0.2, 0.0 ]
+      },
+      {
+        "particle_id": 0,
+        "force_index": 1,
+        "force_law": "r4",
+        "strengths": [ -0.2, -0.002 ]
+      },
+      {
+        "particle_id": 0,
+        "force_index": 2,
+        "force_law": "cross",
+        "strengths": [ 0.2, 0.0 ]
+      },
+      {
+        "particle_id": 1,
+        "force_index": 0,
+        "force_law": "r2",
+        "strengths": [ 0.1, 0.2 ]
+      },
+      {
+        "particle_id": 1,
+        "force_index": 1,
+        "force_law": "r4",
+        "strengths": [ -0.2, -0.002 ]
+      },
+      {
+        "particle_id": 1,
+        "force_index": 2,
+        "force_law": "cross",
         "strengths": [ 0.2, 0.0 ]
       }
     ]

@@ -165,11 +165,11 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
     Vector3D centroid;
 
     //loop over all pairs of particles and compute forces
-    for (int i = 0; i < point_masses.size(); i += 3) {
+    for (int i = 0; i < point_masses.size(); i++) {
         curMass = &point_masses[i];
         curParticleProperties = &particleProperties[curMass->particle_type];
         int cType = curMass->particle_type;
-        for (int j = 0; j < point_masses.size(); j += 3) {
+        for (int j = 0; j < point_masses.size(); j++) {
             if (i == j) continue;
             forces = Vector3D(0);
             otherMass = &point_masses[j];
@@ -214,7 +214,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
     PointMass* curParticle;
 
     //loop through and update particle positions via verlet integration
-    for (int i = 0; i < point_masses.size(); i += 3) {
+    for (int i = 0; i < point_masses.size(); i++) {
         curParticle = &point_masses[i];
         curParticleProperties = &particleProperties[curParticle->particle_type];
 
@@ -231,8 +231,8 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
 
         normal = (centroid - newPos).unit();
         Vector3D orthogonal = Vector3D(1, 1, -(normal.x + normal.y) / normal.z).unit();
-        point_masses[i + 1].position = newPos + orthogonal * curParticleProperties->radius;
-        point_masses[i + 2].position = newPos + cross(orthogonal, normal) * curParticleProperties->radius;
+//        point_masses[i + 1].position = newPos + orthogonal * curParticleProperties->radius;
+//        point_masses[i + 2].position = newPos + cross(orthogonal, normal) * curParticleProperties->radius;
     }
 
     /*for (auto p = point_masses.begin(); p != point_masses.end(); p++) {
@@ -323,7 +323,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     int startIndex;
     int curIndex;
     double rSqr;
-    for (int i = 0; i < point_masses.size(); i += 3) {
+    for (int i = 0; i < point_masses.size(); i++) {
         double r = particleProperties[point_masses[i].particle_type].radius;
         d = ceil(r / c);
         particlePos = point_masses[i].position;
@@ -375,6 +375,8 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
 }
 
 void Cloth::buildClothMesh() {
+    return;
+    
     if (point_masses.size() == 0) return;
 
     ClothMesh* clothMesh = new ClothMesh();
