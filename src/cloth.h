@@ -11,6 +11,7 @@
 #include "collision/collisionObject.h"
 #include "spring.h"
 #include "marchingCubes.h"
+#include "pointMass.h"
 
 using namespace CGL;
 using namespace std;
@@ -48,13 +49,9 @@ struct ClothParameters {
 
 struct Cloth {
     Cloth() {}
-    Cloth(double width, double height, int num_width_points,
-        int num_height_points, float thickness);
     ~Cloth();
 
-    void buildGrid();
-
-    void initializeProperties();
+    void spawnParticles(int count, Vector3D spawnPos, double spawnRadius, ParticleProperties properties);
 
     void simulate(double frames_per_sec, double simulation_steps, ClothParameters* cp,
         vector<Vector3D> external_accelerations,
@@ -70,16 +67,6 @@ struct Cloth {
     MeshTriangle* getMarchingCubeMesh(int& numTriangles);
 
     // Cloth properties
-    vector<int> num_points;
-    vector<Vector3D> spawnPositions;
-    vector<double> spawnRadii;
-
-    //double width;
-    //double height;
-    //int num_width_points;
-    //int num_height_points;
-    //double thickness;
-    //e_orientation orientation;
 
     // Cloth components
     vector<PointMass> point_masses;

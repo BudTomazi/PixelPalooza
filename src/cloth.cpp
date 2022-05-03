@@ -43,18 +43,6 @@ Vector3D cross_law(PointMass* p1, PointMass* p2) {
 
 using namespace std;
 
-Cloth::Cloth(double width, double height, int num_width_points,
-    int num_height_points, float thickness) {
-    //this->width = width;
-    //this->height = height;
-    //this->num_width_points = num_width_points;
-    //this->num_height_points = num_height_points;
-    //this->thickness = thickness;
-
-    buildGrid();
-    buildClothMesh();
-}
-
 Cloth::~Cloth() {
     point_masses.clear();
     springs.clear();
@@ -67,85 +55,23 @@ Cloth::~Cloth() {
     }
 }
 
-void Cloth::buildGrid() {
+void Cloth::spawnParticles(int count, Vector3D spawnPos, double spawnRadius, ParticleProperties properties) {
+    int particleType = particleProperties.size();
+    Vector3D curSpawnPos;
     
-    for (int i = 0; i < num_points.size(); i++) {
-        for (int j = 0; j < num_points[i]; j++) {
-            Vector3D pos = spawnPositions[i];
-            double r = spawnRadii[i];
-            pos += Vector3D(-r + (rand() % 100 / 100.0) * (2 * r), -r + (rand() % 100 / 100.0) * (2 * r), -r + (rand() % 100 / 100.0) * (2 * r));
-            PointMass p = PointMass(pos, i);
-            point_masses.push_back(p);
-        }
+    for (int i = 0; i < count; i++) {
+        curSpawnPos = spawnPos + Vector3D(
+                    -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius),
+                    -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius),
+                    -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius));
+        
+        point_masses.push_back(PointMass(curSpawnPos, particleType));
     }
-    /*initializeProperties();
-    Vector3D right = Vector3D(1, 0, 0);
-    Vector3D up = Vector3D(0, 0, 1);
-
-    for (int y = 0; y < num_height_points; y++) {
-        for (int x = 0; x < num_width_points; x++) {
-            Vector3D pos = Vector3D(0, 0, 0);
-            int particleType = rand() % 2;
-            pos += Vector3D(0.5 * (rand() % 100 / 100.0), 0.5 * (rand() % 100 / 100.0), 1.0 * (rand() % 100 / 100.0));
-
-            double radius = particleProperties[particleType].radius;
-
-            PointMass p = PointMass(pos, particleType);
-
-            if (rand() % 10 == 0) {
-                p.pinned = true;
-            }
-            else {
-                p.pinned = false;
-            }
-            
-            point_masses.push_back(p);
-            point_masses.emplace_back(PointMass(pos + right * radius, particleType));
-            point_masses.emplace_back(PointMass(pos + up * radius, particleType));
-        }
-    }*/
-}
-
-void Cloth::initializeProperties() {
-
-    //// example particles
-    //particleProperties.emplace_back(ParticleProperties(0.1, 0.5, Vector3D(1, 0, 0)));
-    //particleProperties.emplace_back(ParticleProperties(0.1, 0.5, Vector3D(0, 0.5, 1)));
-
-    //int numParticleTypes = particleProperties.size();
-
-    ////setting up forces and force strengths
-    ////particle type 1 laws
-    //particleProperties[0].strengths.resize(3);
-    //particleProperties[0].force_laws.push_back(&r2_law);
-    //particleProperties[0].strengths[0].insert(particleProperties[0].strengths[0].end(), { 0.2,0.0 });
-
-    //particleProperties[0].force_laws.push_back(&r4_law);
-    //particleProperties[0].strengths[1].push_back(-0.02);
-    //particleProperties[0].strengths[1].push_back(-0.2);
-
-    //particleProperties[0].force_laws.push_back(&cross_law);
-    //particleProperties[0].strengths[2].push_back(0.0);
-    //particleProperties[0].strengths[2].push_back(0.2);
-
-    ////particle type 2 laws
-    //particleProperties[1].strengths.resize(3);
-    //particleProperties[1].force_laws.emplace_back(&r2_law);
-    //particleProperties[1].strengths[0].emplace_back(0.1);
-    //particleProperties[1].strengths[0].emplace_back(0.2);
-
-    //particleProperties[1].force_laws.emplace_back(&r4_law);
-    //particleProperties[1].strengths[1].emplace_back(-0.2);
-    //particleProperties[1].strengths[1].emplace_back(-0.02);
-
-    //particleProperties[1].force_laws.emplace_back(&cross_law);
-    //particleProperties[1].strengths[2].emplace_back(0.2);
-    //particleProperties[1].strengths[2].emplace_back(0.0);
-
-    //for (int i = 0; i < numParticleTypes; i++) {
-    //    particleColors.emplace_back(particleProperties[i].color);
-    //}
-
+    
+    particleProperties.push_back(properties);
+    particleColors.push_back(properties.color);
+    
+    cerr << particleProperties[0].strengths[0][1] << "\n";
 }
 
 void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParameters* cp,
@@ -197,7 +123,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
         centroid += curMass->position;
     }
 
-    centroid /= (point_masses.size() / 3);
+    centroid /= (point_masses.size());
 
     for (auto p = point_masses.begin(); p != point_masses.end(); p++) {
         for (auto prim = collision_objects->begin(); prim != collision_objects->end(); prim++) {
@@ -208,7 +134,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
     Vector3D curPos;
     Vector3D newPos;
     double delta_t_sqr = delta_t * delta_t;
-    double dampingFactor = 1 - (cp->damping / 100.0);
+    double dampingFactor = 1 - (0.01 / 100.0); // damping is arbitrary
     double delta = 0.1;
     Vector3D normal;
     PointMass* curParticle;
@@ -228,9 +154,9 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
 
         curParticle->position = newPos;
         curParticle->last_position = curPos;
-
-        normal = (centroid - newPos).unit();
-        Vector3D orthogonal = Vector3D(1, 1, -(normal.x + normal.y) / normal.z).unit();
+        
+//        normal = (centroid - newPos).unit();
+//        Vector3D orthogonal = Vector3D(1, 1, -(normal.x + normal.y) / normal.z).unit();
 //        point_masses[i + 1].position = newPos + orthogonal * curParticleProperties->radius;
 //        point_masses[i + 2].position = newPos + cross(orthogonal, normal) * curParticleProperties->radius;
     }
@@ -361,7 +287,6 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
                 for (int dz = -d; dz <= d; dz++) {
                     if (curIndex >= 0 && curIndex < numCells) {
                         rSqr = (c * Vector3D(dx, dy, dz) - offset).norm();
-//                        cerr << "rSqr: " << rSqr << "\n";
                         
                         if (rSqr <= r) {
                             particleStrength = c + 0.11;
@@ -388,7 +313,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
 //            cells[index].value += 0.01;
 //        }
     }
-//
+    
     MeshTriangle* triangles = MarchingCubes(size, size, size, c, c, c, c/2, cells, numTriangles);
     
 //    MeshTriangle* triangles = MarchingCubesCross(size, size, size, c, cells, numTriangles);

@@ -32,8 +32,9 @@ using json = nlohmann::json;
 const string SPHERE = "sphere";
 const string PLANE = "plane";
 const string CLOTH = "cloth";
+const string PARTICLES = "particles";
 
-const unordered_set<string> VALID_KEYS = {SPHERE, PLANE, CLOTH};
+const unordered_set<string> VALID_KEYS = {SPHERE, PLANE, CLOTH, PARTICLES};
 
 ClothSimulator *app = nullptr;
 GLFWwindow *window = nullptr;
@@ -182,163 +183,97 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
     json object = it.value();
 
     // Parse object depending on type (cloth, sphere, or plane)
-    if (key == CLOTH) {
-      // Cloth
-      //double width, height;
-      //int num_width_points, num_height_points;
-      //float thickness;
-      //e_orientation orientation;
-      //vector<vector<int>> pinned;
-      
-      std::cout << "cloth" << "\n";
-
-      int count = 0;
-      for (auto& elem : object["particles"]) {
-          cloth->num_points.push_back(elem["num_points"]);
-          Vector3D spawn = Vector3D(elem["spawn_x"], elem["spawn_y"], elem["spawn_z"]);
-          cloth->spawnPositions.push_back(spawn);
-          cloth->spawnRadii.push_back(elem["spawnRadius"]);
-          Vector3D color = Vector3D(elem["color_r"], elem["color_g"], elem["color_b"]);
-          double mass = elem["particleMasses"];
-          double radius = elem["particleRadius"];
-          cloth->particleProperties.emplace_back(mass, radius, color);
-          cloth->particleColors.emplace_back(color);
-          cloth->particleProperties[count].strengths.resize(elem["num_forces"]);
-          count++;
+    if (key == PARTICLES) {
+      for (auto& particleData : object) {
+          int particleCount;
+          Vector3D spawnPos;
+          double spawnRadius;
+          ParticleProperties properties;
+          
+          auto temp = particleData.find("count");
+          if (temp != particleData.end()) {
+              particleCount = *temp;
+          } else {
+              incompleteObjectError("particles", "count");
+          }
+          
+          temp = particleData.find("spawnPos");
+          if (temp != particleData.end()) {
+              vector<double> vec_pos = *temp;
+              spawnPos = Vector3D(vec_pos[0], vec_pos[1], vec_pos[2]);
+          } else {
+              incompleteObjectError("particles", "spawnPos");
+          }
+          
+          temp = particleData.find("spawnRadius");
+          if (temp != particleData.end()) {
+              spawnRadius = *temp;
+          } else {
+              incompleteObjectError("particles", "spawnRadius");
+          }
+          
+          temp = particleData.find("particleMass");
+          if (temp != particleData.end()) {
+              properties.mass = *temp;
+          } else {
+              incompleteObjectError("particles", "particleMass");
+          }
+          
+          temp = particleData.find("particleRadius");
+          if (temp != particleData.end()) {
+              properties.radius = *temp;
+          } else {
+              incompleteObjectError("particles", "particleRadius");
+          }
+          
+          temp = particleData.find("particleColor");
+          if (temp != particleData.end()) {
+              vector<double> vec_color = *temp;
+              properties.color = Vector3D(vec_color[0], vec_color[1], vec_color[2]);
+          } else {
+              incompleteObjectError("particles", "particleColor");
+          }
+          
+          forceLaw curLaw;
+          for (auto& forceData : particleData["forces"]) {
+              std::cout << "start forces" << "\n";
+              
+              temp = forceData.find("law");
+              
+              if (temp != forceData.end()) {
+                  auto lawName = *temp;
+                  
+                  if (lawName == "r2") {
+                      curLaw = &r2_law;
+                  } else if (lawName == "r4") {
+                      curLaw = &r4_law;
+                  } else if (lawName == "cross") {
+                      curLaw = &cross_law;
+                  } else {
+                      incompleteObjectError("force", "law");
+                  }
+                                    
+                  properties.force_laws.emplace_back(curLaw);
+              } else {
+                  incompleteObjectError("force", "law");
+              }
+              
+              std::cout << "end forces" << "\n";
+              
+              temp = forceData.find("strengths");
+              if (temp != forceData.end()) {
+                  vector<float> vec_strengths = *temp;
+                  properties.strengths.push_back(vec_strengths);
+              } else {
+                  incompleteObjectError("force", "strengths");
+              }
+          }
+          
+          cloth->spawnParticles(particleCount, spawnPos, spawnRadius, properties);
       }
 
       std::cout << "set up particles" << "\n";
-
-      for (auto& elem : object["forces"]) {
-          std::cout << "start forces" << "\n";
-          if (elem["force_law"] == "r2")
-              cloth->particleProperties[elem["particle_id"]].force_laws.emplace_back(&r2_law);
-          if (elem["force_law"] == "r4")
-              cloth->particleProperties[elem["particle_id"]].force_laws.emplace_back(&r4_law);
-          if (elem["force_law"] == "cross")
-              cloth->particleProperties[elem["particle_id"]].force_laws.emplace_back(&cross_law);
-          std::cout << "end forces" << "\n";
-          
-          for (auto& str : elem["strengths"]) {
-
-              cloth->particleProperties[elem["particle_id"]].strengths[elem["force_index"]].push_back(str);
-              std::cout << "hi" << "\n";
-          }
-      }
-
-      std::cout << "set up forces" << "\n";
-
-      /*auto it_width = object.find("width");
-      if (it_width != object.end()) {
-        width = *it_width;
-      } else {
-        incompleteObjectError("cloth", "width");
-      }
-
-      auto it_height = object.find("height");
-      if (it_height != object.end()) {
-        height = *it_height;
-      } else {
-        incompleteObjectError("cloth", "height");
-      }
-
-      auto it_num_width_points = object.find("num_width_points");
-      if (it_num_width_points != object.end()) {
-        num_width_points = *it_num_width_points;
-      } else {
-        incompleteObjectError("cloth", "num_width_points");
-      }
-
-      auto it_num_height_points = object.find("num_height_points");
-      if (it_num_height_points != object.end()) {
-        num_height_points = *it_num_height_points;
-      } else {
-        incompleteObjectError("cloth", "num_height_points");
-      }
-
-      auto it_thickness = object.find("thickness");
-      if (it_thickness != object.end()) {
-        thickness = *it_thickness;
-      } else {
-        incompleteObjectError("cloth", "thickness");
-      }
-
-      auto it_orientation = object.find("orientation");
-      if (it_orientation != object.end()) {
-        orientation = *it_orientation;
-      } else {
-        incompleteObjectError("cloth", "orientation");
-      }
-
-      auto it_pinned = object.find("pinned");
-      if (it_pinned != object.end()) {
-        vector<json> points = *it_pinned;
-        for (auto pt : points) {
-          vector<int> point = pt;
-          pinned.push_back(point);
-        }
-      }
-
-      cloth->width = width;
-      cloth->height = height;
-      cloth->num_width_points = num_width_points;
-      cloth->num_height_points = num_height_points;
-      cloth->thickness = thickness;
-      cloth->orientation = orientation;
-      cloth->pinned = pinned;*/
-
-      // Cloth parameters
-      //bool enable_structural_constraints, enable_shearing_constraints, enable_bending_constraints;
-      //double damping, density, ks;
-
-      //auto it_enable_structural = object.find("enable_structural");
-      //if (it_enable_structural != object.end()) {
-      //  enable_structural_constraints = *it_enable_structural;
-      //} else {
-      //  incompleteObjectError("cloth", "enable_structural");
-      //}
-
-      //auto it_enable_shearing = object.find("enable_shearing");
-      //if (it_enable_shearing != object.end()) {
-      //  enable_shearing_constraints = *it_enable_shearing;
-      //} else {
-      //  incompleteObjectError("cloth", "it_enable_shearing");
-      //}
-
-      //auto it_enable_bending = object.find("enable_bending");
-      //if (it_enable_bending != object.end()) {
-      //  enable_bending_constraints = *it_enable_bending;
-      //} else {
-      //  incompleteObjectError("cloth", "it_enable_bending");
-      //}
-
-      //auto it_damping = object.find("damping");
-      //if (it_damping != object.end()) {
-      //  damping = *it_damping;
-      //} else {
-      //  incompleteObjectError("cloth", "damping");
-      //}
-
-      //auto it_density = object.find("density");
-      //if (it_density != object.end()) {
-      //  density = *it_density;
-      //} else {
-      //  incompleteObjectError("cloth", "density");
-      //}
-
-      //auto it_ks = object.find("ks");
-      //if (it_ks != object.end()) {
-      //  ks = *it_ks;
-      //} else {
-      //  incompleteObjectError("cloth", "ks");
-      //}
-
-      //cp->enable_structural_constraints = enable_structural_constraints;
-      //cp->enable_shearing_constraints = enable_shearing_constraints;
-      //cp->enable_bending_constraints = enable_bending_constraints;
-      //cp->density = density;
-      //cp->damping = damping;
-      //cp->ks = ks;
+        
     } else if (key == SPHERE) {
       Vector3D origin;
       double radius, friction;
@@ -509,7 +444,6 @@ int main(int argc, char **argv) {
   createGLContexts();
 
   // Initialize the Cloth object
-  cloth.buildGrid();
   cloth.buildClothMesh();
 
   // Initialize the ClothSimulator object

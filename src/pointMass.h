@@ -36,7 +36,7 @@ struct PointMass {
     Halfedge* halfedge;
 };
 
-typedef Vector3D (*f)(PointMass* p1, PointMass* p2);
+typedef Vector3D (*forceLaw)(PointMass* p1, PointMass* p2);
 struct ParticleProperties {
     ParticleProperties() {}
     ParticleProperties(double mass, double radius, Vector3D color) :
@@ -50,7 +50,7 @@ struct ParticleProperties {
 
     //vector<f> forces;
     //vector<float> strengths;
-    std::vector<f> force_laws;
+    std::vector<forceLaw> force_laws;
     std::vector<std::vector<float>> strengths;
     // external forces?
     // color
