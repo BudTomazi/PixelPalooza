@@ -45,14 +45,11 @@ using namespace std;
 
 Cloth::~Cloth() {
     point_masses.clear();
-    springs.clear();
 
     particleProperties.clear();
     particleColors.clear();
-
-    if (clothMesh) {
-        delete clothMesh;
-    }
+    
+    delete[] cells;
 }
 
 void Cloth::spawnParticles(int count, Vector3D spawnPos, double spawnRadius, ParticleProperties properties) {
@@ -70,11 +67,9 @@ void Cloth::spawnParticles(int count, Vector3D spawnPos, double spawnRadius, Par
     
     particleProperties.push_back(properties);
     particleColors.push_back(properties.color);
-    
-    cerr << particleProperties[0].strengths[0][1] << "\n";
 }
 
-void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParameters* cp,
+void Cloth::simulate(double frames_per_sec, double simulation_steps,
     vector<Vector3D> external_accelerations,
     vector<CollisionObject*>* collision_objects) {
     
@@ -87,7 +82,6 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
     PointMass* otherMass;
     Vector3D forces;
     double collDist;
-    Vector3D centroid;
 
     //loop over all pairs of particles and compute forces
     for (int i = 0; i < point_masses.size(); i++) {
@@ -118,10 +112,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
             //curMass->forces += 0.3* cross(curMass->position, Vector3D(1.0, 0.0, 0.0));
             curMass->forces += Vector3D(0.0, 0.0, 0.0);
         }
-        centroid += curMass->position;
     }
-
-    centroid /= (point_masses.size());
 
     for (auto p = point_masses.begin(); p != point_masses.end(); p++) {
         for (auto prim = collision_objects->begin(); prim != collision_objects->end(); prim++) {
@@ -152,11 +143,6 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
 
         curParticle->position = newPos;
         curParticle->last_position = curPos;
-        
-//        normal = (centroid - newPos).unit();
-//        Vector3D orthogonal = Vector3D(1, 1, -(normal.x + normal.y) / normal.z).unit();
-//        point_masses[i + 1].position = newPos + orthogonal * curParticleProperties->radius;
-//        point_masses[i + 2].position = newPos + cross(orthogonal, normal) * curParticleProperties->radius;
     }
 
     /*for (auto p = point_masses.begin(); p != point_masses.end(); p++) {
@@ -188,36 +174,37 @@ float Cloth::hash_position(Vector3D pos) {
     return 0.f;
 }
 
-///////////////////////////////////////////////////////
-/// YOU DO NOT NEED TO REFER TO ANY CODE BELOW THIS ///
-///////////////////////////////////////////////////////
+// Marching cubes
 
-void Cloth::reset() {
-    PointMass* pm = &point_masses[0];
-    for (int i = 0; i < point_masses.size(); i++) {
-        pm->position = pm->start_position;
-        pm->last_position = pm->start_position;
-        pm++;
+void Cloth::initMarchingCubes(int numCells, double cellSize) {
+    this->sideCellCount = numCells;
+    this->cellSize = cellSize;
+    
+    double width = numCells * cellSize; // how big the box is
+        
+    int numPoints = numCells + 1;
+    int yz = numPoints * numPoints;        //for little extra speed
+    
+    double min = -width / 2.0; // centers the entire grid
+    
+    totalVertexCount = numPoints * numPoints * numPoints;
+    cells = new ScalarLoc[totalVertexCount];
+    Vector3D bottomLeft = Vector3D(min);
+    
+    for (int i = 0; i < totalVertexCount; i++) {
+        cells[i].pos = cellSize * Vector3D(i / yz, (i / numPoints) % numPoints, i % numPoints) + bottomLeft;
     }
 }
 
 MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
-    int size = 50; // number of cells along one side
-    double width = 10; // how big the box is
-    
-    double c = width / size; // how big is each cell
-    
-    int n = size + 1; // how many points? TODO: do we need to do this
-    int yz = n * n;        //for little extra speed
-    
+    double width = sideCellCount * cellSize; // how big the box is
     double min = -width / 2.0; // centers the entire grid
+    int n = sideCellCount + 1;
+    int yz = n * n;
     
-    int numCells = n * n * n;
-    ScalarLoc* cells = new ScalarLoc[numCells];
-    Vector3D bottomLeft = Vector3D(min);
-    
-    for (int i = 0; i < numCells; i++) {
-        cells[i].pos = c * Vector3D(i / yz, (i / n) % n, i % n) + bottomLeft;
+    for (int i = 0; i < totalVertexCount; i++) {
+        cells[i].value = 0;
+        cells[i].color = Vector3D(0);
     }
     
     // "accurate" positions
@@ -256,40 +243,42 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         }
     }*/
     
-    int d = 0;
+    double particleRadius;
+    int gridRadius;
+    
     Vector3D offset;
     Vector3D particlePos;
     int startIndex;
     int curIndex;
-    double rSqr;
+    double dist;
     double newVal;
     double particleStrength;
     
     Vector3D particleColor;
     
     for (int i = 0; i < point_masses.size(); i++) {
-        double r = particleProperties[point_masses[i].particle_type].radius;
-        d = ceil(r / c);
+        particleRadius = particleProperties[point_masses[i].particle_type].radius;
+        gridRadius = ceil(particleRadius / cellSize);
         particlePos = point_masses[i].position;
-        startIndex = (int)(floor((particlePos.x - min) / c) * yz + floor((particlePos.y - min) / c) * n + floor((particlePos.z - min) / c));
+        startIndex = (int)(floor((particlePos.x - min) / cellSize) * yz + floor((particlePos.y - min) / cellSize) * n + floor((particlePos.z - min) / cellSize));
         
-        if (startIndex < 0 || startIndex >= numCells) continue;
+        if (startIndex < 0 || startIndex >= totalVertexCount) continue;
 
         offset = particlePos - cells[startIndex].pos;
         particleColor = particleColors[point_masses[i].particle_type];
         
         //TODO: can probably be optimized!!!!
-        for (int dx = -d; dx <= d; dx++) {
-            for (int dy = -d; dy <= d; dy++) {
-                curIndex = startIndex + dx * yz + dy * n - d;
-                for (int dz = -d; dz <= d; dz++) {
-                    if (curIndex >= 0 && curIndex < numCells) {
-                        rSqr = (c * Vector3D(dx, dy, dz) - offset).norm();
+        for (int dx = -gridRadius; dx <= gridRadius; dx++) {
+            for (int dy = -gridRadius; dy <= gridRadius; dy++) {
+                curIndex = startIndex + dx * yz + dy * n - gridRadius;
+                for (int dz = -gridRadius; dz <= gridRadius; dz++) {
+                    if (curIndex >= 0 && curIndex < totalVertexCount) {
+                        dist = (cellSize * Vector3D(dx, dy, dz) - offset).norm();
                         
-                        if (rSqr <= r) {
-                            particleStrength = c + 0.11;
+                        if (dist <= particleRadius) {
+                            particleStrength = cellSize + 0.11;
                         } else {
-                            particleStrength = (c / 100) / (rSqr * rSqr * rSqr);
+                            particleStrength = (cellSize / 100) / (dist * dist * dist);
                         }
                         
                         newVal = cells[curIndex].value + particleStrength;
@@ -312,92 +301,25 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
 //        }
     }
     
-    MeshTriangle* triangles = MarchingCubes(size, size, size, c, c, c, c/2, cells, numTriangles);
+    double minValue = cellSize / 2;
+    MeshTriangle* triangles = MarchingCubes(sideCellCount, sideCellCount, sideCellCount, cellSize, cellSize, cellSize, minValue, cells, numTriangles);
     
 //    MeshTriangle* triangles = MarchingCubesCross(size, size, size, c, cells, numTriangles);
     
 //    MeshTriangle* triangles = MCRecFind(size, size, size, c, c, c, 0.1f, cells, numTriangles);
-    delete[] cells;
-    
     return triangles;
 }
 
-void Cloth::buildClothMesh() {
-    return;
-    
-    if (point_masses.size() == 0) return;
 
-    ClothMesh* clothMesh = new ClothMesh();
-    vector<Triangle*> triangles;
+///////////////////////////////////////////////////////
+/// YOU DO NOT NEED TO REFER TO ANY CODE BELOW THIS ///
+///////////////////////////////////////////////////////
 
-    Vector3D zero = Vector3D(0);
-    for (int i = 0; i < point_masses.size(); i += 3) {
-        triangles.push_back(new Triangle(&point_masses[i], &point_masses[i + 1], &point_masses[i + 2], zero, zero, zero));
+void Cloth::reset() {
+    PointMass* pm = &point_masses[0];
+    for (int i = 0; i < point_masses.size(); i++) {
+        pm->position = pm->start_position;
+        pm->last_position = pm->start_position;
+        pm++;
     }
-
-    // Create vector of triangles
-    /*for (int y = 0; y < num_height_points - 1; y++) {
-      for (int x = 0; x < num_width_points - 1; x++) {
-        PointMass *pm = &point_masses[y * num_width_points + x];
-
-
-
-        // Get neighboring point masses:
-        *                      *
-         * pm_A -------- pm_B   *
-         *             /        *
-         *  |         /   |     *
-         *  |        /    |     *
-         *  |       /     |     *
-         *  |      /      |     *
-         *  |     /       |     *
-         *  |    /        |     *
-         *      /               *
-         * pm_C -------- pm_D   *
-         *                      *
-         *
-
-        */
-
-    // For each triangle in row-order, create 3 edges and 3 internal halfedges
-    for (int i = 0; i < triangles.size(); i++) {
-        Triangle* t = triangles[i];
-
-        // Allocate new halfedges on heap
-        Halfedge* h1 = new Halfedge();
-        Halfedge* h2 = new Halfedge();
-        Halfedge* h3 = new Halfedge();
-
-        // Allocate new edges on heap
-        Edge* e1 = new Edge();
-        Edge* e2 = new Edge();
-        Edge* e3 = new Edge();
-
-        // Assign a halfedge pointer to the triangle
-        t->halfedge = h1;
-
-        // Assign halfedge pointers to point masses
-        t->pm1->halfedge = h1;
-        t->pm2->halfedge = h2;
-        t->pm3->halfedge = h3;
-
-        // Update all halfedge pointers
-        h1->edge = e1;
-        h1->next = h2;
-        h1->pm = t->pm1;
-        h1->triangle = t;
-
-        h2->edge = e2;
-        h2->next = h3;
-        h2->pm = t->pm2;
-        h2->triangle = t;
-
-        h3->edge = e3;
-        h3->next = h1;
-        h3->pm = t->pm3;
-        h3->triangle = t;
-    }
-
-    clothMesh->triangles = triangles;
-    this->clothMesh = clothMesh;
 }

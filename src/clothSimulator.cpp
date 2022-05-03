@@ -247,7 +247,7 @@ void ClothSimulator::drawContents() {
         vector<Vector3D> external_accelerations = { gravity };
 
         for (int i = 0; i < simulation_steps; i++) {
-            cloth->simulate(frames_per_sec, simulation_steps, cp, external_accelerations, collision_objects);
+            cloth->simulate(frames_per_sec, simulation_steps, external_accelerations, collision_objects);
         }
     }
 
@@ -375,9 +375,9 @@ void ClothSimulator::drawNormals(GLShader& shader) {
         Vector3D p2 = triangles[i].p[1];
         Vector3D p3 = triangles[i].p[2];
 
-        Vector3D n1 = triangles[i].norm[0]; //tri->pm1->normal();
-        Vector3D n2 = triangles[i].norm[1]; //tri->pm2->normal();
-        Vector3D n3 = triangles[i].norm[2]; //tri->pm3->normal();
+        Vector3D n1 = triangles[i].norm[0];
+        Vector3D n2 = triangles[i].norm[1];
+        Vector3D n3 = triangles[i].norm[2];
         
         Vector3D c1 = triangles[i].colors[0];
         Vector3D c2 = triangles[i].colors[1];
@@ -421,9 +421,9 @@ void ClothSimulator::drawPhong(GLShader& shader) {
         Vector3D p2 = triangles[i].p[1];
         Vector3D p3 = triangles[i].p[2];
 
-        Vector3D n1 = triangles[i].norm[0]; //tri->pm1->normal();
-        Vector3D n2 = triangles[i].norm[1]; //tri->pm2->normal();
-        Vector3D n3 = triangles[i].norm[2]; //tri->pm3->normal();
+        Vector3D n1 = triangles[i].norm[0];
+        Vector3D n2 = triangles[i].norm[1];
+        Vector3D n3 = triangles[i].norm[2];
 
         positions.col(i * 3) << p1.x, p1.y, p1.z, 1.0;
         positions.col(i * 3 + 1) << p2.x, p2.y, p2.z, 1.0;

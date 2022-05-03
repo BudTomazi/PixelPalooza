@@ -1,20 +1,20 @@
 {
     "particles": [
         {
-            "count": 30,
+            "count": 80,
             "spawnPos": [-3, 0, 0],
             "spawnRadius": 1,
             "particleMass": 0.1,
             "particleRadius": 0.2,
             "particleColor": [1, 0, 0],
-            "forces": [
+            "receivedForces": [
                 {
                     "law": "r2",
                     "strengths": [ 0.5, 10.0 ]
                 },
                 {
                     "law": "r4",
-                    "strengths": [ -0.2, -0.002 ]
+                    "strengths": [ -0.2, -0.02 ]
                 },
                 {
                     "law": "cross",
@@ -23,13 +23,13 @@
             ]
         },
         {
-            "count": 30,
+            "count": 100,
             "spawnPos": [3, 0, 0],
             "spawnRadius": 1,
             "particleMass": 0.1,
             "particleRadius": 0.1,
             "particleColor": [0, 1, 1],
-            "forces": [
+            "receivedForces": [
                 {
                     "law": "r2",
                     "strengths": [ 10.0, 0.7 ]

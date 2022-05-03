@@ -184,6 +184,8 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
 
     // Parse object depending on type (cloth, sphere, or plane)
     if (key == PARTICLES) {
+        cloth->initMarchingCubes(50, 0.2);
+        
       for (auto& particleData : object) {
           int particleCount;
           Vector3D spawnPos;
@@ -235,41 +237,46 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
           }
           
           forceLaw curLaw;
-          for (auto& forceData : particleData["forces"]) {
-              std::cout << "start forces" << "\n";
-              
-              temp = forceData.find("law");
-              
-              if (temp != forceData.end()) {
-                  auto lawName = *temp;
+          temp = particleData.find("receivedForces");
+          if (temp != particleData.end()) {
+              for (auto& forceData : particleData["receivedForces"]) {
+                  std::cout << "start forces" << "\n";
                   
-                  if (lawName == "r2") {
-                      curLaw = &r2_law;
-                  } else if (lawName == "r4") {
-                      curLaw = &r4_law;
-                  } else if (lawName == "cross") {
-                      curLaw = &cross_law;
+                  temp = forceData.find("law");
+                  
+                  if (temp != forceData.end()) {
+                      auto lawName = *temp;
+                      
+                      if (lawName == "r2") {
+                          curLaw = &r2_law;
+                      } else if (lawName == "r4") {
+                          curLaw = &r4_law;
+                      } else if (lawName == "cross") {
+                          curLaw = &cross_law;
+                      } else {
+                          incompleteObjectError("force", "law");
+                      }
+                                        
+                      properties.force_laws.emplace_back(curLaw);
                   } else {
                       incompleteObjectError("force", "law");
                   }
-                                    
-                  properties.force_laws.emplace_back(curLaw);
-              } else {
-                  incompleteObjectError("force", "law");
+                  
+                  std::cout << "end forces" << "\n";
+                  
+                  temp = forceData.find("strengths");
+                  if (temp != forceData.end()) {
+                      vector<float> vec_strengths = *temp;
+                      properties.strengths.push_back(vec_strengths);
+                  } else {
+                      incompleteObjectError("force", "strengths");
+                  }
               }
               
-              std::cout << "end forces" << "\n";
-              
-              temp = forceData.find("strengths");
-              if (temp != forceData.end()) {
-                  vector<float> vec_strengths = *temp;
-                  properties.strengths.push_back(vec_strengths);
-              } else {
-                  incompleteObjectError("force", "strengths");
-              }
+              cloth->spawnParticles(particleCount, spawnPos, spawnRadius, properties);
+          } else {
+              incompleteObjectError("particles", "receivedForces");
           }
-          
-          cloth->spawnParticles(particleCount, spawnPos, spawnRadius, properties);
       }
 
       std::cout << "set up particles" << "\n";
@@ -442,9 +449,6 @@ int main(int argc, char **argv) {
   glfwSetErrorCallback(error_callback);
 
   createGLContexts();
-
-  // Initialize the Cloth object
-  cloth.buildClothMesh();
 
   // Initialize the ClothSimulator object
   app = new ClothSimulator(project_root, screen);

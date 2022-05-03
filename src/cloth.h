@@ -53,30 +53,31 @@ struct Cloth {
 
     void spawnParticles(int count, Vector3D spawnPos, double spawnRadius, ParticleProperties properties);
 
-    void simulate(double frames_per_sec, double simulation_steps, ClothParameters* cp,
+    void simulate(double frames_per_sec, double simulation_steps,
         vector<Vector3D> external_accelerations,
         vector<CollisionObject*>* collision_objects);
 
     void reset();
-    void buildClothMesh();
 
     void build_spatial_map();
     void self_collide(PointMass& pm, double simulation_steps);
     float hash_position(Vector3D pos);
     
-    MeshTriangle* getMarchingCubeMesh(int& numTriangles);
-
-    // Cloth properties
-
     // Cloth components
     vector<PointMass> point_masses;
-    vector<vector<int>> pinned;
-    vector<Spring> springs;
-    ClothMesh* clothMesh;
 
     // Particle properties
     vector<ParticleProperties> particleProperties;
     vector<Vector3D> particleColors;
+    
+    // marching cubes
+    ScalarLoc* cells;
+    int totalVertexCount;
+    int sideCellCount;
+    double cellSize;
+    
+    void initMarchingCubes(int numCells, double cellSize);
+    MeshTriangle* getMarchingCubeMesh(int& numTriangles);
 
     // Spatial hashing
     unordered_map<float, vector<PointMass*>*> map;
