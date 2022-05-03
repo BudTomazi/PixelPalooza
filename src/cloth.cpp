@@ -278,7 +278,7 @@ void Cloth::reset() {
 }
 
 MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
-    int size = 80; // number of cells along one side
+    int size = 50; // number of cells along one side
     double width = 10; // how big the box is
     
     double c = width / size; // how big is each cell
@@ -306,14 +306,29 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     }*/
 
     // nick version
-    /*for (int i = 0; i < point_masses.size(); i += 3) {
-        for (int j = 0; j < point_masses.size(); j += 3) {
-            if (i == j) continue;
-            Vector3D pos = 0.5 * (point_masses[i].position + point_masses[j].position);
-            int index = (int)(floor((pos.x - min) / c) * yz + floor((pos.y - min) / c) * n + floor((pos.z - min) / c));
-            if (index < 0 || index >= numCells) continue;
+    /*Vector3D color;
+    Vector3D color2;
+    Vector3D color3;
+    for (int i = 0; i < point_masses.size(); i++) {
+        color = particleColors[point_masses[i].particle_type];
+        for (int k = 0; k < point_masses.size(); k++) {
+            color2 = particleColors[point_masses[k].particle_type];
 
-            cells[index].value += 0.01;
+            for (int l = 0; l < point_masses.size(); l++) {
+                color3 = particleColors[point_masses[l].particle_type];
+
+                for (int j = 0; j < point_masses.size(); j++) {
+                    if (i == j || i == k || i == l || j == k || j == l || k == l) continue;
+                    Vector3D pos = 0.25 * (point_masses[i].position + point_masses[j].position + point_masses[k].position + point_masses[l].position);
+                    int index = (int)(floor((pos.x - min) / c) * yz + floor((pos.y - min) / c) * n + floor((pos.z - min) / c));
+                    if (index < 0 || index >= numCells) continue;
+                    
+                    Vector3D newColor = 0.25 * (color + color2 + color3 + particleColors[point_masses[j].particle_type]);
+
+                    cells[index].color = cells[index].color * (cells[index].value / (0.01 + cells[index].value)) + newColor * (0.01 / (0.01 + cells[index].value));
+                    cells[index].value += 0.01;
+                }
+            }
         }
     }*/
     
@@ -351,7 +366,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
                         if (rSqr <= r) {
                             particleStrength = c + 0.11;
                         } else {
-                            particleStrength = (c / 1000) / (rSqr * rSqr);
+                            particleStrength = (c / 100) / (rSqr * rSqr * rSqr);
                         }
                         
                         newVal = cells[curIndex].value + particleStrength;
@@ -374,7 +389,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
 //        }
     }
 //
-    MeshTriangle* triangles = MarchingCubes(size, size, size, c, c, c, c, cells, numTriangles);
+    MeshTriangle* triangles = MarchingCubes(size, size, size, c, c, c, c/2, cells, numTriangles);
     
 //    MeshTriangle* triangles = MarchingCubesCross(size, size, size, c, cells, numTriangles);
     
