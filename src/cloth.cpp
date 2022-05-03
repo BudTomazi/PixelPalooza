@@ -110,7 +110,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
         if (!curMass->pinned) {
             curMass->forces = forces;
             //curMass->forces += 0.3* cross(curMass->position, Vector3D(1.0, 0.0, 0.0));
-            curMass->forces += Vector3D(0.0, 0.0, 0.0);
+            curMass->forces += Vector3D(0);
         }
     }
 
@@ -251,28 +251,42 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     int startIndex;
     int curIndex;
     double dist;
+    
     double newVal;
     double particleStrength;
-    
     Vector3D particleColor;
+    
+    int cellPos[3];
     
     for (int i = 0; i < point_masses.size(); i++) {
         particleRadius = particleProperties[point_masses[i].particle_type].radius;
         gridRadius = ceil(particleRadius / cellSize);
         particlePos = point_masses[i].position;
-        startIndex = (int)(floor((particlePos.x - min) / cellSize) * yz + floor((particlePos.y - min) / cellSize) * n + floor((particlePos.z - min) / cellSize));
         
-        if (startIndex < 0 || startIndex >= totalVertexCount) continue;
+        cellPos[0] = floor((particlePos.x - min) / cellSize);
+        if (cellPos[0] < 0 || cellPos[0] >= n) continue;
+
+        cellPos[1] = floor((particlePos.y - min) / cellSize);
+        if (cellPos[1] < 0 || cellPos[1] >= n) continue;
+
+        cellPos[2] = floor((particlePos.z - min) / cellSize);
+        if (cellPos[2] < 0 || cellPos[2] >= n) continue;
+                    
+        startIndex = (int)(cellPos[0] * yz + cellPos[1] * n + cellPos[2]);
 
         offset = particlePos - cells[startIndex].pos;
         particleColor = particleColors[point_masses[i].particle_type];
         
         //TODO: can probably be optimized!!!!
         for (int dx = -gridRadius; dx <= gridRadius; dx++) {
+            if (dx < -cellPos[0] || dx >= n - cellPos[0]) continue;
+            
             for (int dy = -gridRadius; dy <= gridRadius; dy++) {
+                if (dy < -cellPos[1] || dy >= n - cellPos[1]) continue;
+
                 curIndex = startIndex + dx * yz + dy * n - gridRadius;
                 for (int dz = -gridRadius; dz <= gridRadius; dz++) {
-                    if (curIndex >= 0 && curIndex < totalVertexCount) {
+                    if (dz >= -cellPos[2] && dz < n - cellPos[2]) {
                         dist = (cellSize * Vector3D(dx, dy, dz) - offset).norm();
                         
                         if (dist <= particleRadius) {
