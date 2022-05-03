@@ -32,7 +32,7 @@ out vec4 out_color;
 
 void main() {
   // Your awesome shader here!
-//  out_color = (vec4(1, 1, 1, 0) + v_normal) / 2;
-    out_color = v_normal;
+  out_color = (vec4(1, 1, 1, 0) + v_normal) / 2;
+//    out_color = v_normal;
   out_color.a = 1;
 }

@@ -99,8 +99,8 @@ void Cloth::buildGrid() {
 void Cloth::initializeProperties() {
 
     // example particles
-    particleProperties.emplace_back(ParticleProperties(0.1, 0.5, Vector3D(1, 0, 0)));
-    particleProperties.emplace_back(ParticleProperties(0.1, 0.5, Vector3D(0, 0.5, 1)));
+    particleProperties.emplace_back(ParticleProperties(0.1, 0.2, Vector3D(1, 0, 0)));
+    particleProperties.emplace_back(ParticleProperties(0.1, 0.15, Vector3D(0, 0.5, 1)));
 
     int numParticleTypes = particleProperties.size();
 
@@ -314,9 +314,10 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     int curIndex;
     double rSqr;
     for (int i = 0; i < point_masses.size(); i += 3) {
-        d = ceil(particleProperties[point_masses[i].particle_type].radius / c);
+        double r = particleProperties[point_masses[i].particle_type].radius;
+        d = ceil(r / c);
         particlePos = point_masses[i].position;
-        startIndex = (int)(floor((particlePos.x - min) / c) * yz + floor((particlePos.y - min) / c) * n + floor((particlePos.y - min) / c));
+        startIndex = (int)(floor((particlePos.x - min) / c) * yz + floor((particlePos.y - min) / c) * n + floor((particlePos.z - min) / c));
         
         if (startIndex < 0 || startIndex >= numCells) continue;
 
@@ -328,13 +329,13 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
                 curIndex = startIndex + dx * yz + dy * n - d;
                 for (int dz = -d; dz <= d; dz++) {
                     if (curIndex >= 0 && curIndex < numCells) {
-                        rSqr = (c * Vector3D(dx, dy, dz) - offset).norm2();
-                        cerr << "rSqr: " << rSqr << "\n";
+                        rSqr = (c * Vector3D(dx, dy, dz) - offset).norm();
+//                        cerr << "rSqr: " << rSqr << "\n";
                         
-                        if (rSqr <= c) {
-                            cells[curIndex].value += c;
+                        if (rSqr <= r) {
+                            cells[curIndex].value += c + 0.11;
                         } else {
-                            cells[curIndex].value += c / (rSqr * rSqr);
+                            cells[curIndex].value += (c / 1000) / (rSqr * rSqr);
                         }
                     }
                     curIndex++;
@@ -353,7 +354,9 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
 //        }
     }
 //
-    MeshTriangle* triangles = MarchingCubes(size, size, size, c, c, c, 1, cells, numTriangles);
+    MeshTriangle* triangles = MarchingCubes(size, size, size, c, c, c, c, cells, numTriangles);
+    
+//    MeshTriangle* triangles = MarchingCubesCross(size, size, size, c, cells, numTriangles);
     
 //    MeshTriangle* triangles = MCRecFind(size, size, size, c, c, c, 0.1f, cells, numTriangles);
     delete[] cells;
