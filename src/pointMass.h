@@ -14,7 +14,7 @@ class Halfedge;
 struct PointMass {
     PointMass(Vector3D position, int particle_type)
         : start_position(position), position(position),
-        last_position(position), particle_type(particle_type) {}
+        last_position(position), particle_type(particle_type), pinned(false) {}
 
     Vector3D normal();
     Vector3D velocity(double delta_t) {

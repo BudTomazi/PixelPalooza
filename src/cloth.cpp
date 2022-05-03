@@ -192,7 +192,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps, ClothParame
         if (!curMass->pinned) {
             curMass->forces = forces;
             //curMass->forces += 0.3* cross(curMass->position, Vector3D(1.0, 0.0, 0.0));
-            curMass->forces += Vector3D(0.0, -0.7, 0.0);
+            curMass->forces += Vector3D(0.0, 0.0, 0.0);
         }
         centroid += curMass->position;
     }
@@ -293,7 +293,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     Vector3D bottomLeft = Vector3D(min);
     
     for (int i = 0; i < numCells; i++) {
-        cells[i] = ScalarLoc(c * Vector3D(i / yz, (i / n) % n, i % n) + bottomLeft, 0);
+        cells[i].pos = c * Vector3D(i / yz, (i / n) % n, i % n) + bottomLeft;
     }
     
     // "accurate" positions
@@ -323,6 +323,11 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     int startIndex;
     int curIndex;
     double rSqr;
+    double newVal;
+    double particleStrength;
+    
+    Vector3D particleColor;
+    
     for (int i = 0; i < point_masses.size(); i++) {
         double r = particleProperties[point_masses[i].particle_type].radius;
         d = ceil(r / c);
@@ -332,6 +337,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         if (startIndex < 0 || startIndex >= numCells) continue;
 
         offset = particlePos - cells[startIndex].pos;
+        particleColor = particleColors[point_masses[i].particle_type];
         
         //TODO: can probably be optimized!!!!
         for (int dx = -d; dx <= d; dx++) {
@@ -343,10 +349,14 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
 //                        cerr << "rSqr: " << rSqr << "\n";
                         
                         if (rSqr <= r) {
-                            cells[curIndex].value += c + 0.11;
+                            particleStrength = c + 0.11;
                         } else {
-                            cells[curIndex].value += (c / 1000) / (rSqr * rSqr);
+                            particleStrength = (c / 1000) / (rSqr * rSqr);
                         }
+                        
+                        newVal = cells[curIndex].value + particleStrength;
+                        cells[curIndex].color = (cells[curIndex].value / newVal) * cells[curIndex].color + (particleStrength / newVal) * particleColor;
+                        cells[curIndex].value = newVal;
                     }
                     curIndex++;
                 }
