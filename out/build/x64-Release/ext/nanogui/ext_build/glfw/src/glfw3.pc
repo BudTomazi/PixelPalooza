@@ -1,4 +1,4 @@
-prefix=C:/Users/budto/source/repos/PixelPalooza/out/install/x64-Release
+prefix=E:/cs184/PixelPalooza/out/install/x64-Release
 exec_prefix=${prefix}
 includedir=${prefix}/include
 libdir=${exec_prefix}/lib

@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/budto/source/repos/PixelPalooza/src
+# Install script for directory: E:/cs184/PixelPalooza/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/budto/source/repos/PixelPalooza/out/install/x64-Release")
+  set(CMAKE_INSTALL_PREFIX "E:/cs184/PixelPalooza/out/install/x64-Release")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,13 +34,13 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "C:/Users/budto/source/repos/PixelPalooza/pixelpalooza.exe")
+   "E:/cs184/PixelPalooza/pixelpalooza.exe")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "C:/Users/budto/source/repos/PixelPalooza" TYPE EXECUTABLE FILES "C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/pixelpalooza.exe")
+  file(INSTALL DESTINATION "E:/cs184/PixelPalooza" TYPE EXECUTABLE FILES "E:/cs184/PixelPalooza/out/build/x64-Release/pixelpalooza.exe")
 endif()
 

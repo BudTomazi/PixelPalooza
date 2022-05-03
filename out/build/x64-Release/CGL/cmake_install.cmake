@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/budto/source/repos/PixelPalooza/CGL
+# Install script for directory: E:/cs184/PixelPalooza/CGL
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/budto/source/repos/PixelPalooza/CGL")
+  set(CMAKE_INSTALL_PREFIX "E:/cs184/PixelPalooza/CGL")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,8 +34,8 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/CGL/deps/freetype/cmake_install.cmake")
-  include("C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/CGL/src/cmake_install.cmake")
+  include("E:/cs184/PixelPalooza/out/build/x64-Release/CGL/deps/freetype/cmake_install.cmake")
+  include("E:/cs184/PixelPalooza/out/build/x64-Release/CGL/src/cmake_install.cmake")
 
 endif()
 

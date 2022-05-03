@@ -38,6 +38,7 @@ struct PointMass {
 
 typedef Vector3D (*f)(PointMass* p1, PointMass* p2);
 struct ParticleProperties {
+    ParticleProperties() {}
     ParticleProperties(double mass, double radius, Vector3D color) :
         mass(mass), radius(radius), color(color) {}
 

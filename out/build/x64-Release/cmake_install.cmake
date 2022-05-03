@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/budto/source/repos/PixelPalooza
+# Install script for directory: E:/cs184/PixelPalooza
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/budto/source/repos/PixelPalooza/")
+  set(CMAKE_INSTALL_PREFIX "E:/cs184/PixelPalooza/")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,9 +34,9 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/ext/nanogui/cmake_install.cmake")
-  include("C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/CGL/cmake_install.cmake")
-  include("C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/src/cmake_install.cmake")
+  include("E:/cs184/PixelPalooza/out/build/x64-Release/ext/nanogui/cmake_install.cmake")
+  include("E:/cs184/PixelPalooza/out/build/x64-Release/CGL/cmake_install.cmake")
+  include("E:/cs184/PixelPalooza/out/build/x64-Release/src/cmake_install.cmake")
 
 endif()
 
@@ -48,5 +48,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "E:/cs184/PixelPalooza/out/build/x64-Release/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

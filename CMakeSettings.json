@@ -15,12 +15,12 @@
       "name": "x64-Release",
       "generator": "Ninja",
       "configurationType": "Release",
-      "buildRoot": "C:/Users/budto/source/repos/PixelPalooza/out/build/x64-Release",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "cmakeToolchain": "C:/Users/budto/source/repos/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "cmakeToolchain": "C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
       "inheritEnvironments": [ "msvc_x64_x64" ]
     }
   ]

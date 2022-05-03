@@ -17,6 +17,10 @@ using namespace std;
 
 enum e_orientation { HORIZONTAL = 0, VERTICAL = 1 };
 
+Vector3D r2_law(PointMass* p1, PointMass* p2);
+Vector3D r4_law(PointMass* p1, PointMass* p2);
+Vector3D cross_law(PointMass* p1, PointMass* p2);
+
 struct ClothParameters {
     ClothParameters() {}
     ClothParameters(bool enable_structural_constraints,
@@ -66,12 +70,16 @@ struct Cloth {
     MeshTriangle* getMarchingCubeMesh(int& numTriangles);
 
     // Cloth properties
-    double width;
-    double height;
-    int num_width_points;
-    int num_height_points;
-    double thickness;
-    e_orientation orientation;
+    vector<int> num_points;
+    vector<Vector3D> spawnPositions;
+    vector<double> spawnRadii;
+
+    //double width;
+    //double height;
+    //int num_width_points;
+    //int num_height_points;
+    //double thickness;
+    //e_orientation orientation;
 
     // Cloth components
     vector<PointMass> point_masses;

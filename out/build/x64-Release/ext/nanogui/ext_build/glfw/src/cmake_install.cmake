@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/budto/source/repos/PixelPalooza/ext/nanogui/ext/glfw/src
+# Install script for directory: E:/cs184/PixelPalooza/ext/nanogui/ext/glfw/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/budto/source/repos/PixelPalooza/out/install/x64-Release")
+  set(CMAKE_INSTALL_PREFIX "E:/cs184/PixelPalooza/out/install/x64-Release")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

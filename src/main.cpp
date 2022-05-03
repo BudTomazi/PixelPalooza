@@ -165,6 +165,8 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
   json j;
   i >> j;
 
+  std::cout << "loaded json" << "\n";
+
   // Loop over objects in scene
   for (json::iterator it = j.begin(); it != j.end(); ++it) {
     string key = it.key();
@@ -182,13 +184,51 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
     // Parse object depending on type (cloth, sphere, or plane)
     if (key == CLOTH) {
       // Cloth
-      double width, height;
-      int num_width_points, num_height_points;
-      float thickness;
-      e_orientation orientation;
-      vector<vector<int>> pinned;
+      //double width, height;
+      //int num_width_points, num_height_points;
+      //float thickness;
+      //e_orientation orientation;
+      //vector<vector<int>> pinned;
+      
+      std::cout << "cloth" << "\n";
 
-      auto it_width = object.find("width");
+      int count = 0;
+      for (auto& elem : object["particles"]) {
+          cloth->num_points.push_back(elem["num_points"]);
+          Vector3D spawn = Vector3D(elem["spawn_x"], elem["spawn_y"], elem["spawn_z"]);
+          cloth->spawnPositions.push_back(spawn);
+          cloth->spawnRadii.push_back(elem["spawnRadius"]);
+          Vector3D color = Vector3D(elem["color_r"], elem["color_g"], elem["color_b"]);
+          double mass = elem["particleMasses"];
+          double radius = elem["particleRadius"];
+          cloth->particleProperties.emplace_back(mass, radius, color);
+          cloth->particleColors.emplace_back(color);
+          cloth->particleProperties[count].strengths.resize(elem["num_forces"]);
+          count++;
+      }
+
+      std::cout << "set up particles" << "\n";
+
+      for (auto& elem : object["forces"]) {
+          std::cout << "start forces" << "\n";
+          if (elem["force_law"] == "r2")
+              cloth->particleProperties[elem["particle_id"]].force_laws.emplace_back(&r2_law);
+          if (elem["force_law"] == "r4")
+              cloth->particleProperties[elem["particle_id"]].force_laws.emplace_back(&r4_law);
+          if (elem["force_law"] == "cross")
+              cloth->particleProperties[elem["particle_id"]].force_laws.emplace_back(&cross_law);
+          std::cout << "end forces" << "\n";
+          
+          for (auto& str : elem["strengths"]) {
+
+              cloth->particleProperties[elem["particle_id"]].strengths[elem["force_index"]].push_back(str);
+              std::cout << "hi" << "\n";
+          }
+      }
+
+      std::cout << "set up forces" << "\n";
+
+      /*auto it_width = object.find("width");
       if (it_width != object.end()) {
         width = *it_width;
       } else {
@@ -245,60 +285,60 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
       cloth->num_height_points = num_height_points;
       cloth->thickness = thickness;
       cloth->orientation = orientation;
-      cloth->pinned = pinned;
+      cloth->pinned = pinned;*/
 
       // Cloth parameters
-      bool enable_structural_constraints, enable_shearing_constraints, enable_bending_constraints;
-      double damping, density, ks;
+      //bool enable_structural_constraints, enable_shearing_constraints, enable_bending_constraints;
+      //double damping, density, ks;
 
-      auto it_enable_structural = object.find("enable_structural");
-      if (it_enable_structural != object.end()) {
-        enable_structural_constraints = *it_enable_structural;
-      } else {
-        incompleteObjectError("cloth", "enable_structural");
-      }
+      //auto it_enable_structural = object.find("enable_structural");
+      //if (it_enable_structural != object.end()) {
+      //  enable_structural_constraints = *it_enable_structural;
+      //} else {
+      //  incompleteObjectError("cloth", "enable_structural");
+      //}
 
-      auto it_enable_shearing = object.find("enable_shearing");
-      if (it_enable_shearing != object.end()) {
-        enable_shearing_constraints = *it_enable_shearing;
-      } else {
-        incompleteObjectError("cloth", "it_enable_shearing");
-      }
+      //auto it_enable_shearing = object.find("enable_shearing");
+      //if (it_enable_shearing != object.end()) {
+      //  enable_shearing_constraints = *it_enable_shearing;
+      //} else {
+      //  incompleteObjectError("cloth", "it_enable_shearing");
+      //}
 
-      auto it_enable_bending = object.find("enable_bending");
-      if (it_enable_bending != object.end()) {
-        enable_bending_constraints = *it_enable_bending;
-      } else {
-        incompleteObjectError("cloth", "it_enable_bending");
-      }
+      //auto it_enable_bending = object.find("enable_bending");
+      //if (it_enable_bending != object.end()) {
+      //  enable_bending_constraints = *it_enable_bending;
+      //} else {
+      //  incompleteObjectError("cloth", "it_enable_bending");
+      //}
 
-      auto it_damping = object.find("damping");
-      if (it_damping != object.end()) {
-        damping = *it_damping;
-      } else {
-        incompleteObjectError("cloth", "damping");
-      }
+      //auto it_damping = object.find("damping");
+      //if (it_damping != object.end()) {
+      //  damping = *it_damping;
+      //} else {
+      //  incompleteObjectError("cloth", "damping");
+      //}
 
-      auto it_density = object.find("density");
-      if (it_density != object.end()) {
-        density = *it_density;
-      } else {
-        incompleteObjectError("cloth", "density");
-      }
+      //auto it_density = object.find("density");
+      //if (it_density != object.end()) {
+      //  density = *it_density;
+      //} else {
+      //  incompleteObjectError("cloth", "density");
+      //}
 
-      auto it_ks = object.find("ks");
-      if (it_ks != object.end()) {
-        ks = *it_ks;
-      } else {
-        incompleteObjectError("cloth", "ks");
-      }
+      //auto it_ks = object.find("ks");
+      //if (it_ks != object.end()) {
+      //  ks = *it_ks;
+      //} else {
+      //  incompleteObjectError("cloth", "ks");
+      //}
 
-      cp->enable_structural_constraints = enable_structural_constraints;
-      cp->enable_shearing_constraints = enable_shearing_constraints;
-      cp->enable_bending_constraints = enable_bending_constraints;
-      cp->density = density;
-      cp->damping = damping;
-      cp->ks = ks;
+      //cp->enable_structural_constraints = enable_structural_constraints;
+      //cp->enable_shearing_constraints = enable_shearing_constraints;
+      //cp->enable_bending_constraints = enable_bending_constraints;
+      //cp->density = density;
+      //cp->damping = damping;
+      //cp->ks = ks;
     } else if (key == SPHERE) {
       Vector3D origin;
       double radius, friction;
@@ -459,7 +499,6 @@ int main(int argc, char **argv) {
     def_fname << "/scene/pinned2.json";
     file_to_load_from = def_fname.str();
   }
-  
   bool success = loadObjectsFromFile(file_to_load_from, &cloth, &cp, &objects, sphere_num_lat, sphere_num_lon);
   if (!success) {
     std::cout << "Warn: Unable to load from file: " << file_to_load_from << std::endl;

@@ -41,3 +41,7 @@ CMakeSettings.json
 build
 xcode
 out
+*.obj
+*.obj
+*.obj
+*.obj

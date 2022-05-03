@@ -45,11 +45,11 @@ using namespace std;
 
 Cloth::Cloth(double width, double height, int num_width_points,
     int num_height_points, float thickness) {
-    this->width = width;
-    this->height = height;
-    this->num_width_points = num_width_points;
-    this->num_height_points = num_height_points;
-    this->thickness = thickness;
+    //this->width = width;
+    //this->height = height;
+    //this->num_width_points = num_width_points;
+    //this->num_height_points = num_height_points;
+    //this->thickness = thickness;
 
     buildGrid();
     buildClothMesh();
@@ -68,7 +68,17 @@ Cloth::~Cloth() {
 }
 
 void Cloth::buildGrid() {
-    initializeProperties();
+    
+    for (int i = 0; i < num_points.size(); i++) {
+        for (int j = 0; j < num_points[i]; j++) {
+            Vector3D pos = spawnPositions[i];
+            double r = spawnRadii[i];
+            pos += Vector3D(-r + (rand() % 100 / 100.0) * (2 * r), -r + (rand() % 100 / 100.0) * (2 * r), -r + (rand() % 100 / 100.0) * (2 * r));
+            PointMass p = PointMass(pos, i);
+            point_masses.push_back(p);
+        }
+    }
+    /*initializeProperties();
     Vector3D right = Vector3D(1, 0, 0);
     Vector3D up = Vector3D(0, 0, 1);
 
@@ -93,48 +103,48 @@ void Cloth::buildGrid() {
             point_masses.emplace_back(PointMass(pos + right * radius, particleType));
             point_masses.emplace_back(PointMass(pos + up * radius, particleType));
         }
-    }
+    }*/
 }
 
 void Cloth::initializeProperties() {
 
-    // example particles
-    particleProperties.emplace_back(ParticleProperties(0.1, 0.2, Vector3D(1, 0, 0)));
-    particleProperties.emplace_back(ParticleProperties(0.1, 0.15, Vector3D(0, 0.5, 1)));
+    //// example particles
+    //particleProperties.emplace_back(ParticleProperties(0.1, 0.5, Vector3D(1, 0, 0)));
+    //particleProperties.emplace_back(ParticleProperties(0.1, 0.5, Vector3D(0, 0.5, 1)));
 
-    int numParticleTypes = particleProperties.size();
+    //int numParticleTypes = particleProperties.size();
 
-    //setting up forces and force strengths
-    //particle type 1 laws
-    particleProperties[0].strengths.resize(3);
-    particleProperties[0].force_laws.push_back(&r2_law);
-    particleProperties[0].strengths[0].insert(particleProperties[0].strengths[0].end(), { 0.2,0.0 });
+    ////setting up forces and force strengths
+    ////particle type 1 laws
+    //particleProperties[0].strengths.resize(3);
+    //particleProperties[0].force_laws.push_back(&r2_law);
+    //particleProperties[0].strengths[0].insert(particleProperties[0].strengths[0].end(), { 0.2,0.0 });
 
-    particleProperties[0].force_laws.push_back(&r4_law);
-    particleProperties[0].strengths[1].push_back(-0.02);
-    particleProperties[0].strengths[1].push_back(-0.2);
+    //particleProperties[0].force_laws.push_back(&r4_law);
+    //particleProperties[0].strengths[1].push_back(-0.02);
+    //particleProperties[0].strengths[1].push_back(-0.2);
 
-    particleProperties[0].force_laws.push_back(&cross_law);
-    particleProperties[0].strengths[2].push_back(0.0);
-    particleProperties[0].strengths[2].push_back(0.2);
+    //particleProperties[0].force_laws.push_back(&cross_law);
+    //particleProperties[0].strengths[2].push_back(0.0);
+    //particleProperties[0].strengths[2].push_back(0.2);
 
-    //particle type 2 laws
-    particleProperties[1].strengths.resize(3);
-    particleProperties[1].force_laws.emplace_back(&r2_law);
-    particleProperties[1].strengths[0].emplace_back(0.1);
-    particleProperties[1].strengths[0].emplace_back(0.2);
+    ////particle type 2 laws
+    //particleProperties[1].strengths.resize(3);
+    //particleProperties[1].force_laws.emplace_back(&r2_law);
+    //particleProperties[1].strengths[0].emplace_back(0.1);
+    //particleProperties[1].strengths[0].emplace_back(0.2);
 
-    particleProperties[1].force_laws.emplace_back(&r4_law);
-    particleProperties[1].strengths[1].emplace_back(-0.2);
-    particleProperties[1].strengths[1].emplace_back(-0.02);
+    //particleProperties[1].force_laws.emplace_back(&r4_law);
+    //particleProperties[1].strengths[1].emplace_back(-0.2);
+    //particleProperties[1].strengths[1].emplace_back(-0.02);
 
-    particleProperties[1].force_laws.emplace_back(&cross_law);
-    particleProperties[1].strengths[2].emplace_back(0.2);
-    particleProperties[1].strengths[2].emplace_back(0.0);
+    //particleProperties[1].force_laws.emplace_back(&cross_law);
+    //particleProperties[1].strengths[2].emplace_back(0.2);
+    //particleProperties[1].strengths[2].emplace_back(0.0);
 
-    for (int i = 0; i < numParticleTypes; i++) {
-        particleColors.emplace_back(particleProperties[i].color);
-    }
+    //for (int i = 0; i < numParticleTypes; i++) {
+    //    particleColors.emplace_back(particleProperties[i].color);
+    //}
 
 }
 
