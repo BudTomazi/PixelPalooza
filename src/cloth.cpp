@@ -271,7 +271,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     int size = 80; // number of cells along one side
     double width = 10; // how big the box is
     
-    double c = width / size;
+    double c = width / size; // how big is each cell
     
     int n = size + 1; // how many points? TODO: do we need to do this
     int yz = n * n;        //for little extra speed
@@ -296,7 +296,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     }*/
 
     // nick version
-    for (int i = 0; i < point_masses.size(); i += 3) {
+    /*for (int i = 0; i < point_masses.size(); i += 3) {
         for (int j = 0; j < point_masses.size(); j += 3) {
             if (i == j) continue;
             Vector3D pos = 0.5 * (point_masses[i].position + point_masses[j].position);
@@ -305,9 +305,55 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
 
             cells[index].value += 0.01;
         }
+    }*/
+    
+    int d = 0;
+    Vector3D offset;
+    Vector3D particlePos;
+    int startIndex;
+    int curIndex;
+    double rSqr;
+    for (int i = 0; i < point_masses.size(); i += 3) {
+        d = ceil(particleProperties[point_masses[i].particle_type].radius / c);
+        particlePos = point_masses[i].position;
+        startIndex = (int)(floor((particlePos.x - min) / c) * yz + floor((particlePos.y - min) / c) * n + floor((particlePos.y - min) / c));
+        
+        if (startIndex < 0 || startIndex >= numCells) continue;
+
+        offset = particlePos - cells[startIndex].pos;
+        
+        //TODO: can probably be optimized!!!!
+        for (int dx = -d; dx <= d; dx++) {
+            for (int dy = -d; dy <= d; dy++) {
+                curIndex = startIndex + dx * yz + dy * n - d;
+                for (int dz = -d; dz <= d; dz++) {
+                    if (curIndex >= 0 && curIndex < numCells) {
+                        rSqr = (c * Vector3D(dx, dy, dz) - offset).norm2();
+                        cerr << "rSqr: " << rSqr << "\n";
+                        
+                        if (rSqr <= c) {
+                            cells[curIndex].value += c;
+                        } else {
+                            cells[curIndex].value += c / (rSqr * rSqr);
+                        }
+                    }
+                    curIndex++;
+                }
+            }
+        }
+        
+        
+//        for (int j = 0; j < point_masses.size(); j += 3) {
+//            if (i == j) continue;
+//            Vector3D pos = 0.5 * (point_masses[i].position + point_masses[j].position);
+//            int index = (int)(floor((pos.x - min) / c) * yz + floor((pos.y - min) / c) * n + floor((pos.z - min) / c));
+//            if (index < 0 || index >= numCells) continue;
+//
+//            cells[index].value += 0.01;
+//        }
     }
 //
-    MeshTriangle* triangles = MarchingCubes(size, size, size, c, c, c, 0.1f, cells, numTriangles);
+    MeshTriangle* triangles = MarchingCubes(size, size, size, c, c, c, 1, cells, numTriangles);
     
 //    MeshTriangle* triangles = MCRecFind(size, size, size, c, c, c, 0.1f, cells, numTriangles);
     delete[] cells;
