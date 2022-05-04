@@ -7,7 +7,7 @@
 
   "particles": [
       {
-          "count": 0,
+          "count": 50,
           "spawnPos": [0, -0.2, 0],
           "spawnRadius": 1,
           "particleMass": 0.01,
@@ -15,6 +15,7 @@
         "particleColor": [ 1, 0, 0 ],
         "externalForces": 0,
         "pinned": 0,
+        "shaderType": 0,
         "receivedForces": [
           {
             "law": "r2",
@@ -35,6 +36,7 @@
         "transformations": [0, 2, 0]
       },
     {
+
       "count": 1000,
       "spawnPos": [ 0, 0, 0 ],
       "spawnRadius": 1,
@@ -43,6 +45,7 @@
       "particleColor": [ 0, 0, 1 ],
       "externalForces": 1,
       "pinned": 0,
+      "shaderType": 1,
       "receivedForces": [
         {
           "law": "r2",
@@ -71,6 +74,7 @@
       "particleColor": [ 0.4, 0.4, 0.4 ],
       "externalForces": 0,
       "pinned": 0,
+      "shaderType": 0,
       "receivedForces": [
         {
           "law": "r2",

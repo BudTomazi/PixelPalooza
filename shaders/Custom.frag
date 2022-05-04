@@ -26,13 +26,25 @@ uniform samplerCube u_texture_cubemap;
 in vec4 v_position;
 in vec4 v_normal;
 in vec4 v_tangent;
-in vec2 v_uv;
+in vec4 v_color;
+in float v_shaderType;
 
 out vec4 out_color;
 
 void main() {
   // Your awesome shader here!
-  out_color = (vec4(1, 1, 1, 0) + v_normal) / 2;
+    if (v_shaderType < 0.01) {
+        out_color = v_color * (2.0 / 3.0) + (v_normal) / 3;
+    } else if (v_shaderType < 1.01) {
+        // cursed mirror
+        vec3 in_ray = u_cam_pos - vec3(v_position);
+        vec3 sideways = (in_ray - dot(in_ray, vec3(v_normal)));
+        vec3 out_ray = in_ray - 2 * sideways;
+
+        out_color = v_color / 3.0 + texture(u_texture_cubemap, out_ray) * (2.0 / 3.0);
+    } else {
+        out_color = vec4(0, 0, 0, 1);
+    }
 //    out_color = v_normal;
   out_color.a = 1;
 }
