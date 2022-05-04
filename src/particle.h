@@ -47,11 +47,14 @@ struct ParticleProperties {
     Vector3D color;
     bool external_forces;
     bool primitive_collision;
+    bool particle_collisions;
+    bool pinned;
 
     //vector<f> forces;
     //vector<float> strengths;
     std::vector<forceLaw> force_laws;
     std::vector<std::vector<float>> strengths;
+    std::vector<int> collision_transformations;
     // external forces?
     // color
 };

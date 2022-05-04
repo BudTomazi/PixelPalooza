@@ -18,6 +18,7 @@ Vector3D r2_law(Particle* p1, Particle* p2) {
     Vector3D dir = pos1 - pos2;
     float distSqr = dir.norm2();
     dir = dir.unit();
+    //new commen
     return dir / distSqr;
 };
 
@@ -87,10 +88,10 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
     for (int i = 0; i < particles.size(); i++) {
         curParticle = &particles[i];
         curProperties = &particleProperties[curParticle->particle_type];
-        int cType = otherParticle->particle_type;
+        int cType = curParticle->particle_type;
+        forces = Vector3D(0);
         for (int j = 0; j < particles.size(); j++) {
             if (i == j) continue;
-            forces = Vector3D(0);
             otherParticle = &particles[j];
             int oType = otherParticle->particle_type;
 
@@ -107,11 +108,16 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
             }
         }
 
-        if (!curParticle->pinned) {
+        if (curProperties->external_forces) {
+            forces += Vector3D(0.0, -100.0, 0.0);
+        }
+
+        if (!curProperties->pinned) {
             curParticle->forces = forces;
             //curMass->forces += 0.3* cross(curMass->position, Vector3D(1.0, 0.0, 0.0));
             curParticle->forces += Vector3D(0);
         }
+
     }
 
     for (auto p = particles.begin(); p != particles.end(); p++) {
@@ -144,10 +150,11 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
         curParticle->last_position = curPos;
     }
 
-    /*for (auto p = particles.begin(); p != particles.end(); p++) {
+    build_spatial_map();
+    for (auto p = particles.begin(); p != particles.end(); p++) {
         if (p->pinned) continue;
         self_collide(*p, simulation_steps);
-    }*/
+    }
 
     
 }
@@ -158,19 +165,74 @@ void Cloth::build_spatial_map() {
     }
     map.clear();
 
+
+
+    // TODO (Part 4): Build a spatial map out of all of the point masses.
+    for (Particle& curMass : particles) {
+        float hashed_position = hash_position(curMass.position);
+        if (map.find(hashed_position) == map.end()) {
+            map[hashed_position] = new vector<Particle*>;
+        }
+        map[hashed_position]->push_back(&curMass);
+    }
+
     // TODO (Part 4): Build a spatial map out of all of the point masses.
 
 }
 
 void Cloth::self_collide(Particle& pm, double simulation_steps) {
-    // TODO (Part 4): Handle self-collision for a given point mass.
+    vector<Particle*>* candidates = map[hash_position(pm.position)];
+
+    //cerr << "start self collide\n";
+    Vector3D correction = Vector3D(0.0, 0.0, 0.0);
+    double counter = 0.0;
+
+    ParticleProperties* curProperties = &particleProperties[pm.particle_type];
+    float r1 = curProperties->radius;
+
+    for (Particle* p : *candidates) {
+        ParticleProperties* otherProperties = &particleProperties[p->particle_type];
+        float r2 = otherProperties->radius;
+        if (p != &pm && (pm.position - p->position).norm() < (r1 + r2)) {
+            counter += 1;
+            correction += (pm.position - p->position).unit() * (r1 + r2) + p->position - pm.position;
+            p->particle_type = curProperties->collision_transformations[p->particle_type];
+        }
+    }
+
+
+    //cerr << "end self collide\n";
+    if (counter == 0) {
+        correction = Vector3D(0.0, 0.0, 0.0);
+    }
+    else {
+        correction = correction / counter;
+    }
+
+    pm.position = (correction / simulation_steps) + pm.position;
 
 }
 
 float Cloth::hash_position(Vector3D pos) {
     // TODO (Part 4): Hash a 3D position into a unique float identifier that represents membership in some 3D box volume.
 
-    return 0.f;
+    double w = 1.0;
+    double h = 1.0;
+    double t = max(w, h);
+    double num_width_points = 20;
+    double num_height_points = 20;
+
+    int x_coord;
+    int y_coord;
+    int z_coord;
+
+    x_coord = (int)(pos.x / w);
+    y_coord = (int)(pos.y / h);
+    z_coord = (int)(pos.z / t);
+ 
+
+    float output = x_coord + num_width_points * y_coord + num_width_points * num_height_points * z_coord;
+   return output; 
 }
 
 // Marching cubes
@@ -288,6 +350,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
                         newVal = cells[curIndex].value + particleStrength;
                         cells[curIndex].color = (cells[curIndex].value / newVal) * cells[curIndex].color + (particleStrength / newVal) * particleColor;
                         cells[curIndex].value = newVal;
+                        cells[curIndex].p = &particles[i];
                     }
                     curIndex++;
                 }
