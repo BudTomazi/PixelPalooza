@@ -34,7 +34,18 @@ out vec4 out_color;
 void main() {
   // Your awesome shader here!
     if (v_shaderType < 0.01) {
-        out_color = v_color * (2.0 / 3.0) + (v_normal) / 3;
+//        out_color = v_color * (2.0 / 3.0) + (v_normal) / 3;
+        float intensity;
+        intensity = dot(vec4(u_light_pos.x, u_light_pos.y, u_light_pos.z, 1), normalize(v_normal));
+        if (intensity > 0.9) {
+            out_color = v_color * 0.83;
+        } else if (intensity > 0.5) {
+            out_color = v_color * 0.71;
+        } else if (intensity > 0.1) {
+            out_color = v_color * 0.56;
+        } else {
+            out_color = v_color * 0.39;
+        }
     } else if (v_shaderType < 1.01) {
         // cursed mirror
         vec3 in_ray = u_cam_pos - vec3(v_position);
