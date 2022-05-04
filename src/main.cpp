@@ -308,6 +308,20 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
                   } else {
                       incompleteObjectError("force", "strengths");
                   }
+
+                  temp = forceData.find("localized");
+                  if (temp != forceData.end()) {
+                      if (*temp == 1) {
+                          properties.localized.push_back(true);
+                      }
+                      else {
+                          properties.localized.push_back(false);
+                      }
+                      
+                  }
+                  else {
+                      incompleteObjectError("force", "strengths");
+                  }
               }
               
               cloth->spawnParticles(particleCount, spawnPos, spawnRadius, properties);

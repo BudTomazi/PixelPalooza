@@ -35,7 +35,7 @@
         "transformations": [0, 2, 0]
       },
     {
-      "count": 480,
+      "count": 1000,
       "spawnPos": [ 0, 0, 0 ],
       "spawnRadius": 1,
       "particleMass": 0.1,
@@ -46,18 +46,18 @@
       "receivedForces": [
         {
           "law": "r2",
-          "strengths": [ 0.0, 0.5, 0.0 ],
+          "strengths": [ 0.0, 0.0, 0.0 ],
           "localized":  1
         },
         {
           "law": "r4",
-          "strengths": [ 0.0, -0.02, 0.0 ],
+          "strengths": [ 0.0, -0.0, 0.0 ],
           "localized": 1
         },
         {
           "law": "cross",
           "strengths": [ 0.0, 0.0, 0.0 ],
-          "localized": 0
+          "localized": 1
         }
       ],
       "transformations": [ 2, 1, 1 ]

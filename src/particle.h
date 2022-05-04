@@ -49,6 +49,7 @@ struct ParticleProperties {
     bool primitive_collision;
     bool particle_collisions;
     bool pinned;
+    std::vector<bool> localized;
 
     //vector<f> forces;
     //vector<float> strengths;

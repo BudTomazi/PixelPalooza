@@ -103,26 +103,55 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
     double collDist;
 
     //loop over all pairs of particles and compute forces
+    build_spatial_map();
+    for (auto p = particles.begin(); p != particles.end(); p++) {
+        if (p->pinned) continue;
+        self_collide(*p, simulation_steps);
+    }
+    build_spatial_map();
     for (int i = 0; i < particles.size(); i++) {
         curParticle = &particles[i];
         curProperties = &particleProperties[curParticle->particle_type];
         int cType = curParticle->particle_type;
         forces = Vector3D(0);
-        for (int j = 0; j < particles.size(); j++) {
-            if (i == j) continue;
-            otherParticle = &particles[j];
-            int oType = otherParticle->particle_type;
+        for (int k = 0; k < curProperties->force_laws.size(); k++) {
+            if (!curProperties->localized[k]) {
+                for (int j = 0; j < particles.size(); j++) {
+                    if (i == j) continue;
+                    otherParticle = &particles[j];
+                    int oType = otherParticle->particle_type;
 
-            dir = otherParticle->position - curParticle->position;
-            distSqr = dir.norm2();
-            dir = dir.unit();
+                    dir = otherParticle->position - curParticle->position;
+                    distSqr = dir.norm2();
+                    dir = dir.unit();
 
-            if (distSqr <= 0.000005) continue; //cancel computation if distance too small to avoid explosions
+                    if (distSqr <= 0.000005) continue; //cancel computation if distance too small to avoid explosions
 
-            for (int k = 0; k < curProperties->force_laws.size(); k++) {
-                Vector3D force = -curProperties->force_laws[k](curParticle, otherParticle);
-                float factor = curProperties->strengths[k][oType];
-                forces += factor * force;
+
+                    Vector3D force = -curProperties->force_laws[k](curParticle, otherParticle);
+                    float factor = curProperties->strengths[k][oType];
+                    forces += factor * force;
+                }
+            }
+            else {
+                vector<Particle*>* candidates = map[hash_position(curParticle->position)];
+
+                for (Particle* p : *candidates) {
+                    if (p == curParticle) continue;
+                        int oType = p->particle_type;
+                        dir = p->position - curParticle->position;
+                        if (dir.norm() == 0.0) continue;
+                        distSqr = dir.norm2();
+                        dir = dir.unit();
+
+                        if (distSqr <= 0.000005) continue; //cancel computation if distance too small to avoid explosions
+
+
+                        Vector3D force = -curProperties->force_laws[k](curParticle, p);
+                        float factor = curProperties->strengths[k][oType];
+                        //forces += factor * force;
+
+                }
             }
         }
 
@@ -143,19 +172,23 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
             (*prim)->collide(*p);
         }
     }*/
-
+    
     for (int i = 0; i < planeNorms.size(); i++) {
         for (int j = 0; j < particles.size(); j++) {
             PlaneCollision(planeLocs[i], planeNorms[i], particles[j]);
         }
     }
-
+    
     Vector3D curPos;
     Vector3D newPos;
     double delta_t_sqr = delta_t * delta_t;
     double dampingFactor = 1 - (0.01 / 100.0); // damping is arbitrary
     double delta = 0.1;
     Vector3D normal;
+
+    //cerr << "help1\n";
+    
+    //cerr << "help2\n";
 
     //loop through and update particle positions via verlet integration
     for (int i = 0; i < particles.size(); i++) {
@@ -174,22 +207,24 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
         curParticle->last_position = curPos;
     }
 
-    build_spatial_map();
-    for (auto p = particles.begin(); p != particles.end(); p++) {
+    
+    //build_spatial_map();
+    /*for (auto p = particles.begin(); p != particles.end(); p++) {
         if (p->pinned) continue;
         self_collide(*p, simulation_steps);
-    }
+    }*/
 
     
 }
 
 void Cloth::build_spatial_map() {
+    //cerr << "help3\n";
     for (const auto& entry : map) {
         delete(entry.second);
     }
     map.clear();
 
-
+    //cerr << "help4\n";
 
     // TODO (Part 4): Build a spatial map out of all of the point masses.
     for (Particle& curMass : particles) {
@@ -199,7 +234,7 @@ void Cloth::build_spatial_map() {
         }
         map[hashed_position]->push_back(&curMass);
     }
-
+    //cerr << "help5\n";
     // TODO (Part 4): Build a spatial map out of all of the point masses.
 
 }
