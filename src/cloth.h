@@ -75,6 +75,8 @@ struct Cloth {
     int sideCellCount;
     double cellSize;
     double borderDist;
+    vector<Vector3D> planeLocs;
+    vector<Vector3D> planeNorms;
     
     void initMarchingCubes(int numCells, double cellSize);
     MeshTriangle* getMarchingCubeMesh(int& numTriangles);

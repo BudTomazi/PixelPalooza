@@ -42,6 +42,24 @@ Vector3D cross_law(Particle* p1, Particle* p2) {
     return cross(vel1, vel2);
 };
 
+void PlaneCollision(Vector3D planeLoc, Vector3D planeNorm, Particle& p) {
+    double last_side, curr_side;
+    last_side = dot(p.last_position - planeLoc, planeNorm);
+    curr_side = dot(p.position - planeLoc, planeNorm);
+    //abs(curr_side - last_side) > abs(curr_side)
+
+    bool a = last_side > 0;
+    bool b = curr_side > 0;
+    if (a != b) {
+        p.position = p.last_position;
+    }
+    if (abs(curr_side) < 0.1) {
+        if (dot(p.forces, planeNorm) < 0.0) {
+            p.forces -= dot(p.forces, planeNorm);
+        }
+    }
+}
+
 using namespace std;
 
 Cloth::~Cloth() {
@@ -120,9 +138,15 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
 
     }
 
-    for (auto p = particles.begin(); p != particles.end(); p++) {
+    /*for (auto p = particles.begin(); p != particles.end(); p++) {
         for (auto prim = collision_objects->begin(); prim != collision_objects->end(); prim++) {
             (*prim)->collide(*p);
+        }
+    }*/
+
+    for (int i = 0; i < planeNorms.size(); i++) {
+        for (int j = 0; j < particles.size(); j++) {
+            PlaneCollision(planeLocs[i], planeNorms[i], particles[j]);
         }
     }
 
@@ -247,6 +271,20 @@ void Cloth::initMarchingCubes(int numCells, double cellSize) {
     int yz = numPoints * numPoints;        //for little extra speed
     
     borderDist = width / 2.0; // centers the entire grid
+    double tempDist = borderDist / 3.5;// - 20 * cellSize;
+    planeLocs.emplace_back(Vector3D(tempDist, 0.0, 0.0));
+    planeLocs.emplace_back(Vector3D(-tempDist, 0.0, 0.0));
+    planeLocs.emplace_back(Vector3D(0.0, tempDist, 0.0));
+    planeLocs.emplace_back(Vector3D(0.0, -tempDist, 0.0));
+    planeLocs.emplace_back(Vector3D(0.0, 0.0, tempDist));
+    planeLocs.emplace_back(Vector3D(0.0, 0.0, -tempDist));
+
+    planeNorms.emplace_back(Vector3D(-1.0, 0.0, 0.0));
+    planeNorms.emplace_back(Vector3D(1.0, 0.0, 0.0));
+    planeNorms.emplace_back(Vector3D(0.0, -1.0, 0.0));
+    planeNorms.emplace_back(Vector3D(0.0, 1.0, 0.0));
+    planeNorms.emplace_back(Vector3D(0.0, 0.0, -1.0));
+    planeNorms.emplace_back(Vector3D(0.0, 0.0, 1.0));
     
     totalVertexCount = numPoints * numPoints * numPoints;
     cells = new ScalarLoc[totalVertexCount];

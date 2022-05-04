@@ -1,13 +1,13 @@
 {
   "plane": {
-    "point": [ 0, -2, 0 ],
+    "point": [ 0, -20, 0 ],
     "normal": [ 0, 1, 0 ],
     "friction": 0.5
   },
 
   "particles": [
       {
-          "count": 80,
+          "count": 0,
           "spawnPos": [0, -0.2, 0],
           "spawnRadius": 1,
           "particleMass": 0.01,
@@ -18,22 +18,25 @@
         "receivedForces": [
           {
             "law": "r2",
-            "strengths": [ 0.01, 0.0, 0.0]
+            "strengths": [ 0.01, 0.0, 0.0 ],
+            "localized": 0
           },
           {
             "law": "r4",
-            "strengths": [ -0.01, 0.0, 0.0 ]
+            "strengths": [ -0.01, 0.0, 0.0 ],
+            "localized": 0
           },
           {
             "law": "cross",
-            "strengths": [ 0.0, 0.0, 0.0 ]
+            "strengths": [ 0.0, 0.0, 0.0 ],
+            "localized": 0
           }
         ],
         "transformations": [0, 2, 0]
       },
     {
-      "count": 80,
-      "spawnPos": [ 0, 1, 0 ],
+      "count": 480,
+      "spawnPos": [ 0, 0, 0 ],
       "spawnRadius": 1,
       "particleMass": 0.1,
       "particleRadius": 0.1,
@@ -43,15 +46,18 @@
       "receivedForces": [
         {
           "law": "r2",
-          "strengths": [ 0.0, 0.5, 0.0 ]
+          "strengths": [ 0.0, 0.5, 0.0 ],
+          "localized":  1
         },
         {
           "law": "r4",
-          "strengths": [ 0.0, -0.02, 0.0 ]
+          "strengths": [ 0.0, -0.02, 0.0 ],
+          "localized": 1
         },
         {
           "law": "cross",
-          "strengths": [ 0.0, 0.0, 0.0 ]
+          "strengths": [ 0.0, 0.0, 0.0 ],
+          "localized": 0
         }
       ],
       "transformations": [ 2, 1, 1 ]
@@ -68,15 +74,18 @@
       "receivedForces": [
         {
           "law": "r2",
-          "strengths": [ 0.0, 0.0, 2.0 ]
+          "strengths": [ 0.0, 0.0, 2.0 ],
+          "localized": 0
         },
         {
           "law": "r4",
-          "strengths": [ 0.0, 0.0, -0.3 ]
+          "strengths": [ 0.0, 0.0, -0.3 ],
+          "localized": 0
         },
         {
           "law": "cross",
-          "strengths": [ 0.0, 0.0, 3.0 ]
+          "strengths": [ 0.0, 0.0, 3.0 ],
+          "localized": 0
         }
       ],
       "transformations": [ 2, 2, 2 ]
