@@ -13,21 +13,16 @@
 
 //some force laws stored here for now
 Vector3D r2_law(Particle* p1, Particle* p2) {
-    Vector3D pos1 = p1->position;
-    Vector3D pos2 = p2->position;
-    Vector3D dir = pos1 - pos2;
-    float distSqr = dir.norm2();
-    dir = dir.unit();
-    //new commen
+    Vector3D dir = p1->position - p2->position;
+    double distSqr = dir.norm2();
+    dir = dir / sqrt(distSqr);
     return dir / distSqr;
 };
 
 Vector3D r4_law(Particle* p1, Particle* p2) {
-    Vector3D pos1 = p1->position;
-    Vector3D pos2 = p2->position;
-    Vector3D dir = pos1 - pos2;
+    Vector3D dir = p1->position - p2->position;
     float distSqr = dir.norm2();
-    dir = dir.unit();
+    dir = dir / sqrt(distSqr);
     return dir / (distSqr * distSqr);
 };
 
@@ -38,7 +33,6 @@ Vector3D cross_law(Particle* p1, Particle* p2) {
     Vector3D vel2 = pos2 - p2->last_position;
     Vector3D dir = pos1 - pos2;
     float distSqr = dir.norm2();
-    dir = dir.unit();
     return cross(vel1, vel2);
 };
 
@@ -59,6 +53,12 @@ void PlaneCollision(Vector3D planeLoc, Vector3D planeNorm, Particle& p) {
             //p.forces -= dot(p.forces, planeNorm);
         }
     }
+}
+
+const double scalingFactor = 315.0 / (64 * 3.14159);
+double smoothingKernel(Vector3D x1, Vector3D x2, double h2, double h9) {
+    double hr = (h2 - (x2 - x1).norm2());
+    return scalingFactor * hr * hr * hr / h9;
 }
 
 using namespace std;
@@ -115,6 +115,9 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
         curProperties = &particleProperties[curParticle->particle_type];
         int cType = curParticle->particle_type;
         forces = Vector3D(0);
+        
+        vector<Particle*>* localCandidates = map[hash_position(curParticle->position)];
+        
         for (int k = 0; k < curProperties->force_laws.size(); k++) {
             if (!curProperties->localized[k]) {
                 for (int j = 0; j < particles.size(); j++) {
@@ -124,10 +127,8 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
 
                     dir = otherParticle->position - curParticle->position;
                     distSqr = dir.norm2();
-                    dir = dir.unit();
 
                     if (distSqr <= 0.000005) continue; //cancel computation if distance too small to avoid explosions
-
 
                     Vector3D force = -curProperties->force_laws[k](curParticle, otherParticle);
                     float factor = curProperties->strengths[k][oType];
@@ -135,23 +136,18 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
                 }
             }
             else {
-                vector<Particle*>* candidates = map[hash_position(curParticle->position)];
-
-                for (Particle* p : *candidates) {
+                for (Particle* p : *localCandidates) {
                     if (p == curParticle) continue;
-                        int oType = p->particle_type;
-                        dir = p->position - curParticle->position;
-                        if (dir.norm() == 0.0) continue;
-                        distSqr = dir.norm2();
-                        dir = dir.unit();
+                    
+                    int oType = p->particle_type;
+                    dir = p->position - curParticle->position;
+                    distSqr = dir.norm2();
 
-                        if (distSqr <= 0.000005) continue; //cancel computation if distance too small to avoid explosions
+                    if (distSqr <= 0.000005) continue; //cancel computation if distance too small to avoid explosions
 
-
-                        Vector3D force = -curProperties->force_laws[k](curParticle, p);
-                        float factor = curProperties->strengths[k][oType];
-                        //forces += factor * force;
-
+                    Vector3D force = -curProperties->force_laws[k](curParticle, p);
+                    float factor = curProperties->strengths[k][oType];
+                    forces += factor * force;
                 }
             }
         }
