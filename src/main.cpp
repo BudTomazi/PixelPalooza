@@ -227,6 +227,13 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
           } else {
               incompleteObjectError("particles", "particleRadius");
           }
+          temp = particleData.find("collRadius");
+          if (temp != particleData.end()) {
+              properties.collRadius = *temp;
+          }
+          else {
+              incompleteObjectError("particles", "particleRadius");
+          }
 
           temp = particleData.find("externalForces");
           if (temp != particleData.end()) {

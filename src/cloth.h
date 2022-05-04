@@ -75,6 +75,7 @@ struct Cloth {
     int sideCellCount;
     double cellSize;
     double borderDist;
+    double physicsBorder;
     vector<Vector3D> planeLocs;
     vector<Vector3D> planeNorms;
     

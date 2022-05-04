@@ -44,6 +44,7 @@ struct ParticleProperties {
 
     double mass;
     double radius;
+    double collRadius;
     Vector3D color;
     bool external_forces;
     bool primitive_collision;

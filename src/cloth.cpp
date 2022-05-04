@@ -51,11 +51,12 @@ void PlaneCollision(Vector3D planeLoc, Vector3D planeNorm, Particle& p) {
     bool a = last_side > 0;
     bool b = curr_side > 0;
     if (a != b) {
-        p.position = p.last_position;
+        Vector3D diff = (p.position - p.last_position);
+        p.position -= planeNorm * dot(diff, planeNorm);
     }
     if (abs(curr_side) < 0.1) {
         if (dot(p.forces, planeNorm) < 0.0) {
-            p.forces -= dot(p.forces, planeNorm);
+            //p.forces -= dot(p.forces, planeNorm);
         }
     }
 }
@@ -158,6 +159,9 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
         if (curProperties->external_forces) {
             forces += Vector3D(0.0, -100.0, 0.0);
         }
+        if (cType == 2) {
+            forces += Vector3D(0.0, 5.0, 0.0);
+        }
 
         if (!curProperties->pinned) {
             curParticle->forces = forces;
@@ -247,15 +251,15 @@ void Cloth::self_collide(Particle& pm, double simulation_steps) {
     double counter = 0.0;
 
     ParticleProperties* curProperties = &particleProperties[pm.particle_type];
-    float r1 = curProperties->radius;
+    float r1 = curProperties->collRadius;
 
     for (Particle* p : *candidates) {
         ParticleProperties* otherProperties = &particleProperties[p->particle_type];
-        float r2 = otherProperties->radius;
+        float r2 = otherProperties->collRadius;
         if (p != &pm && (pm.position - p->position).norm() < (r1 + r2)) {
             counter += 1;
             correction += (pm.position - p->position).unit() * (r1 + r2) + p->position - pm.position;
-            p->particle_type = curProperties->collision_transformations[p->particle_type];
+            pm.particle_type = curProperties->collision_transformations[p->particle_type];
         }
     }
 
@@ -269,25 +273,27 @@ void Cloth::self_collide(Particle& pm, double simulation_steps) {
     }
 
     pm.position = (correction / simulation_steps) + pm.position;
+    //pm.last_position = pm.position;
 
 }
 
 float Cloth::hash_position(Vector3D pos) {
     // TODO (Part 4): Hash a 3D position into a unique float identifier that represents membership in some 3D box volume.
 
-    double w = 1.0;
-    double h = 1.0;
-    double t = max(w, h);
-    double num_width_points = 20;
-    double num_height_points = 20;
+    double num_width_points = 4;
+    double num_height_points = 4;
+    double w = 2 * physicsBorder / num_width_points;
+    double h = 2 * physicsBorder / num_width_points;
+    double z = 2 * physicsBorder / num_height_points;
+    
 
     int x_coord;
     int y_coord;
     int z_coord;
 
-    x_coord = (int)(pos.x / w);
-    y_coord = (int)(pos.y / h);
-    z_coord = (int)(pos.z / t);
+    x_coord = (int)((pos.x + physicsBorder) / w);
+    y_coord = (int)((pos.y + physicsBorder) / h);
+    z_coord = (int)((pos.z + physicsBorder) / z);
  
 
     float output = x_coord + num_width_points * y_coord + num_width_points * num_height_points * z_coord;
@@ -306,17 +312,17 @@ void Cloth::initMarchingCubes(int numCells, double cellSize) {
     int yz = numPoints * numPoints;        //for little extra speed
     
     borderDist = width / 2.0; // centers the entire grid
-    double tempDist = borderDist / 3.5;// - 20 * cellSize;
-    planeLocs.emplace_back(Vector3D(tempDist, 0.0, 0.0));
-    planeLocs.emplace_back(Vector3D(-tempDist, 0.0, 0.0));
-    planeLocs.emplace_back(Vector3D(0.0, tempDist, 0.0));
-    planeLocs.emplace_back(Vector3D(0.0, -tempDist, 0.0));
-    planeLocs.emplace_back(Vector3D(0.0, 0.0, tempDist));
-    planeLocs.emplace_back(Vector3D(0.0, 0.0, -tempDist));
+    physicsBorder = borderDist / 3.0;// - 20 * cellSize;
+    planeLocs.emplace_back(Vector3D(physicsBorder, 0.0, 0.0));
+    planeLocs.emplace_back(Vector3D(-physicsBorder, 0.0, 0.0));
+    //planeLocs.emplace_back(Vector3D(0.0, physicsBorder, 0.0));
+    planeLocs.emplace_back(Vector3D(0.0, -physicsBorder, 0.0));
+    planeLocs.emplace_back(Vector3D(0.0, 0.0, physicsBorder));
+    planeLocs.emplace_back(Vector3D(0.0, 0.0, -physicsBorder));
 
     planeNorms.emplace_back(Vector3D(-1.0, 0.0, 0.0));
     planeNorms.emplace_back(Vector3D(1.0, 0.0, 0.0));
-    planeNorms.emplace_back(Vector3D(0.0, -1.0, 0.0));
+    //planeNorms.emplace_back(Vector3D(0.0, -1.0, 0.0));
     planeNorms.emplace_back(Vector3D(0.0, 1.0, 0.0));
     planeNorms.emplace_back(Vector3D(0.0, 0.0, -1.0));
     planeNorms.emplace_back(Vector3D(0.0, 0.0, 1.0));
