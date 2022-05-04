@@ -171,11 +171,11 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
 
     }
 
-    /*for (auto p = particles.begin(); p != particles.end(); p++) {
+    for (auto p = particles.begin(); p != particles.end(); p++) {
         for (auto prim = collision_objects->begin(); prim != collision_objects->end(); prim++) {
             (*prim)->collide(*p);
         }
-    }*/
+    }
     
     for (int i = 0; i < planeNorms.size(); i++) {
         for (int j = 0; j < particles.size(); j++) {

@@ -87,6 +87,13 @@ void ClothSimulator::load_textures() {
       m_project_root + "/textures/cube/negy.jpg",
       m_project_root + "/textures/cube/posz.jpg",
       m_project_root + "/textures/cube/negz.jpg"
+        //m_project_root + "/textures/cube/MegaSunFront.png",
+        //m_project_root + "/textures/cube/MegaSunBack.png",
+        //m_project_root + "/textures/cube/MegaSunTop.png",
+        //m_project_root + "/textures/cube/MegaSunBottom.png",
+        //m_project_root + "/textures/cube/MegaSunRight.png",
+        //m_project_root + "/textures/cube/MegaSunLeft.png",
+
     };
 
     load_cubemap(5, m_gl_cubemap_tex, cubemap_fnames);
