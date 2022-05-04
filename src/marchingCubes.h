@@ -5,6 +5,7 @@
 #include "CGL/CGL.h"
 #include "MCTable.h"		//tables used by Marching Cubes (edgeTable and triTable)
 #include "CGL/vector3D.h"
+#include "particle.h"
 
 using namespace CGL;
 
@@ -19,6 +20,7 @@ struct ScalarLoc {
     Vector3D pos;
     float value;
     Vector3D color;
+    Particle* p;
     
     ScalarLoc() : pos(Vector3D(0)), value(0), color(Vector3D(0)) { }
     

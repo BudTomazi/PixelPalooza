@@ -227,6 +227,32 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
           } else {
               incompleteObjectError("particles", "particleRadius");
           }
+
+          temp = particleData.find("externalForces");
+          if (temp != particleData.end()) {
+              if (*(temp) == 1) {
+                  properties.external_forces = true;
+              }
+              else {
+                  properties.external_forces = false;
+              }
+          }
+          else {
+              incompleteObjectError("particles", "particleRadius");
+          }
+
+          temp = particleData.find("pinned");
+          if (temp != particleData.end()) {
+              if (*(temp) == 1) {
+                  properties.pinned = true;
+              }
+              else {
+                  properties.pinned = false;
+              }
+          }else {
+              incompleteObjectError("particles", "particleRadius");
+          }
+          
           
           temp = particleData.find("particleColor");
           if (temp != particleData.end()) {
@@ -234,6 +260,17 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
               properties.color = Vector3D(vec_color[0], vec_color[1], vec_color[2]);
           } else {
               incompleteObjectError("particles", "particleColor");
+          }
+
+          temp = particleData.find("transformations");
+          if (temp != particleData.end()) {
+              vector<double> vec_transform = *temp;
+              for (int val : vec_transform) {
+                  properties.collision_transformations.push_back(val);
+              }
+          }
+          else {
+              incompleteObjectError("particles", "transformations");
           }
           
           forceLaw curLaw;
