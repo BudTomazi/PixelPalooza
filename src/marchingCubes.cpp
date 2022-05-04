@@ -53,7 +53,7 @@ Vector3D ColorInterp(ScalarLoc p1, ScalarLoc p2, float value) {
 }
 
 int GetShaderType(ScalarLoc p1, ScalarLoc p2, float value) {
-    if (p1.shaderType != p2.shaderType) return p1.shaderType;
+    if (p1.shaderType == p2.shaderType) return p1.shaderType;
     
     if (p1.value > 0 && p2.value > 0) {
         if (abs(value - p1.value) < abs(value - p2.value)) {

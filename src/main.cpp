@@ -238,7 +238,7 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
               }
           }
           else {
-              incompleteObjectError("particles", "particleRadius");
+              incompleteObjectError("particles", "externalForces");
           }
 
           temp = particleData.find("pinned");
@@ -250,9 +250,15 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
                   properties.pinned = false;
               }
           }else {
-              incompleteObjectError("particles", "particleRadius");
+              incompleteObjectError("particles", "pinned");
           }
           
+          temp = particleData.find("shaderType");
+          if (temp != particleData.end()) {
+              properties.shaderType = *temp;
+          }else {
+              incompleteObjectError("particles", "shaderType");
+          }
           
           temp = particleData.find("particleColor");
           if (temp != particleData.end()) {

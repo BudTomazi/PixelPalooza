@@ -13,7 +13,7 @@ typedef struct {
 	Vector3D p[3];
     Vector3D norm[3];
     Vector3D colors[3];
-    double shaderTypes[3];
+    int shaderTypes[3];
 } MeshTriangle;
 
 struct ScalarLoc {
@@ -22,13 +22,7 @@ struct ScalarLoc {
     Vector3D color;
     int shaderType;
     
-    ScalarLoc() : pos(Vector3D(0)), value(0), color(Vector3D(0)) { }
-    
-    ScalarLoc(double x, double y, double z, double value, Vector3D color) : pos(Vector3D(x, y, z)), value(value), color(color) { }
-    
-    ScalarLoc(Vector3D pos, double value, Vector3D color) : pos(pos), value(value), color(color) { }
-    
-    ScalarLoc(ScalarLoc& loc) : pos(loc.pos), value(loc.value), color(loc.color) { }
+    ScalarLoc() : pos(Vector3D(0)), value(0), color(Vector3D(0)), shaderType(0) { }
 };
 
 //does Linear Interpolation between points p1 and p2 (they already contain their computed values)
