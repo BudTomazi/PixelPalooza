@@ -9,18 +9,18 @@
 
 using namespace CGL;
 
-//used to save triangles - 3 vertices and a normal vector
 typedef struct {
 	Vector3D p[3];
     Vector3D norm[3];
     Vector3D colors[3];
+    double shaderTypes[3];
 } MeshTriangle;
 
 struct ScalarLoc {
     Vector3D pos;
     float value;
     Vector3D color;
-    Particle* p;
+    int shaderType;
     
     ScalarLoc() : pos(Vector3D(0)), value(0), color(Vector3D(0)) { }
     

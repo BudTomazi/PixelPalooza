@@ -49,6 +49,8 @@ struct ParticleProperties {
     bool primitive_collision;
     bool particle_collisions;
     bool pinned;
+    
+    int shaderType;
 
     //vector<f> forces;
     //vector<float> strengths;

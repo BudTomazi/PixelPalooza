@@ -15,7 +15,6 @@ uniform float u_height_scaling;
 in vec4 v_position;
 in vec4 v_normal;
 in vec4 v_tangent;
-in vec2 v_uv;
 
 out vec4 out_color;
 
@@ -27,7 +26,7 @@ float h(vec2 uv) {
 
 void main() {
   // YOUR CODE HERE
-  float dU = (h(v_uv + vec2(1/u_texture_2_size.y, 0.0)) - h(v_uv)) * u_height_scaling * u_normal_scaling;
+  /*float dU = (h(v_uv + vec2(1/u_texture_2_size.y, 0.0)) - h(v_uv)) * u_height_scaling * u_normal_scaling;
   float dV = (h(v_uv + vec2(0.0, 1/u_texture_2_size.x)) - h(v_uv)) * u_height_scaling * u_normal_scaling;
   vec3 no = vec3(-dU, -dV, 1.0);
   mat3 TBN = mat3(vec3(v_tangent), cross(vec3(v_normal), vec3(v_tangent)), vec3(v_normal));
@@ -51,6 +50,6 @@ void main() {
   vec3 specular = u_light_intensity / (length(l) * length(l)) 
   * pow(max(0.0, dot(normalize(vec3(nd)), h)), 40);
 
-  out_color = vec4(ambient + diffuse + 0.8 * specular, 1.0);
+  out_color = vec4(ambient + diffuse + 0.8 * specular, 1.0);*/
 }
 

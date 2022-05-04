@@ -149,7 +149,7 @@ void ClothSimulator::load_shaders() {
 
     // Assuming that it's there, use "Wireframe" by default
     for (size_t i = 0; i < shaders_combobox_names.size(); ++i) {
-        if (shaders_combobox_names[i] == "Normal") {
+        if (shaders_combobox_names[i] == "Custom") {
             active_shader_idx = i;
             break;
         }
@@ -363,8 +363,9 @@ void ClothSimulator::drawPhong(GLShader& shader) {
     
     MatrixXf positions(4, num_tris * 3);
     MatrixXf normals(4, num_tris * 3);
-    MatrixXf uvs(2, num_tris * 3);
     MatrixXf tangents(4, num_tris * 3);
+    MatrixXf colors(4, num_tris * 3);
+    MatrixXf shaders(1, num_tris * 3);
 
     //cerr << "help";
     for (int i = 0; i < num_tris; i++) {
@@ -376,6 +377,10 @@ void ClothSimulator::drawPhong(GLShader& shader) {
         Vector3D n1 = triangles[i].norm[0];
         Vector3D n2 = triangles[i].norm[1];
         Vector3D n3 = triangles[i].norm[2];
+        
+        Vector3D c1 = triangles[i].colors[0];
+        Vector3D c2 = triangles[i].colors[1];
+        Vector3D c3 = triangles[i].colors[2];
 
         positions.col(i * 3) << p1.x, p1.y, p1.z, 1.0;
         positions.col(i * 3 + 1) << p2.x, p2.y, p2.z, 1.0;
@@ -385,20 +390,24 @@ void ClothSimulator::drawPhong(GLShader& shader) {
         normals.col(i * 3 + 1) << n2.x, n2.y, n2.z, 0.0;
         normals.col(i * 3 + 2) << n3.x, n3.y, n3.z, 0.0;
 
-        uvs.col(i * 3) << 0, 0;
-        uvs.col(i * 3 + 1) << 0, 0;
-        uvs.col(i * 3 + 2) << 0, 0;
-
         tangents.col(i * 3) << 1.0, 0.0, 0.0, 1.0;
         tangents.col(i * 3 + 1) << 1.0, 0.0, 0.0, 1.0;
         tangents.col(i * 3 + 2) << 1.0, 0.0, 0.0, 1.0;
+        
+        colors.col(i * 3) << c1.x, c1.y, c1.z, 0.0;
+        colors.col(i * 3 + 1) << c2.x, c2.y, c2.z, 0.0;
+        colors.col(i * 3 + 2) << c3.x, c3.y, c3.z, 0.0;
+        
+        shaders.col(i * 3) << triangles[i].shaderTypes[0];
+        shaders.col(i * 3 + 1) << triangles[i].shaderTypes[1];
+        shaders.col(i * 3 + 2) << triangles[i].shaderTypes[2];
     }
-
 
     shader.uploadAttrib("in_position", positions, false);
     shader.uploadAttrib("in_normal", normals, false);
-    shader.uploadAttrib("in_uv", uvs, false);
     shader.uploadAttrib("in_tangent", tangents, false);
+    shader.uploadAttrib("in_color", colors, false);
+    shader.uploadAttrib("in_shaderType", shaders, false);
 
     shader.drawArray(GL_TRIANGLES, 0, num_tris * 3);
     

@@ -300,9 +300,11 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     int n = sideCellCount + 1;
     int yz = n * n;
     
+    int numParticleTypes = particleProperties.size();
     for (int i = 0; i < totalVertexCount; i++) {
         cells[i].value = 0;
         cells[i].color = Vector3D(0);
+        cells[i].shaderType = -1;
     }
 
     // nick version
@@ -332,7 +334,6 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         }
     }*/
     
-    double particleRadius;
     int gridRadius;
     
     Vector3D offset;
@@ -343,13 +344,14 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     
     double newVal;
     double particleStrength;
-    Vector3D particleColor;
+    ParticleProperties* curProperties;
     
     int cellPos[3];
     
     for (int i = 0; i < particles.size(); i++) {
-        particleRadius = particleProperties[particles[i].particle_type].radius;
-        gridRadius = ceil(particleRadius / cellSize);
+        curProperties = &particleProperties[particles[i].particle_type];
+        
+        gridRadius = ceil(curProperties->radius / cellSize);
         particlePos = particles[i].position;
         
         cellPos[0] = floor((particlePos.x + borderDist) / cellSize);
@@ -364,7 +366,6 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         startIndex = (int)(cellPos[0] * yz + cellPos[1] * n + cellPos[2]);
 
         offset = particlePos - cells[startIndex].pos;
-        particleColor = particleColors[particles[i].particle_type];
         
         //TODO: can probably be optimized!!!!
         for (int dx = -gridRadius; dx <= gridRadius; dx++) {
@@ -378,16 +379,18 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
                     if (dz >= -cellPos[2] && dz < n - cellPos[2]) {
                         dist = (cellSize * Vector3D(dx, dy, dz) - offset).norm();
                         
-                        if (dist <= particleRadius) {
+                        if (dist <= curProperties->radius) {
                             particleStrength = cellSize + 0.11;
                         } else {
                             particleStrength = (cellSize / 100) / (dist * dist * dist);
                         }
                         
                         newVal = cells[curIndex].value + particleStrength;
-                        cells[curIndex].color = (cells[curIndex].value / newVal) * cells[curIndex].color + (particleStrength / newVal) * particleColor;
+                        cells[curIndex].color = (cells[curIndex].value / newVal) * cells[curIndex].color + (particleStrength / newVal) * curProperties->color;
                         cells[curIndex].value = newVal;
-                        cells[curIndex].p = &particles[i];
+                        if (curProperties->shaderType > cells[curIndex].shaderType) {
+                            cells[curIndex].shaderType = curProperties->shaderType;
+                        }
                     }
                     curIndex++;
                 }

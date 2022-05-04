@@ -52,6 +52,22 @@ Vector3D ColorInterp(ScalarLoc p1, ScalarLoc p2, float value) {
     }
 }
 
+int GetShaderType(ScalarLoc p1, ScalarLoc p2, float value) {
+    if (p1.shaderType != p2.shaderType) return p1.shaderType;
+    
+    if (p1.value > 0 && p2.value > 0) {
+        if (abs(value - p1.value) < abs(value - p2.value)) {
+            return p1.shaderType; // closer to p1
+        } else {
+            return p2.shaderType;
+        }
+    } else if (p1.value > 0) {
+        return p1.shaderType;
+    } else { // doens't matter
+        return p2.shaderType;
+    }
+}
+
 //Macros used to compute gradient vector on each vertex of a cube
 //argument should be the name of array of vertices
 //can be verts or *verts if done by reference
@@ -93,6 +109,7 @@ MeshTriangle* MarchingCubes(int ncellsX, int ncellsY, int ncellsZ,
     ScalarLoc* verts[8];            //vertices of a cube (array of pointers for extra speed)
     Vector3D intVerts[12];            //linearly interpolated vertices on each edge
     Vector3D intColors[12];
+    int shaderTypes[12];
     int cubeIndex;                    //shows which vertices are outside/inside
     int edgeIndex;                    //index returned by edgeTable[cubeIndex]
     Vector4D gradVerts[8];            //gradients at each vertex of a cube
@@ -138,6 +155,7 @@ MeshTriangle* MarchingCubes(int ncellsX, int ncellsY, int ncellsZ,
                 if(edgeIndex & 1) {
                     intVerts[0] = LinearInterp(*verts[0], *verts[1], minValue);
                     intColors[0] = ColorInterp(*verts[0], *verts[1], minValue);
+                    shaderTypes[0] = GetShaderType(*verts[0], *verts[1], minValue);
                     
                     if(i != 0 && j != 0 && k != 0) gradVerts[0] = CALC_GRAD_VERT_0(*verts)
                     else gradVerts[0] = Vector4D(1.0, 1.0, 1.0, 1.0);
@@ -150,6 +168,7 @@ MeshTriangle* MarchingCubes(int ncellsX, int ncellsY, int ncellsZ,
                 if(edgeIndex & 2) {
                     intVerts[1] = LinearInterp(*verts[1], *verts[2], minValue);
                     intColors[1] = ColorInterp(*verts[1], *verts[2], minValue);
+                    shaderTypes[1] = GetShaderType(*verts[1], *verts[2], minValue);
                     
                     if(! (indGrad & 2)) {
                         if(i != lastX-1 && j != 0 && k != 0) gradVerts[1] = CALC_GRAD_VERT_1(*verts)
@@ -165,6 +184,7 @@ MeshTriangle* MarchingCubes(int ncellsX, int ncellsY, int ncellsZ,
                 if(edgeIndex & 4) {
                     intVerts[2] = LinearInterp(*verts[2], *verts[3], minValue);
                     intColors[2] = ColorInterp(*verts[2], *verts[3], minValue);
+                    shaderTypes[2] = GetShaderType(*verts[2], *verts[3], minValue);
 
                     if(! (indGrad & 4)) {
                         if(i != lastX-1 && j != 0 && k != 0) gradVerts[2] = CALC_GRAD_VERT_2(*verts)
@@ -180,6 +200,7 @@ MeshTriangle* MarchingCubes(int ncellsX, int ncellsY, int ncellsZ,
                 if(edgeIndex & 8) {
                     intVerts[3] = LinearInterp(*verts[3], *verts[0], minValue);
                     intColors[3] = ColorInterp(*verts[3], *verts[0], minValue);
+                    shaderTypes[3] = GetShaderType(*verts[3], *verts[0], minValue);
 
                     if(! (indGrad & 8)) {
                         if(i != 0 && j != 0 && k != lastZ-1) gradVerts[3] = CALC_GRAD_VERT_3(*verts)
@@ -197,6 +218,7 @@ MeshTriangle* MarchingCubes(int ncellsX, int ncellsY, int ncellsZ,
                 if(edgeIndex & 16) {
                     intVerts[4] = LinearInterp(*verts[4], *verts[5], minValue);
                     intColors[4] = ColorInterp(*verts[4], *verts[5], minValue);
+                    shaderTypes[4] = GetShaderType(*verts[4], *verts[5], minValue);
 
                     if(i != 0 && j != lastY-1 && k != 0) gradVerts[4] = CALC_GRAD_VERT_4(*verts)
                     else gradVerts[4] = Vector4D(1.0, 1.0, 1.0, 1.0);
@@ -211,6 +233,7 @@ MeshTriangle* MarchingCubes(int ncellsX, int ncellsY, int ncellsZ,
                 if(edgeIndex & 32) {
                     intVerts[5] = LinearInterp(*verts[5], *verts[6], minValue);
                     intColors[5] = ColorInterp(*verts[5], *verts[6], minValue);
+                    shaderTypes[5] = GetShaderType(*verts[5], *verts[6], minValue);
 
                     if(! (indGrad & 32)) {
                         if(i != lastX-1 && j != lastY-1 && k != 0) gradVerts[5] = CALC_GRAD_VERT_5(*verts)
@@ -227,6 +250,7 @@ MeshTriangle* MarchingCubes(int ncellsX, int ncellsY, int ncellsZ,
                 if(edgeIndex & 64) {
                     intVerts[6] = LinearInterp(*verts[6], *verts[7], minValue);
                     intColors[6] = ColorInterp(*verts[6], *verts[7], minValue);
+                    shaderTypes[6] = GetShaderType(*verts[6], *verts[7], minValue);
 
                     if(! (indGrad & 64)) {
                         if(i != lastX-1 && j != lastY-1 && k != lastZ-1) gradVerts[6] = CALC_GRAD_VERT_6(*verts)
@@ -243,6 +267,7 @@ MeshTriangle* MarchingCubes(int ncellsX, int ncellsY, int ncellsZ,
                 if(edgeIndex & 128) {
                     intVerts[7] = LinearInterp(*verts[7], *verts[4], minValue);
                     intColors[7] = ColorInterp(*verts[7], *verts[4], minValue);
+                    shaderTypes[7] = GetShaderType(*verts[7], *verts[4], minValue);
 
                     if(! (indGrad & 128)) {
                         if(i != 0 && j != lastY-1 && k != lastZ-1) gradVerts[7] = CALC_GRAD_VERT_7(*verts)
@@ -260,6 +285,7 @@ MeshTriangle* MarchingCubes(int ncellsX, int ncellsY, int ncellsZ,
                 if(edgeIndex & 256) {
                     intVerts[8] = LinearInterp(*verts[0], *verts[4], minValue);
                     intColors[8] = ColorInterp(*verts[0], *verts[4], minValue);
+                    shaderTypes[8] = GetShaderType(*verts[0], *verts[4], minValue);
 
                     if(! (indGrad & 1)) {
                         if(i != 0 && j != 0 && k != 0) gradVerts[0] = CALC_GRAD_VERT_0(*verts)
@@ -277,6 +303,7 @@ MeshTriangle* MarchingCubes(int ncellsX, int ncellsY, int ncellsZ,
                 if(edgeIndex & 512) {
                     intVerts[9] = LinearInterp(*verts[1], *verts[5], minValue);
                     intColors[9] = ColorInterp(*verts[1], *verts[5], minValue);
+                    shaderTypes[9] = GetShaderType(*verts[1], *verts[5], minValue);
 
                     if(! (indGrad & 2)) {
                         if(i != lastX-1 && j != 0 && k != 0) gradVerts[1] = CALC_GRAD_VERT_1(*verts)
@@ -294,6 +321,7 @@ MeshTriangle* MarchingCubes(int ncellsX, int ncellsY, int ncellsZ,
                 if(edgeIndex & 1024) {
                     intVerts[10] = LinearInterp(*verts[2], *verts[6], minValue);
                     intColors[10] = ColorInterp(*verts[2], *verts[6], minValue);
+                    shaderTypes[10] = GetShaderType(*verts[2], *verts[6], minValue);
 
                     if(! (indGrad & 4)) {
                         if(i != lastX-1 && j != 0 && k != 0) gradVerts[2] = CALC_GRAD_VERT_2(*verts)
@@ -311,6 +339,7 @@ MeshTriangle* MarchingCubes(int ncellsX, int ncellsY, int ncellsZ,
                 if(edgeIndex & 2048) {
                     intVerts[11] = LinearInterp(*verts[3], *verts[7], minValue);
                     intColors[11] = ColorInterp(*verts[3], *verts[7], minValue);
+                    shaderTypes[11] = GetShaderType(*verts[3], *verts[7], minValue);
 
                     if(! (indGrad & 8)) {
                         if(i != 0 && j != 0 && k != lastZ-1) gradVerts[3] = CALC_GRAD_VERT_3(*verts)
@@ -331,10 +360,13 @@ MeshTriangle* MarchingCubes(int ncellsX, int ncellsY, int ncellsZ,
                 //now build the triangles using triTable
                 for (int n=0; triTable[cubeIndex][n] != -1; n+=3) {
                     int index[3] = {triTable[cubeIndex][n+2], triTable[cubeIndex][n+1], triTable[cubeIndex][n]};
+                    int cur;
                     for(int h=0; h < 3; h++) {    //copy vertices and normals into triangles array
-                        triangles[numTriangles].p[h] = intVerts[index[h]];
-                        triangles[numTriangles].norm[h] = grads[index[h]];
-                        triangles[numTriangles].colors[h] = intColors[index[h]];
+                        cur = index[h];
+                        triangles[numTriangles].p[h] = intVerts[cur];
+                        triangles[numTriangles].norm[h] = grads[cur];
+                        triangles[numTriangles].colors[h] = intColors[cur];
+                        triangles[numTriangles].shaderTypes[h] = shaderTypes[cur];
                     }
                     numTriangles++;    //one more triangle has been added
                 }
