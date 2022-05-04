@@ -74,6 +74,7 @@ struct Cloth {
     int totalVertexCount;
     int sideCellCount;
     double cellSize;
+    double borderDist;
     
     void initMarchingCubes(int numCells, double cellSize);
     MeshTriangle* getMarchingCubeMesh(int& numTriangles);

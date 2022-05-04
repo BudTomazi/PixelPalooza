@@ -184,11 +184,11 @@ void Cloth::initMarchingCubes(int numCells, double cellSize) {
     int numPoints = numCells + 1;
     int yz = numPoints * numPoints;        //for little extra speed
     
-    double min = -width / 2.0; // centers the entire grid
+    borderDist = width / 2.0; // centers the entire grid
     
     totalVertexCount = numPoints * numPoints * numPoints;
     cells = new ScalarLoc[totalVertexCount];
-    Vector3D bottomLeft = Vector3D(min);
+    Vector3D bottomLeft = Vector3D(-borderDist);
     
     for (int i = 0; i < totalVertexCount; i++) {
         cells[i].pos = cellSize * Vector3D(i / yz, (i / numPoints) % numPoints, i % numPoints) + bottomLeft;
@@ -197,7 +197,6 @@ void Cloth::initMarchingCubes(int numCells, double cellSize) {
 
 MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     double width = sideCellCount * cellSize; // how big the box is
-    double min = -width / 2.0; // centers the entire grid
     int n = sideCellCount + 1;
     int yz = n * n;
     
@@ -253,13 +252,13 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         gridRadius = ceil(particleRadius / cellSize);
         particlePos = particles[i].position;
         
-        cellPos[0] = floor((particlePos.x - min) / cellSize);
+        cellPos[0] = floor((particlePos.x + borderDist) / cellSize);
         if (cellPos[0] < 0 || cellPos[0] >= n) continue;
 
-        cellPos[1] = floor((particlePos.y - min) / cellSize);
+        cellPos[1] = floor((particlePos.y + borderDist) / cellSize);
         if (cellPos[1] < 0 || cellPos[1] >= n) continue;
 
-        cellPos[2] = floor((particlePos.z - min) / cellSize);
+        cellPos[2] = floor((particlePos.z + borderDist) / cellSize);
         if (cellPos[2] < 0 || cellPos[2] >= n) continue;
                     
         startIndex = (int)(cellPos[0] * yz + cellPos[1] * n + cellPos[2]);
