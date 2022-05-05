@@ -16,6 +16,7 @@
       "externalForces": [ 0, -100.0, 0 ],
       "pinned": 0,
       "shaderType": 2,
+      "partColl": 1,
       "particleAveragingFactor": 0.01,
       "receivedForces": [
         {
@@ -48,7 +49,11 @@
       "externalForces": [ 0, -100, 0 ],
       "pinned": 0,
       "shaderType": 1,
+<<<<<<< HEAD
+      "partColl": 1,
+=======
       "particleAveragingFactor": 0,
+>>>>>>> 24a302d3bf3635cce7167c066b721cf5d9c1e1e8
       "receivedForces": [
       ],
       "transformations": [ 2, 1, 1 ]
@@ -63,6 +68,7 @@
       "particleColor": [ 0.4, 0.4, 0.4 ],
       "externalForces": [ 0.0, 5.0, 0.0 ],
       "pinned": 0,
+      "partColl": 1,
       "shaderType": 0,
       "particleAveragingFactor": 0.001,
       "receivedForces": [

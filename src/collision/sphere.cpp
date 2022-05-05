@@ -13,7 +13,9 @@ void Sphere::collide(Particle &pm) {
 
 	if (offset.norm() <= radius) {
 		Vector3D correction = (pm.last_position - origin).unit() * radius + origin - pm.last_position;
-		pm.forces -= dot(pm.forces, offset.unit());
+		pm.forces -= dot(pm.forces, offset.unit()) * offset.unit();
+		pm.last_position -= dot(pm.last_position - pm.position, offset.unit()) * (offset).unit();
+
 		//pm.position = pm.last_position + (correction) * (1 - friction);
 	}
 
