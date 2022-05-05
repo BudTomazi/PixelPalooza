@@ -33,8 +33,9 @@ const string SPHERE = "sphere";
 const string PLANE = "plane";
 const string CLOTH = "cloth";
 const string PARTICLES = "particles";
+const string BOUNDARY = "bounds";
 
-const unordered_set<string> VALID_KEYS = {SPHERE, PLANE, CLOTH, PARTICLES};
+const unordered_set<string> VALID_KEYS = {SPHERE, PLANE, CLOTH, PARTICLES, BOUNDARY};
 
 ClothSimulator *app = nullptr;
 GLFWwindow *window = nullptr;
@@ -167,6 +168,11 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
   i >> j;
 
   std::cout << "loaded json" << "\n";
+    
+    auto boundary = j.find(BOUNDARY);
+    if (boundary == j.end()) {
+        incompleteObjectError("JSON", "boundary data");
+    }
 
   // Loop over objects in scene
   for (json::iterator it = j.begin(); it != j.end(); ++it) {
@@ -184,8 +190,6 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
 
     // Parse object depending on type (cloth, sphere, or plane)
     if (key == PARTICLES) {
-        cloth->initMarchingCubes(50, 0.2);
-        
       for (auto& particleData : object) {
           int particleCount;
           Vector3D spawnPos;
@@ -340,6 +344,36 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
 
       std::cout << "set up particles" << "\n";
         
+    } else if (key == BOUNDARY) {
+        double marchingSize;
+        double physicsBuffer;
+        int sideCellCounts[3];
+        
+        auto temp = object.find("marchingSize");
+        if (temp != object.end()) {
+            marchingSize = *temp;
+        } else {
+            incompleteObjectError("bounds", "marchingSize");
+        }
+        
+        temp = object.find("marchingCount");
+        if (temp != object.end()) {
+            vector<int> numCells = *temp;
+            sideCellCounts[0] = numCells[0];
+            sideCellCounts[1] = numCells[1];
+            sideCellCounts[2] = numCells[2];
+        } else {
+            incompleteObjectError("bounds", "marchingCount");
+        }
+        
+        temp = object.find("physicsBuffer");
+        if (temp != object.end()) {
+            physicsBuffer = *temp;
+        } else {
+            incompleteObjectError("bounds", "physicsBuffer");
+        }
+        
+        cloth->initMarchingCubes(sideCellCounts[0], sideCellCounts[1], sideCellCounts[2], marchingSize, physicsBuffer);
     } else if (key == SPHERE) {
       Vector3D origin;
       double radius, friction;
@@ -539,7 +573,7 @@ int main(int argc, char **argv) {
 
     // Draw nanogui
     screen->drawContents();
-    screen->drawWidgets();
+//    screen->drawWidgets();
 
     glfwSwapBuffers(window);
 

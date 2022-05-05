@@ -308,18 +308,18 @@ float Cloth::hash_position(Vector3D pos) {
 
     double num_width_points = 4;
     double num_height_points = 4;
-    double w = 2 * physicsBorder / num_width_points;
-    double h = 2 * physicsBorder / num_width_points;
-    double z = 2 * physicsBorder / num_height_points;
+    double w = 2 * physicsBorder.x / num_width_points;
+    double h = 2 * physicsBorder.y / num_width_points;
+    double z = 2 * physicsBorder.z / num_height_points;
 
 
     int x_coord;
     int y_coord;
     int z_coord;
 
-    x_coord = (int)((pos.x + physicsBorder) / w);
-    y_coord = (int)((pos.y + physicsBorder) / h);
-    z_coord = (int)((pos.z + physicsBorder) / z);
+    x_coord = (int)((pos.x + physicsBorder.x) / w);
+    y_coord = (int)((pos.y + physicsBorder.y) / h);
+    z_coord = (int)((pos.z + physicsBorder.z) / z);
 
 
     float output = x_coord + num_width_points * y_coord + num_width_points * num_height_points * z_coord;
@@ -328,23 +328,28 @@ float Cloth::hash_position(Vector3D pos) {
 
 // Marching cubes
 
-void Cloth::initMarchingCubes(int numCells, double cellSize) {
-    this->sideCellCount = numCells;
+void Cloth::initMarchingCubes(int numCellsX, int numCellsY, int numCellsZ, double cellSize, double physicsBuffer) {
+    sideCellCount[0] = numCellsX;
+    sideCellCount[1] = numCellsY;
+    sideCellCount[2] = numCellsZ;
     this->cellSize = cellSize;
 
-    double width = numCells * cellSize; // how big the box is
+    borderDist = cellSize * Vector3D(numCellsX, numCellsY, numCellsZ) / 2;
 
-    int numPoints = numCells + 1;
-    int yz = numPoints * numPoints;        //for little extra speed
+    int numPoints[3];
+    numPoints[0] = sideCellCount[0]+1;
+    numPoints[1] = sideCellCount[1]+1;
+    numPoints[2] = sideCellCount[2]+1;
 
-    borderDist = width / 2.0; // centers the entire grid
-    physicsBorder = borderDist / 3.0;// - 20 * cellSize;
-    planeLocs.emplace_back(Vector3D(physicsBorder, 0.0, 0.0));
-    planeLocs.emplace_back(Vector3D(-physicsBorder, 0.0, 0.0));
+    int yz = numPoints[1] * numPoints[2];        //for little extra speed
+
+    physicsBorder = borderDist - Vector3D(physicsBuffer);
+    planeLocs.emplace_back(Vector3D(physicsBorder.x, 0.0, 0.0));
+    planeLocs.emplace_back(Vector3D(-physicsBorder.x, 0.0, 0.0));
     //planeLocs.emplace_back(Vector3D(0.0, physicsBorder, 0.0));
-    planeLocs.emplace_back(Vector3D(0.0, -physicsBorder, 0.0));
-    planeLocs.emplace_back(Vector3D(0.0, 0.0, physicsBorder));
-    planeLocs.emplace_back(Vector3D(0.0, 0.0, -physicsBorder));
+    planeLocs.emplace_back(Vector3D(0.0, -physicsBorder.y, 0.0));
+    planeLocs.emplace_back(Vector3D(0.0, 0.0, physicsBorder.z));
+    planeLocs.emplace_back(Vector3D(0.0, 0.0, -physicsBorder.z));
 
     planeNorms.emplace_back(Vector3D(-1.0, 0.0, 0.0));
     planeNorms.emplace_back(Vector3D(1.0, 0.0, 0.0));
@@ -353,19 +358,20 @@ void Cloth::initMarchingCubes(int numCells, double cellSize) {
     planeNorms.emplace_back(Vector3D(0.0, 0.0, -1.0));
     planeNorms.emplace_back(Vector3D(0.0, 0.0, 1.0));
 
-    totalVertexCount = numPoints * numPoints * numPoints;
+    totalVertexCount = numPoints[0] * numPoints[1] * numPoints[2];
     cells = new ScalarLoc[totalVertexCount];
     Vector3D bottomLeft = Vector3D(-borderDist);
 
     for (int i = 0; i < totalVertexCount; i++) {
-        cells[i].pos = cellSize * Vector3D(i / yz, (i / numPoints) % numPoints, i % numPoints) + bottomLeft;
+        cells[i].pos = cellSize * Vector3D(i / yz, (i / numPoints[2]) % numPoints[1], i % numPoints[2]) + bottomLeft;
     }
 }
 
 MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
-    double width = sideCellCount * cellSize; // how big the box is
-    int n = sideCellCount + 1;
-    int yz = n * n;
+    int numX = sideCellCount[0] + 1;
+    int numY = sideCellCount[1] + 1;
+    int numZ = sideCellCount[2] + 1;
+    int yz = numY * numZ;
 
     int numParticleTypes = particleProperties.size();
     for (int i = 0; i < totalVertexCount; i++) {
@@ -436,16 +442,16 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         gridRadius = ceil(curProperties->radius / cellSize);
         particlePos = particles[i].position;
 
-        cellPos[0] = floor((particlePos.x + borderDist) / cellSize);
-        if (cellPos[0] < 0 || cellPos[0] >= n) continue;
+        cellPos[0] = floor((particlePos.x + borderDist.x) / cellSize);
+        if (cellPos[0] < 0 || cellPos[0] >= numX) continue;
 
-        cellPos[1] = floor((particlePos.y + borderDist) / cellSize);
-        if (cellPos[1] < 0 || cellPos[1] >= n) continue;
+        cellPos[1] = floor((particlePos.y + borderDist.y) / cellSize);
+        if (cellPos[1] < 0 || cellPos[1] >= numY) continue;
 
-        cellPos[2] = floor((particlePos.z + borderDist) / cellSize);
-        if (cellPos[2] < 0 || cellPos[2] >= n) continue;
+        cellPos[2] = floor((particlePos.z + borderDist.z) / cellSize);
+        if (cellPos[2] < 0 || cellPos[2] >= numZ) continue;
 
-        startIndex = (int)(cellPos[0] * yz + cellPos[1] * n + cellPos[2]);
+        startIndex = (int)(cellPos[0] * yz + cellPos[1] * numZ + cellPos[2]);
 
         offset = particlePos - cells[startIndex].pos;
 
@@ -454,14 +460,14 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         double h9 = h2 * h2 * h2 * h2 * curProperties->radius;
 
         for (int dx = -gridRadius; dx <= gridRadius; dx++) {
-            if (dx < -cellPos[0] || dx >= n - cellPos[0]) continue;
+            if (dx < -cellPos[0] || dx >= numX - cellPos[0]) continue;
 
             for (int dy = -gridRadius; dy <= gridRadius; dy++) {
-                if (dy < -cellPos[1] || dy >= n - cellPos[1]) continue;
+                if (dy < -cellPos[1] || dy >= numY - cellPos[1]) continue;
 
-                curIndex = startIndex + dx * yz + dy * n - gridRadius;
+                curIndex = startIndex + dx * yz + dy * numZ - gridRadius;
                 for (int dz = -gridRadius; dz <= gridRadius; dz++) {
-                    if (dz >= -cellPos[2] && dz < n - cellPos[2]) {
+                    if (dz >= -cellPos[2] && dz < numZ - cellPos[2]) {
                         particleStrength = curProperties->mass * smoothingKernel(cellSize * Vector3D(dx, dy, dz), offset, h2, h9) / particles[i].density;
                         
 //                        dist = (cellSize * Vector3D(dx, dy, dz) - offset).norm();
@@ -492,17 +498,17 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
                 if (other.particle_type == curParticleType) {
                     Vector3D pos = 0.5 * (particles[i].position + other.position);
                     
-                    cellPos[0] = floor((pos.x + borderDist) / cellSize);
-                    if (cellPos[0] < 0 || cellPos[0] >= n) continue;
+                    cellPos[0] = floor((pos.x + borderDist.x) / cellSize);
+                    if (cellPos[0] < 0 || cellPos[0] >= numX) continue;
 
-                    cellPos[1] = floor((pos.y + borderDist) / cellSize);
-                    if (cellPos[1] < 0 || cellPos[1] >= n) continue;
+                    cellPos[1] = floor((pos.y + borderDist.y) / cellSize);
+                    if (cellPos[1] < 0 || cellPos[1] >= numY) continue;
 
-                    cellPos[2] = floor((pos.z + borderDist) / cellSize);
-                    if (cellPos[2] < 0 || cellPos[2] >= n) continue;
+                    cellPos[2] = floor((pos.z + borderDist.z) / cellSize);
+                    if (cellPos[2] < 0 || cellPos[2] >= numZ) continue;
 
                     
-                    curIndex = (int)(cellPos[0] * yz + cellPos[1] * n + cellPos[2]);
+                    curIndex = (int)(cellPos[0] * yz + cellPos[1] * numZ + cellPos[2]);
 
                     particleStrength = curProperties->particleAveragingFactor;
                     
@@ -519,7 +525,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     }
 
     double minValue = 0.02;
-    MeshTriangle* triangles = MarchingCubes(sideCellCount, sideCellCount, sideCellCount, cellSize, cellSize, cellSize, minValue, cells, numTriangles);
+    MeshTriangle* triangles = MarchingCubes(sideCellCount[0], sideCellCount[1], sideCellCount[2], cellSize, cellSize, cellSize, minValue, cells, numTriangles);
 
 //    MeshTriangle* triangles = MarchingCubesCross(size, size, size, c, cells, numTriangles);
 

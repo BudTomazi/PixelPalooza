@@ -73,14 +73,14 @@ struct Cloth {
     // marching cubes
     ScalarLoc* cells;
     int totalVertexCount;
-    int sideCellCount;
+    int sideCellCount[3];
     double cellSize;
-    double borderDist;
-    double physicsBorder;
+    Vector3D borderDist;
+    Vector3D physicsBorder;
     vector<Vector3D> planeLocs;
     vector<Vector3D> planeNorms;
     
-    void initMarchingCubes(int numCells, double cellSize);
+    void initMarchingCubes(int numCellsX, int numCellsY, int numCellsZ, double cellSize, double physicsBuffer);
     MeshTriangle* getMarchingCubeMesh(int& numTriangles);
 
     // Spatial hashing
