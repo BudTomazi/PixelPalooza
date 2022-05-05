@@ -29,6 +29,7 @@ struct Particle {
     Vector3D last_position;
     Vector3D forces;
     bool pinned;
+    double density;
 
     int particle_type;
 
