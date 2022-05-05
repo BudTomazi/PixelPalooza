@@ -14,7 +14,7 @@ class Halfedge;
 struct Particle {
     Particle(Vector3D position, int particle_type)
         : start_position(position), position(position),
-        last_position(position), particle_type(particle_type), pinned(false) {}
+        last_position(position), particle_type(particle_type), pinned(false), start_type(particle_type) {}
 
     Vector3D normal();
     Vector3D velocity(double delta_t) {
@@ -23,6 +23,7 @@ struct Particle {
 
     // static values
     Vector3D start_position;
+    int start_type;
 
     // dynamic values
     Vector3D position;

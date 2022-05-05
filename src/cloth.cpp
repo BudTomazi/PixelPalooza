@@ -474,6 +474,7 @@ void Cloth::reset() {
     for (int i = 0; i < particles.size(); i++) {
         particle->position = particle->start_position;
         particle->last_position = particle->start_position;
+        particle->particle_type = particle->start_type;
         particle++;
     }
 }
