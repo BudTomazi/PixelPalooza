@@ -56,6 +56,7 @@ struct ParticleProperties {
     
     int shaderType;
     double particleAveragingFactor;
+    double particleAveragingDist;
 
     //vector<f> forces;
     //vector<float> strengths;

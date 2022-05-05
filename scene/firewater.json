@@ -2,7 +2,8 @@
   "bounds": {
       "marchingSize": 0.2,
       "marchingCount": [24, 30, 24],
-      "physicsBuffer": 0.5
+      "physicsBuffer": 0.5,
+      "noTop": 1
   },
   "particles": [
     {

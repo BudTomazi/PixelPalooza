@@ -79,8 +79,9 @@ struct Cloth {
     vector<Vector3D> planeLocs;
     vector<Vector3D> planeNorms;
     
-    void initMarchingCubes(int numCellsX, int numCellsY, int numCellsZ, double cellSize, double physicsBuffer);
+    void initMarchingCubes(int numCellsX, int numCellsY, int numCellsZ, double cellSize, double physicsBuffer, bool noTop);
     MeshTriangle* getMarchingCubeMesh(int& numTriangles);
+    MeshTriangle* getTrianglesMesh(int& numTriangles);
 
     // Spatial hashing
     unordered_map<float, vector<Particle*>*> map;

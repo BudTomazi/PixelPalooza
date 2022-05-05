@@ -280,6 +280,12 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
               properties.particleAveragingFactor = *temp;
           }
           
+          temp = particleData.find("particleAveragingDist");
+          properties.particleAveragingDist = 0;
+          if (temp != particleData.end()) {
+              properties.particleAveragingDist = *temp;
+          }
+          
           temp = particleData.find("particleColor");
           if (temp != particleData.end()) {
               vector<double> vec_color = *temp;
@@ -382,6 +388,12 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
             incompleteObjectError("bounds", "marchingCount");
         }
         
+        temp = object.find("noTop");
+        bool noTop = false;
+        if (temp != object.end() && *temp == 1) {
+            noTop = true;
+        }
+        
         temp = object.find("physicsBuffer");
         if (temp != object.end()) {
             physicsBuffer = *temp;
@@ -389,7 +401,7 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
             incompleteObjectError("bounds", "physicsBuffer");
         }
         
-        cloth->initMarchingCubes(sideCellCounts[0], sideCellCounts[1], sideCellCounts[2], marchingSize, physicsBuffer);
+        cloth->initMarchingCubes(sideCellCounts[0], sideCellCounts[1], sideCellCounts[2], marchingSize, physicsBuffer, noTop);
     } else if (key == SPHERE) {
       Vector3D origin;
       double radius, friction;
@@ -416,9 +428,9 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
         incompleteObjectError("sphere", "friction");
       }
 
-      for (int k = 0; k < 10; k++) {
+      for (int k = 0; k < 3; k++) {
           float a = (rand() % 100) / 100.0 - 0.5;
-          float b = (rand() % 100) / 100.0 - 0.5;
+          float b = 2 * (rand() % 100) / 100.0 - 1.4;
           float c = (rand() % 100) / 100.0 - 0.5;
           Sphere* s = new Sphere(origin + Vector3D(2 * a, 4 * b, 2 * c), radius, friction, sphere_num_lat, sphere_num_lon);
           objects->push_back(s);
