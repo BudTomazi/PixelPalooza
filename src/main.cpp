@@ -303,13 +303,15 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
                           curLaw = &r4_law;
                       } else if (lawName == "cross") {
                           curLaw = &cross_law;
-                      } else {
-                          incompleteObjectError("force", "law");
+                      }else if (lawName == "fireForce") {
+                          curLaw = &fire_force;
+                      }else {
+                          incompleteObjectError("force", "law1");
                       }
                                         
                       properties.force_laws.emplace_back(curLaw);
                   } else {
-                      incompleteObjectError("force", "law");
+                      incompleteObjectError("force", "law2");
                   }
                   
                   std::cout << "end forces" << "\n";

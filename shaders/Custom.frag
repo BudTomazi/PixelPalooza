@@ -53,7 +53,13 @@ void main() {
         vec3 out_ray = in_ray - 2 * sideways;
 
         out_color = v_color / 3.0 + texture(u_texture_cubemap, out_ray) * (2.0 / 3.0);
-    } else {
+    } else if(v_shaderType < 2.01){
+        out_color[0] = 1.0;
+        out_color[1] = (v_position[1] + 3.0)/10.0;
+        out_color[2] = 0.0;
+        out_color[3] = 1.0;
+    }
+    else {
         out_color = vec4(0, 0, 0, 1);
     }
 //    out_color = v_normal;

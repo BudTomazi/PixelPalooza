@@ -36,6 +36,16 @@ Vector3D cross_law(Particle* p1, Particle* p2) {
     return cross(vel1, vel2);
 };
 
+Vector3D fire_force(Particle* p1, Particle* p2) {
+    Vector3D pos1 = p1->position;
+    Vector3D pos2 = p2->position;
+    Vector3D dir = pos1 - pos2;
+    float dist = dir.norm();
+    dir = Vector3D(0.0, -1.0, 0.0);
+    //new commen
+    return dir/dist;
+};
+
 void PlaneCollision(Vector3D planeLoc, Vector3D planeNorm, Particle& p) {
     double last_side, curr_side;
     last_side = dot(p.last_position - planeLoc, planeNorm);
@@ -69,23 +79,23 @@ Cloth::~Cloth() {
 
     particleProperties.clear();
     particleColors.clear();
-    
+
     delete[] cells;
 }
 
 void Cloth::spawnParticles(int count, Vector3D spawnPos, double spawnRadius, ParticleProperties properties) {
     int particleType = particleProperties.size();
     Vector3D curSpawnPos;
-    
+
     for (int i = 0; i < count; i++) {
         curSpawnPos = spawnPos + Vector3D(
                     -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius),
                     -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius),
                     -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius));
-        
+
         particles.push_back(Particle(curSpawnPos, particleType));
     }
-    
+
     particleProperties.push_back(properties);
     particleColors.push_back(properties.color);
 }
@@ -93,7 +103,7 @@ void Cloth::spawnParticles(int count, Vector3D spawnPos, double spawnRadius, Par
 void Cloth::simulate(double frames_per_sec, double simulation_steps,
     vector<Vector3D> external_accelerations,
     vector<CollisionObject*>* collision_objects) {
-    
+
     //Particle force calculations-----------------------------
     double delta_t = 1.0f / frames_per_sec / simulation_steps;
     double distSqr;
@@ -116,9 +126,9 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
         curProperties = &particleProperties[curParticle->particle_type];
         int cType = curParticle->particle_type;
         forces = Vector3D(0);
-        
+
         vector<Particle*>* localCandidates = map[hash_position(curParticle->position)];
-        
+
         for (int k = 0; k < curProperties->force_laws.size(); k++) {
             if (!curProperties->localized[k]) {
                 for (int j = 0; j < particles.size(); j++) {
@@ -139,7 +149,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
             else {
                 for (Particle* p : *localCandidates) {
                     if (p == curParticle) continue;
-                    
+
                     int oType = p->particle_type;
                     dir = p->position - curParticle->position;
                     distSqr = dir.norm2();
@@ -172,13 +182,13 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
             (*prim)->collide(*p);
         }
     }
-    
+
     for (int i = 0; i < planeNorms.size(); i++) {
         for (int j = 0; j < particles.size(); j++) {
             PlaneCollision(planeLocs[i], planeNorms[i], particles[j]);
         }
     }
-    
+
     Vector3D curPos;
     Vector3D newPos;
     double delta_t_sqr = delta_t * delta_t;
@@ -187,7 +197,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
     Vector3D normal;
 
     //cerr << "help1\n";
-    
+
     //cerr << "help2\n";
 
     //loop through and update particle positions via verlet integration
@@ -207,14 +217,14 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
         curParticle->last_position = curPos;
     }
 
-    
+
     //build_spatial_map();
     /*for (auto p = particles.begin(); p != particles.end(); p++) {
         if (p->pinned) continue;
         self_collide(*p, simulation_steps);
     }*/
 
-    
+
 }
 
 void Cloth::build_spatial_map() {
@@ -255,7 +265,9 @@ void Cloth::self_collide(Particle& pm, double simulation_steps) {
         if (p != &pm && (pm.position - p->position).norm() < (r1 + r2)) {
             counter += 1;
             correction += (pm.position - p->position).unit() * (r1 + r2) + p->position - pm.position;
+            int last_type = pm.particle_type;
             pm.particle_type = curProperties->collision_transformations[p->particle_type];
+            p->particle_type = otherProperties->collision_transformations[last_type];
         }
     }
 
@@ -281,7 +293,7 @@ float Cloth::hash_position(Vector3D pos) {
     double w = 2 * physicsBorder / num_width_points;
     double h = 2 * physicsBorder / num_width_points;
     double z = 2 * physicsBorder / num_height_points;
-    
+
 
     int x_coord;
     int y_coord;
@@ -290,10 +302,10 @@ float Cloth::hash_position(Vector3D pos) {
     x_coord = (int)((pos.x + physicsBorder) / w);
     y_coord = (int)((pos.y + physicsBorder) / h);
     z_coord = (int)((pos.z + physicsBorder) / z);
- 
+
 
     float output = x_coord + num_width_points * y_coord + num_width_points * num_height_points * z_coord;
-   return output; 
+   return output;
 }
 
 // Marching cubes
@@ -301,12 +313,12 @@ float Cloth::hash_position(Vector3D pos) {
 void Cloth::initMarchingCubes(int numCells, double cellSize) {
     this->sideCellCount = numCells;
     this->cellSize = cellSize;
-    
+
     double width = numCells * cellSize; // how big the box is
-        
+
     int numPoints = numCells + 1;
     int yz = numPoints * numPoints;        //for little extra speed
-    
+
     borderDist = width / 2.0; // centers the entire grid
     physicsBorder = borderDist / 3.0;// - 20 * cellSize;
     planeLocs.emplace_back(Vector3D(physicsBorder, 0.0, 0.0));
@@ -322,11 +334,11 @@ void Cloth::initMarchingCubes(int numCells, double cellSize) {
     planeNorms.emplace_back(Vector3D(0.0, 1.0, 0.0));
     planeNorms.emplace_back(Vector3D(0.0, 0.0, -1.0));
     planeNorms.emplace_back(Vector3D(0.0, 0.0, 1.0));
-    
+
     totalVertexCount = numPoints * numPoints * numPoints;
     cells = new ScalarLoc[totalVertexCount];
     Vector3D bottomLeft = Vector3D(-borderDist);
-    
+
     for (int i = 0; i < totalVertexCount; i++) {
         cells[i].pos = cellSize * Vector3D(i / yz, (i / numPoints) % numPoints, i % numPoints) + bottomLeft;
     }
@@ -336,14 +348,14 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     double width = sideCellCount * cellSize; // how big the box is
     int n = sideCellCount + 1;
     int yz = n * n;
-    
+
     int numParticleTypes = particleProperties.size();
     for (int i = 0; i < totalVertexCount; i++) {
         cells[i].value = 0;
         cells[i].color = Vector3D(0);
         cells[i].shaderType = -1;
     }
-    
+
     build_spatial_map();
     ParticleProperties* otherProperties;
     for (Particle& curParticle : particles) {
@@ -376,7 +388,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
                     Vector3D pos = 0.25 * (particles[i].position + particles[j].position + particles[k].position + particles[l].position);
                     int index = (int)(floor((pos.x - min) / c) * yz + floor((pos.y - min) / c) * n + floor((pos.z - min) / c));
                     if (index < 0 || index >= numCells) continue;
-                    
+
                     Vector3D newColor = 0.25 * (color + color2 + color3 + particleColors[particles[j].particle_type]);
 
                     cells[index].color = cells[index].color * (cells[index].value / (0.01 + cells[index].value)) + newColor * (0.01 / (0.01 + cells[index].value));
@@ -385,27 +397,27 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
             }
         }
     }*/
-    
+
     int gridRadius;
-    
+
     Vector3D offset;
     Vector3D particlePos;
     int startIndex;
     int curIndex;
     double dist;
-    
+
     double newVal;
     double particleStrength;
     ParticleProperties* curProperties;
-    
+
     int cellPos[3];
-    
+
     for (int i = 0; i < particles.size(); i++) {
         curProperties = &particleProperties[particles[i].particle_type];
-        
+
         gridRadius = ceil(curProperties->radius / cellSize);
         particlePos = particles[i].position;
-        
+
         cellPos[0] = floor((particlePos.x + borderDist) / cellSize);
         if (cellPos[0] < 0 || cellPos[0] >= n) continue;
 
@@ -414,18 +426,18 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
 
         cellPos[2] = floor((particlePos.z + borderDist) / cellSize);
         if (cellPos[2] < 0 || cellPos[2] >= n) continue;
-                    
+
         startIndex = (int)(cellPos[0] * yz + cellPos[1] * n + cellPos[2]);
 
         offset = particlePos - cells[startIndex].pos;
-        
+
         //TODO: can probably be optimized!!!!
         double h2 = curProperties->radius;
         double h9 = h2 * h2 * h2 * h2 * curProperties->radius;
-        
+
         for (int dx = -gridRadius; dx <= gridRadius; dx++) {
             if (dx < -cellPos[0] || dx >= n - cellPos[0]) continue;
-            
+
             for (int dy = -gridRadius; dy <= gridRadius; dy++) {
                 if (dy < -cellPos[1] || dy >= n - cellPos[1]) continue;
 
@@ -454,12 +466,12 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
             }
         }
     }
-    
+
     double minValue = 0.02;
     MeshTriangle* triangles = MarchingCubes(sideCellCount, sideCellCount, sideCellCount, cellSize, cellSize, cellSize, minValue, cells, numTriangles);
-    
+
 //    MeshTriangle* triangles = MarchingCubesCross(size, size, size, c, cells, numTriangles);
-    
+
 //    MeshTriangle* triangles = MCRecFind(size, size, size, c, c, c, 0.1f, cells, numTriangles);
     return triangles;
 }

@@ -20,6 +20,7 @@ enum e_orientation { HORIZONTAL = 0, VERTICAL = 1 };
 Vector3D r2_law(Particle* p1, Particle* p2);
 Vector3D r4_law(Particle* p1, Particle* p2);
 Vector3D cross_law(Particle* p1, Particle* p2);
+Vector3D fire_force(Particle* p1, Particle* p2);
 
 struct ClothParameters {
     ClothParameters() {}
