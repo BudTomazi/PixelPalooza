@@ -81,18 +81,18 @@ void ClothSimulator::load_textures() {
     std::cout << "Texture 4 loaded with size: " << m_gl_texture_4_size << std::endl;
 
     std::vector<std::string> cubemap_fnames = {
-      //m_project_root + "/textures/cube/posx.jpg",
-      //m_project_root + "/textures/cube/negx.jpg",
-      //m_project_root + "/textures/cube/posy.jpg",
-      //m_project_root + "/textures/cube/negy.jpg",
-      //m_project_root + "/textures/cube/posz.jpg",
-      //m_project_root + "/textures/cube/negz.jpg"
-        m_project_root + "/textures/cube/MegaSunFront.png",
-        m_project_root + "/textures/cube/MegaSunBack.png",
-        m_project_root + "/textures/cube/MegaSunTop.png",
-        m_project_root + "/textures/cube/MegaSunBottom.png",
-        m_project_root + "/textures/cube/MegaSunRight.png",
-        m_project_root + "/textures/cube/MegaSunLeft.png",
+      m_project_root + "/textures/cube/posx.jpg",
+      m_project_root + "/textures/cube/negx.jpg",
+      m_project_root + "/textures/cube/posy.jpg",
+      m_project_root + "/textures/cube/negy.jpg",
+      m_project_root + "/textures/cube/posz.jpg",
+      m_project_root + "/textures/cube/negz.jpg"
+//        m_project_root + "/textures/cube/MegaSunFront.png",
+//        m_project_root + "/textures/cube/MegaSunBack.png",
+//        m_project_root + "/textures/cube/MegaSunTop.png",
+//        m_project_root + "/textures/cube/MegaSunBottom.png",
+//        m_project_root + "/textures/cube/MegaSunRight.png",
+//        m_project_root + "/textures/cube/MegaSunLeft.png",
 
     };
 
