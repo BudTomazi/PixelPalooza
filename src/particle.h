@@ -57,6 +57,7 @@ struct ParticleProperties {
     int shaderType;
     double particleAveragingFactor;
     double particleAveragingDist;
+    double particleAveragingBrightness;
     
     Vector3D velocity;
     Vector3D velocityColor;

@@ -304,6 +304,12 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
               properties.particleAveragingDist = *temp;
           }
           
+          temp = particleData.find("particleAveragingBrightness");
+          properties.particleAveragingBrightness = 1;
+          if (temp != particleData.end()) {
+              properties.particleAveragingBrightness = *temp;
+          }
+          
           temp = particleData.find("particleColor");
           if (temp != particleData.end()) {
               vector<double> vec_color = *temp;

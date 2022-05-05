@@ -532,6 +532,8 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
 
         if (curProperties->particleAveragingFactor > 0) {
             int curParticleType = particles[i].particle_type;
+            curParticleColor *= curProperties->particleAveragingBrightness;
+            
             for (Particle& other : particles) {
                 if (other.particle_type == curParticleType) {
                     if (curProperties->particleAveragingDist > 0 && (particles[i].position - other.position).norm2() > curProperties->particleAveragingDist) {
@@ -554,7 +556,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
                     particleStrength = curProperties->particleAveragingFactor;
 
                     newVal = cells[curIndex].value + particleStrength;
-                    cells[curIndex].color = (cells[curIndex].value / newVal) * cells[curIndex].color + (particleStrength / newVal) * curProperties->color;
+                    cells[curIndex].color = (cells[curIndex].value / newVal) * cells[curIndex].color + (particleStrength / newVal) * curParticleColor;
                     cells[curIndex].value = newVal;
                     if (curProperties->shaderType > cells[curIndex].shaderType) {
                         cells[curIndex].shaderType = curProperties->shaderType;
