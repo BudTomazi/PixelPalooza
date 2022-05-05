@@ -16,7 +16,7 @@ Vector3D r2_law(Particle* p1, Particle* p2) {
     Vector3D pos1 = p1->position;
     Vector3D pos2 = p2->position;
     Vector3D dir = pos1 - pos2;
-    float distSqr = dir.norm2();
+    float distSqr = dir.norm();
     dir = dir.unit();
     //new commen
     return dir / distSqr;
@@ -40,6 +40,16 @@ Vector3D cross_law(Particle* p1, Particle* p2) {
     float distSqr = dir.norm2();
     dir = dir.unit();
     return cross(vel1, vel2);
+};
+
+Vector3D fire_force(Particle* p1, Particle* p2) {
+    Vector3D pos1 = p1->position;
+    Vector3D pos2 = p2->position;
+    Vector3D dir = pos1 - pos2;
+    float dist = dir.norm();
+    dir = Vector3D(0.0, -1.0, 0.0);
+    //new commen
+    return dir/dist;
 };
 
 void PlaneCollision(Vector3D planeLoc, Vector3D planeNorm, Particle& p) {
@@ -150,7 +160,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
 
                         Vector3D force = -curProperties->force_laws[k](curParticle, p);
                         float factor = curProperties->strengths[k][oType];
-                        //forces += factor * force;
+                        forces += factor * force;
 
                 }
             }
@@ -259,7 +269,9 @@ void Cloth::self_collide(Particle& pm, double simulation_steps) {
         if (p != &pm && (pm.position - p->position).norm() < (r1 + r2)) {
             counter += 1;
             correction += (pm.position - p->position).unit() * (r1 + r2) + p->position - pm.position;
+            int last_type = pm.particle_type;
             pm.particle_type = curProperties->collision_transformations[p->particle_type];
+            p->particle_type = otherProperties->collision_transformations[last_type];
         }
     }
 

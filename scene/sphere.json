@@ -1,6 +1,6 @@
 {
   "sphere": {
-    "origin": [ 0.0, -1.9, 0.0 ],
+    "origin": [ 0.0, -2.3, 0.0 ],
     "radius": 1.0,
     "friction": 0.3
   },
@@ -50,7 +50,7 @@
       "receivedForces": [
         {
           "law": "r2",
-          "strengths": [ 0.0, 0.4, 0.0 ],
+          "strengths": [ 0.0, 0.0, 0.0 ],
           "localized": 1
         },
         {
