@@ -190,6 +190,10 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
 
     // Parse object depending on type (cloth, sphere, or plane)
     if (key == PARTICLES) {
+        //TODO: how to do this better?
+        cloth->frames_per_sec = 90;
+        cloth->simulation_steps = 30;
+        
       for (auto& particleData : object) {
           int particleCount;
           Vector3D spawnPos;
@@ -246,6 +250,20 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
               properties.external_forces = Vector3D(vec_forces[0], vec_forces[1], vec_forces[2]);
           } else {
               incompleteObjectError("particles", "externalForces");
+          }
+          
+          temp = particleData.find("velocity");
+          properties.velocity = Vector3D(0);
+          if (temp != particleData.end()) {
+              vector<double> vec_vel = *temp;
+              properties.velocity = Vector3D(vec_vel[0], vec_vel[1], vec_vel[2]);
+          }
+          
+          temp = particleData.find("velocityColor");
+          properties.velocityColor = Vector3D(0);
+          if (temp != particleData.end()) {
+              vector<double> vec_vel = *temp;
+              properties.velocityColor = Vector3D(vec_vel[0], vec_vel[1], vec_vel[2]);
           }
           
           temp = particleData.find("pinned");

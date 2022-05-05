@@ -94,6 +94,8 @@ Cloth::~Cloth() {
 void Cloth::spawnParticles(int count, Vector3D spawnPos, Vector3D spawnExtents, ParticleProperties properties) {
     int particleType = particleProperties.size();
     Vector3D curSpawnPos;
+    
+    Vector3D velOffset = -properties.velocity * (1.0f / frames_per_sec / simulation_steps);
 
     int sideCount = round(pow(count, (1.0 / 3.0)));
     Vector3D spawnOffset;
@@ -109,7 +111,9 @@ void Cloth::spawnParticles(int count, Vector3D spawnPos, Vector3D spawnExtents, 
                              -r + (rand() % 100 / 100.0) * (2 * r),
                              -r + (rand() % 100 / 100.0) * (2 * r));
 
-                particles.push_back(Particle(curSpawnPos, particleType));
+                Particle newParticle = Particle(curSpawnPos, particleType);
+                newParticle.last_position += velOffset;
+                particles.push_back(newParticle);
             }
         }
     }
@@ -118,9 +122,7 @@ void Cloth::spawnParticles(int count, Vector3D spawnPos, Vector3D spawnExtents, 
     particleColors.push_back(properties.color);
 }
 
-void Cloth::simulate(double frames_per_sec, double simulation_steps,
-    vector<CollisionObject*>* collision_objects) {
-
+void Cloth::simulate(vector<CollisionObject*>* collision_objects) {
     //Particle force calculations-----------------------------
     double delta_t = 1.0f / frames_per_sec / simulation_steps;
     double distSqr;
@@ -135,7 +137,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
     build_spatial_map();
     for (auto p = particles.begin(); p != particles.end(); p++) {
         if (particleProperties[p->particle_type].pinned) continue;
-        self_collide(*p, simulation_steps);
+        self_collide(*p);
     }
     build_spatial_map();
     for (int i = 0; i < particles.size(); i++) {
@@ -234,7 +236,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
     //build_spatial_map();
     /*for (auto p = particles.begin(); p != particles.end(); p++) {
         if (p->pinned) continue;
-        self_collide(*p, simulation_steps);
+        self_collide(*p);
     }*/
 
 
@@ -262,7 +264,7 @@ void Cloth::build_spatial_map() {
 
 }
 
-void Cloth::self_collide(Particle& pm, double simulation_steps) {
+void Cloth::self_collide(Particle& pm) {
     vector<Particle*>* candidates = map[hash_position(pm.position)];
 
     //cerr << "start self collide\n";
@@ -464,6 +466,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     double newVal;
     double particleStrength;
     ParticleProperties* curProperties;
+    Vector3D curParticleColor;
 
     int cellPos[3];
 
@@ -485,6 +488,10 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         startIndex = (int)(cellPos[0] * yz + cellPos[1] * numZ + cellPos[2]);
 
         offset = particlePos - cells[startIndex].pos;
+        curParticleColor = curProperties->color;
+        if (curProperties->velocityColor.norm2() > 0) {
+            curParticleColor += curProperties->velocityColor * particles[i].velocity(1 / frames_per_sec / simulation_steps).norm2();
+        }
 
         //TODO: can probably be optimized!!!!
         double h2 = curProperties->radius;
@@ -510,7 +517,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
 //                        }
                         if (particleStrength > 0) {
                             newVal = cells[curIndex].value + particleStrength;
-                            cells[curIndex].color = (cells[curIndex].value / newVal) * cells[curIndex].color + (particleStrength / newVal) * curProperties->color;
+                            cells[curIndex].color = (cells[curIndex].value / newVal) * cells[curIndex].color + (particleStrength / newVal) * curParticleColor;
                             cells[curIndex].value = newVal;
                             if (curProperties->shaderType > cells[curIndex].shaderType) {
                                 cells[curIndex].shaderType = curProperties->shaderType;
@@ -575,8 +582,10 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
 void Cloth::reset() {
     Particle* particle = &particles[0];
     for (int i = 0; i < particles.size(); i++) {
+        Vector3D velOffset = -particleProperties[particles[i].particle_type].velocity * (1.0f / frames_per_sec / simulation_steps);
+        
         particle->position = particle->start_position;
-        particle->last_position = particle->start_position;
+        particle->last_position = particle->start_position + velOffset;
         particle->particle_type = particle->start_type;
         particle++;
     }

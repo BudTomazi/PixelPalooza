@@ -252,7 +252,7 @@ void ClothSimulator::drawContents() {
 
     if (!is_paused) {
         for (int i = 0; i < simulation_steps; i++) {
-            cloth->simulate(frames_per_sec, simulation_steps, collision_objects);
+            cloth->simulate(collision_objects);
         }
     }
 
@@ -692,7 +692,11 @@ void ClothSimulator::initGUI(Screen* screen) {
         fsec->setFontSize(14);
         fsec->setValue(frames_per_sec);
         fsec->setSpinnable(true);
-        fsec->setCallback([this](int value) { frames_per_sec = value; });
+        fsec->setCallback([this](int value) {
+            frames_per_sec = value;
+            cloth->frames_per_sec = value;
+        });
+        cloth->frames_per_sec = frames_per_sec;
 
         new Label(panel, "steps/frame :", "sans-bold");
 
@@ -703,7 +707,11 @@ void ClothSimulator::initGUI(Screen* screen) {
         num_steps->setValue(simulation_steps);
         num_steps->setSpinnable(true);
         num_steps->setMinValue(0);
-        num_steps->setCallback([this](int value) { simulation_steps = value; });
+        num_steps->setCallback([this](int value) {
+            simulation_steps = value;
+            cloth->simulation_steps = value;
+        });
+        cloth->simulation_steps = simulation_steps;
     }
 
     // Damping slider and textbox

@@ -1,0 +1,82 @@
+{
+  "bounds": {
+      "marchingSize": 0.1,
+      "marchingCount": [80, 50, 80],
+      "physicsBuffer": 1.0
+  },
+  "particles": [
+    {
+      "count": 27,
+      "spawnPos": [ -1.6, 0.8, -1.4 ],
+      "spawnExtents": [ 0.2, 0.2, 0.2 ],
+      "particleMass": 0.2,
+      "particleRadius": 0.04,
+      "collRadius": 0.2,
+      "particleColor": [ 0.3, 0.3, 0.4 ],
+      "velocityColor": [ 0.0005, 0.01, 0.01 ],
+      "externalForces": [ 0, 0, 0 ],
+      "pinned": 0,
+      "shaderType": 0,
+      "partColl": 0,
+      "particleAveragingFactor": 0,
+      "receivedForces": [
+        {
+          "law": "r2",
+          "strengths": [ 0.0, 20, 0.0 ],
+          "localized": 0
+        },
+        {
+          "law": "r4",
+          "strengths": [ 0.0, -0.4, 0.0 ],
+          "localized": 0
+        }
+      ],
+      "velocity": [0, -0.5, 5],
+      "transformations": [ 0, 0, 0 ]
+    },
+    {
+      "count": 1,
+      "spawnPos": [ 0, 0, 0 ],
+      "spawnExtents": [ 0.3, 0.3, 0.3 ],
+      "particleMass": 1000,
+      "particleRadius": 0.1,
+      "collRadius": 0.2,
+      "particleColor": [ 0.1, 0.1, 0.1 ],
+      "externalForces": [ 0, 0, 0 ],
+      "pinned": 1,
+      "shaderType": 0,
+      "partColl": 0,
+      "particleAveragingFactor": 0,
+      "receivedForces": [
+        {
+          "law": "r2",
+          "strengths": [ 0, 0.0, 0 ],
+          "localized": 0
+        }
+      ],
+      "transformations": [ 1, 1, 1 ]
+    },
+    {
+      "count": 0,
+      "spawnPos": [ 0.6, 0, 0 ],
+      "spawnExtents": [ 0.3, 0.3, 0.3 ],
+      "particleMass": 0.1,
+      "particleRadius": 0.1,
+      "collRadius": 0.2,
+      "particleColor": [ 0.4, 0, 0.6 ],
+      "externalForces": [ 0, 0, 0 ],
+      "pinned": 0,
+      "shaderType": 0,
+      "partColl": 0,
+      "particleAveragingFactor": 0,
+      "receivedForces": [
+        {
+          "law": "r2",
+          "strengths": [ 0.3, -0.4, 0.0 ],
+          "localized": 0
+        }
+      ],
+      "transformations": [ 2, 1, 2 ]
+    }
+  ]
+}
