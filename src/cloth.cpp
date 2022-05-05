@@ -182,7 +182,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
         }
 
         if (curProperties->external_forces) {
-            forces += Vector3D(0.0, 10.0, 0.0);
+            forces += Vector3D(0.0, -5.0, 0.0);
         }
         if (cType == 2) {
             forces += Vector3D(0.0, 5.0, 0.0);
@@ -195,15 +195,15 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
 
     }
 
-    for (auto p = particles.begin(); p != particles.end(); p++) {
-        for (auto prim = collision_objects->begin(); prim != collision_objects->end(); prim++) {
-            (*prim)->collide(*p);
-        }
-    }
-
     for (int i = 0; i < planeNorms.size(); i++) {
         for (int j = 0; j < particles.size(); j++) {
             PlaneCollision(planeLocs[i], planeNorms[i], particles[j]);
+        }
+    }
+
+    for (auto p = particles.begin(); p != particles.end(); p++) {
+        for (auto prim = collision_objects->begin(); prim != collision_objects->end(); prim++) {
+            (*prim)->collide(*p);
         }
     }
 

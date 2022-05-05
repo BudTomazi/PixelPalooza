@@ -386,10 +386,10 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
       }
 
       for (int k = 0; k < 10; k++) {
-          float a = (rand() % 100) / 100.0;
-          float b = (rand() % 100) / 100.0;
-          float c = (rand() % 100) / 100.0;
-          Sphere* s = new Sphere(origin + Vector3D(a, b, c), radius, friction, sphere_num_lat, sphere_num_lon);
+          float a = (rand() % 100) / 100.0 - 0.5;
+          float b = (rand() % 100) / 100.0 - 0.5;
+          float c = (rand() % 100) / 100.0 - 0.5;
+          Sphere* s = new Sphere(origin + Vector3D(2 * a, 4 * b, 2 * c), radius, friction, sphere_num_lat, sphere_num_lon);
           objects->push_back(s);
       }
       
