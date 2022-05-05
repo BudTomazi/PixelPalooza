@@ -253,17 +253,18 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
           if (temp != particleData.end() && *(temp) == 1) {
               properties.pinned = true;
           }
-          temp = particleData.find("pinned");
+          
+          temp = particleData.find("partColl");
           if (temp != particleData.end()) {
-              if (*(temp) == 0) {
-                  properties.particle_collisions = false;
+              if (*(temp) == 1) {
+                  properties.particle_collisions = true;
               }
               else {
-                  properties.particle_collisions = true;
+                  properties.particle_collisions = false;
               }
           }
           else {
-              incompleteObjectError("particles", "pinned");
+              incompleteObjectError("particles", "partColl");
           }
           
           temp = particleData.find("shaderType");
