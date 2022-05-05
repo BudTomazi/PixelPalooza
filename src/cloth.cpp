@@ -176,7 +176,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
 
                     Vector3D force = -curProperties->force_laws[k](curParticle, p);
                     float factor = curProperties->strengths[k][oType];
-//                    forces += factor * force;
+                    forces += factor * force;
                 }
             }
         }
@@ -481,6 +481,38 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
                         }
                     }
                     curIndex++;
+                }
+            }
+        }
+        
+        
+        if (curProperties->particleAveragingFactor > 0) {
+            int curParticleType = particles[i].particle_type;
+            for (Particle& other : particles) {
+                if (other.particle_type == curParticleType) {
+                    Vector3D pos = 0.5 * (particles[i].position + other.position);
+                    
+                    cellPos[0] = floor((pos.x + borderDist) / cellSize);
+                    if (cellPos[0] < 0 || cellPos[0] >= n) continue;
+
+                    cellPos[1] = floor((pos.y + borderDist) / cellSize);
+                    if (cellPos[1] < 0 || cellPos[1] >= n) continue;
+
+                    cellPos[2] = floor((pos.z + borderDist) / cellSize);
+                    if (cellPos[2] < 0 || cellPos[2] >= n) continue;
+
+                    
+                    curIndex = (int)(cellPos[0] * yz + cellPos[1] * n + cellPos[2]);
+
+                    particleStrength = curProperties->particleAveragingFactor;
+                    
+                    newVal = cells[curIndex].value + particleStrength;
+                    cells[curIndex].color = (cells[curIndex].value / newVal) * cells[curIndex].color + (particleStrength / newVal) * curProperties->color;
+                    cells[curIndex].value = newVal;
+                    if (curProperties->shaderType > cells[curIndex].shaderType) {
+                        cells[curIndex].shaderType = curProperties->shaderType;
+                    }
+
                 }
             }
         }

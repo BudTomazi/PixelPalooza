@@ -55,6 +55,7 @@ struct ParticleProperties {
     std::vector<bool> localized;
     
     int shaderType;
+    double particleAveragingFactor;
 
     //vector<f> forces;
     //vector<float> strengths;

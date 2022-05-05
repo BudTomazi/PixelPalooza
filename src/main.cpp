@@ -236,28 +236,15 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
           }
 
           temp = particleData.find("externalForces");
-          if (temp != particleData.end()) {
-              if (*(temp) == 1) {
-                  properties.external_forces = true;
-              }
-              else {
-                  properties.external_forces = false;
-              }
+          properties.external_forces = false;
+          if (temp != particleData.end() && *(temp) == 1) {
+              properties.external_forces = true;
           }
-          else {
-              incompleteObjectError("particles", "externalForces");
-          }
-
+          
           temp = particleData.find("pinned");
-          if (temp != particleData.end()) {
-              if (*(temp) == 1) {
-                  properties.pinned = true;
-              }
-              else {
-                  properties.pinned = false;
-              }
-          }else {
-              incompleteObjectError("particles", "pinned");
+          properties.pinned = false;
+          if (temp != particleData.end() && *(temp) == 1) {
+              properties.pinned = true;
           }
           
           temp = particleData.find("shaderType");
@@ -265,6 +252,12 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
               properties.shaderType = *temp;
           }else {
               incompleteObjectError("particles", "shaderType");
+          }
+          
+          temp = particleData.find("particleAveragingFactor");
+          properties.particleAveragingFactor = 0;
+          if (temp != particleData.end()) {
+              properties.particleAveragingFactor = *temp;
           }
           
           temp = particleData.find("particleColor");

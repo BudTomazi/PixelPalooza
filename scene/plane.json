@@ -17,6 +17,7 @@
       "externalForces": 1,
       "pinned": 0,
       "shaderType": 2,
+      "particleAveragingFactor": 0.01,
       "receivedForces": [
         {
           "law": "r2",
@@ -32,11 +33,6 @@
           "law": "cross",
           "strengths": [ 1.0, 0.0, 0.0 ],
           "localized": 0
-        },
-        {
-          "law": "r4",
-          "strengths": [ 0.0, 0.0, 0.0 ],
-          "localized": 1
         }
       ],
       "transformations": [ 0, 2, 0 ]
@@ -53,6 +49,7 @@
       "externalForces": 1,
       "pinned": 0,
       "shaderType": 1,
+      "particleAveragingFactor": 0,
       "receivedForces": [
         {
           "law": "r2",
@@ -83,6 +80,7 @@
       "externalForces": 0,
       "pinned": 0,
       "shaderType": 0,
+      "particleAveragingFactor": 0.001,
       "receivedForces": [
         {
           "law": "r2",
