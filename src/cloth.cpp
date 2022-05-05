@@ -135,7 +135,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
     //loop over all pairs of particles and compute forces
     build_spatial_map();
     for (auto p = particles.begin(); p != particles.end(); p++) {
-        if (p->pinned) continue;
+        if (particleProperties[p->particle_type].pinned) continue;
         self_collide(*p, simulation_steps);
     }
     build_spatial_map();
@@ -182,7 +182,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
         }
 
         if (curProperties->external_forces) {
-            forces += Vector3D(0.0, -100.0, 0.0);
+            forces += Vector3D(0.0, 10.0, 0.0);
         }
         if (cType == 2) {
             forces += Vector3D(0.0, 5.0, 0.0);
@@ -221,8 +221,9 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
     //loop through and update particle positions via verlet integration
     for (int i = 0; i < particles.size(); i++) {
         curParticle = &particles[i];
+        
         curProperties = &particleProperties[curParticle->particle_type];
-
+        if (curProperties->pinned) continue;
         curPos = curParticle->position;
         newPos = curPos + dampingFactor * (curPos - curParticle->last_position) + ((curParticle->forces / curProperties->mass) * delta_t_sqr);
 
@@ -291,7 +292,7 @@ void Cloth::self_collide(Particle& pm, double simulation_steps) {
 
 
     //cerr << "end self collide\n";
-    if (counter == 0) {
+    if (counter == 0 || !curProperties->particle_collisions) {
         correction = Vector3D(0.0, 0.0, 0.0);
     }
     else {

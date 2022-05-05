@@ -17,6 +17,7 @@
       "externalForces": 1,
       "pinned": 0,
       "shaderType": 2,
+      "partColl": 1,
       "receivedForces": [
         {
           "law": "r2",
@@ -53,6 +54,7 @@
       "externalForces": 1,
       "pinned": 0,
       "shaderType": 1,
+      "partColl": 1,
       "receivedForces": [
         {
           "law": "r2",
@@ -82,6 +84,7 @@
       "particleColor": [ 0.4, 0.4, 0.4 ],
       "externalForces": 0,
       "pinned": 0,
+      "partColl": 1,
       "shaderType": 0,
       "receivedForces": [
         {

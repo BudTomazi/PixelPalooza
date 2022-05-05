@@ -259,6 +259,18 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
           }else {
               incompleteObjectError("particles", "pinned");
           }
+          temp = particleData.find("pinned");
+          if (temp != particleData.end()) {
+              if (*(temp) == 0) {
+                  properties.particle_collisions = false;
+              }
+              else {
+                  properties.particle_collisions = true;
+              }
+          }
+          else {
+              incompleteObjectError("particles", "pinned");
+          }
           
           temp = particleData.find("shaderType");
           if (temp != particleData.end()) {
@@ -373,8 +385,14 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
         incompleteObjectError("sphere", "friction");
       }
 
-      Sphere *s = new Sphere(origin, radius, friction, sphere_num_lat, sphere_num_lon);
-      objects->push_back(s);
+      for (int k = 0; k < 10; k++) {
+          float a = (rand() % 100) / 100.0;
+          float b = (rand() % 100) / 100.0;
+          float c = (rand() % 100) / 100.0;
+          Sphere* s = new Sphere(origin + Vector3D(a, b, c), radius, friction, sphere_num_lat, sphere_num_lon);
+          objects->push_back(s);
+      }
+      
     } else if (key == PLANE) { // PLANE
       Vector3D point, normal;
       double friction;
