@@ -193,7 +193,7 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
       for (auto& particleData : object) {
           int particleCount;
           Vector3D spawnPos;
-          double spawnRadius;
+          Vector3D spawnExtents;
           ParticleProperties properties;
           
           auto temp = particleData.find("count");
@@ -211,11 +211,12 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
               incompleteObjectError("particles", "spawnPos");
           }
           
-          temp = particleData.find("spawnRadius");
+          temp = particleData.find("spawnExtents");
           if (temp != particleData.end()) {
-              spawnRadius = *temp;
+              vector<double> vec_extents = *temp;
+              spawnExtents = Vector3D(vec_extents[0], vec_extents[1], vec_extents[2]);
           } else {
-              incompleteObjectError("particles", "spawnRadius");
+              incompleteObjectError("particles", "spawnExtents");
           }
           
           temp = particleData.find("particleMass");
@@ -240,9 +241,11 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
           }
 
           temp = particleData.find("externalForces");
-          properties.external_forces = false;
-          if (temp != particleData.end() && *(temp) == 1) {
-              properties.external_forces = true;
+          if (temp != particleData.end()) {
+              vector<double> vec_forces = *temp;
+              properties.external_forces = Vector3D(vec_forces[0], vec_forces[1], vec_forces[2]);
+          } else {
+              incompleteObjectError("particles", "externalForces");
           }
           
           temp = particleData.find("pinned");
@@ -336,7 +339,7 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
                   }
               }
               
-              cloth->spawnParticles(particleCount, spawnPos, spawnRadius, properties);
+              cloth->spawnParticles(particleCount, spawnPos, spawnExtents, properties);
           } else {
               incompleteObjectError("particles", "receivedForces");
           }

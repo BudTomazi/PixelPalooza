@@ -251,10 +251,8 @@ void ClothSimulator::drawContents() {
     glEnable(GL_DEPTH_TEST);
 
     if (!is_paused) {
-        vector<Vector3D> external_accelerations = { gravity };
-
         for (int i = 0; i < simulation_steps; i++) {
-            cloth->simulate(frames_per_sec, simulation_steps, external_accelerations, collision_objects);
+            cloth->simulate(frames_per_sec, simulation_steps, collision_objects);
         }
     }
 

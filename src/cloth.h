@@ -51,10 +51,9 @@ struct Cloth {
     Cloth() {}
     ~Cloth();
 
-    void spawnParticles(int count, Vector3D spawnPos, double spawnRadius, ParticleProperties properties);
+    void spawnParticles(int count, Vector3D spawnPos, Vector3D spawnExtents, ParticleProperties properties);
 
     void simulate(double frames_per_sec, double simulation_steps,
-        vector<Vector3D> external_accelerations,
         vector<CollisionObject*>* collision_objects);
 
     void reset();

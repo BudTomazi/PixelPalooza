@@ -91,35 +91,34 @@ Cloth::~Cloth() {
     delete[] cells;
 }
 
-void Cloth::spawnParticles(int count, Vector3D spawnPos, double spawnRadius, ParticleProperties properties) {
+void Cloth::spawnParticles(int count, Vector3D spawnPos, Vector3D spawnExtents, ParticleProperties properties) {
     int particleType = particleProperties.size();
     Vector3D curSpawnPos;
     
-    int sideCount = round(pow(count, 0.3333333333));
+    int sideCount = round(pow(count, (1.0 / 3.0)));
+    Vector3D spawnOffset;
+    double r = 0.02;
     for (int x = 0; x < sideCount; x++) {
+        spawnOffset.x = -spawnExtents.x + (2 * spawnExtents.x) * (x / (double)sideCount);
         for (int y = 0; y < sideCount; y++) {
+            spawnOffset.y = -spawnExtents.y + (2 * spawnExtents.y) * (y / (double)sideCount);
             for (int z = 0; z < sideCount; z++) {
-                curSpawnPos = spawnPos + Vector3D(-spawnRadius + (2 * spawnRadius) * (x / (double)sideCount), -spawnRadius + (2 * spawnRadius) * (y / (double)sideCount), -spawnRadius + (2 * spawnRadius) * (z / (double)sideCount)) + Vector3D(-0.02 * (rand() % 100 / 100.0) * (2 * 0.02),-0.02 + (rand() % 100 / 100.0) * (2 * 0.02),-0.02 + (rand() % 100 / 100.0) * (2 * 0.02));
+                spawnOffset.z = -spawnExtents.z + (2 * spawnExtents.z) * (z / (double)sideCount);
+                curSpawnPos = spawnPos + spawnOffset +
+                    Vector3D(-r * (rand() % 100 / 100.0) * (2 * r),
+                             -r + (rand() % 100 / 100.0) * (2 * r),
+                             -r + (rand() % 100 / 100.0) * (2 * r));
                 
                 particles.push_back(Particle(curSpawnPos, particleType));
             }
         }
     }
-//    for (int i = 0; i < count; i++) {
-//        curSpawnPos = spawnPos + Vector3D(
-//                    -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius),
-//                    -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius),
-//                    -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius));
-//
-//        particles.push_back(Particle(curSpawnPos, particleType));
-//    }
 
     particleProperties.push_back(properties);
     particleColors.push_back(properties.color);
 }
 
 void Cloth::simulate(double frames_per_sec, double simulation_steps,
-    vector<Vector3D> external_accelerations,
     vector<CollisionObject*>* collision_objects) {
 
     //Particle force calculations-----------------------------
@@ -181,12 +180,7 @@ void Cloth::simulate(double frames_per_sec, double simulation_steps,
             }
         }
 
-        if (curProperties->external_forces) {
-            forces += Vector3D(0.0, -100.0, 0.0);
-        }
-        if (cType == 2) {
-            forces += Vector3D(0.0, 5.0, 0.0);
-        }
+        forces += curProperties->external_forces;
 
         if (!curProperties->pinned) {
             curParticle->forces = forces;
