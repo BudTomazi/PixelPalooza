@@ -49,11 +49,8 @@
       "externalForces": [ 0, -100, 0 ],
       "pinned": 0,
       "shaderType": 1,
-<<<<<<< HEAD
       "partColl": 1,
-=======
       "particleAveragingFactor": 0,
->>>>>>> 24a302d3bf3635cce7167c066b721cf5d9c1e1e8
       "receivedForces": [
       ],
       "transformations": [ 2, 1, 1 ]
