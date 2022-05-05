@@ -55,7 +55,7 @@ void main() {
         out_color = v_color / 3.0 + texture(u_texture_cubemap, out_ray) * (2.0 / 3.0);
     } else if(v_shaderType < 2.01){
         out_color[0] = 1.0;
-        out_color[1] = (v_position[1] + 3.0)/10.0;
+        out_color[1] = 1.0 - (v_position[1] + 3.0)/10.0;
         out_color[2] = 0.0;
         out_color[3] = 1.0;
     }

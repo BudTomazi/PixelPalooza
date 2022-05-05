@@ -42,7 +42,15 @@ Vector3D fire_force(Particle* p1, Particle* p2) {
     Vector3D dir = pos1 - pos2;
     float dist = dir.norm();
     dir = Vector3D(0.0, -1.0, 0.0);
+    dir[0] = 0.2 * p1->position.x;
+    dir[2] = 0.2 * p1->position.z;
+    //float factor = (3.0 + p1->position.y)/(10.0);
+    
+    //dir[0] *= factor;
+    //dir[2] *= factor;
+    //dir[1] *= (1.2 - factor);
     //new commen
+    //if(rand()%4 == 0) return Vector3D(0.0);
     return dir/dist;
 };
 
@@ -86,15 +94,25 @@ Cloth::~Cloth() {
 void Cloth::spawnParticles(int count, Vector3D spawnPos, double spawnRadius, ParticleProperties properties) {
     int particleType = particleProperties.size();
     Vector3D curSpawnPos;
-
-    for (int i = 0; i < count; i++) {
-        curSpawnPos = spawnPos + Vector3D(
-                    -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius),
-                    -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius),
-                    -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius));
-
-        particles.push_back(Particle(curSpawnPos, particleType));
+    
+    int sideCount = round(pow(count, 0.3333333333));
+    for (int x = 0; x < sideCount; x++) {
+        for (int y = 0; y < sideCount; y++) {
+            for (int z = 0; z < sideCount; z++) {
+                curSpawnPos = spawnPos + Vector3D(-spawnRadius + (2 * spawnRadius) * (x / (double)sideCount), -spawnRadius + (2 * spawnRadius) * (y / (double)sideCount), -spawnRadius + (2 * spawnRadius) * (z / (double)sideCount)) + Vector3D(-0.02 * (rand() % 100 / 100.0) * (2 * 0.02),-0.02 + (rand() % 100 / 100.0) * (2 * 0.02),-0.02 + (rand() % 100 / 100.0) * (2 * 0.02));
+                
+                particles.push_back(Particle(curSpawnPos, particleType));
+            }
+        }
     }
+//    for (int i = 0; i < count; i++) {
+//        curSpawnPos = spawnPos + Vector3D(
+//                    -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius),
+//                    -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius),
+//                    -spawnRadius + (rand() % 100 / 100.0) * (2 * spawnRadius));
+//
+//        particles.push_back(Particle(curSpawnPos, particleType));
+//    }
 
     particleProperties.push_back(properties);
     particleColors.push_back(properties.color);
@@ -445,6 +463,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
                 for (int dz = -gridRadius; dz <= gridRadius; dz++) {
                     if (dz >= -cellPos[2] && dz < n - cellPos[2]) {
                         particleStrength = curProperties->mass * smoothingKernel(cellSize * Vector3D(dx, dy, dz), offset, h2, h9) / particles[i].density;
+                        
 //                        dist = (cellSize * Vector3D(dx, dy, dz) - offset).norm();
 //
 //                        if (dist <= curProperties->radius) {
