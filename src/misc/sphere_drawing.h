@@ -41,6 +41,8 @@ private:
   MatrixXf normals;
   MatrixXf uvs;
   MatrixXf tangents;
+    MatrixXf colors;
+    MatrixXf shaderTypes;
 };
 
 

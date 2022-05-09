@@ -48,7 +48,7 @@ struct ParticleProperties {
     double radius;
     double collRadius;
     Vector3D color;
-    bool external_forces;
+    Vector3D external_forces;
     bool primitive_collision;
     bool particle_collisions;
     bool pinned;
@@ -56,6 +56,11 @@ struct ParticleProperties {
     
     int shaderType;
     double particleAveragingFactor;
+    double particleAveragingDist;
+    double particleAveragingBrightness;
+    
+    Vector3D velocity;
+    Vector3D velocityColor;
 
     //vector<f> forces;
     //vector<float> strengths;

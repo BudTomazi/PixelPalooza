@@ -1,20 +1,20 @@
 {
-  "plane": {
-    "point": [ 0, -20, 0 ],
-    "normal": [ 0, 1, 0 ],
-    "friction": 0.5
+  "bounds": {
+      "marchingSize": 0.2,
+      "marchingCount": [24, 30, 24],
+      "physicsBuffer": 0.5,
+      "noTop": 1
   },
-
   "particles": [
     {
       "count": 240,
-      "spawnPos": [ 0, 0.5, 0 ],
-      "spawnRadius": 2,
+      "spawnPos": [ 0, -0.5, 0 ],
+      "spawnExtents": [ 2, 2, 2 ],
       "particleMass": 0.01,
       "particleRadius": 0.1,
       "collRadius": 0.2,
       "particleColor": [ 1, 0, 0 ],
-      "externalForces": 1,
+      "externalForces": [ 0, -100.0, 0 ],
       "pinned": 0,
       "shaderType": 2,
       "partColl": 1,
@@ -41,48 +41,30 @@
     {
 
       "count": 1000,
-      "spawnPos": [ 0, 200, 0 ],
-      "spawnRadius": 1,
+      "spawnPos": [ 0, 150, 0 ],
+      "spawnExtents": [ 1, 2, 1 ],
       "particleMass": 0.02,
       "particleRadius": 0.05,
       "collRadius": 0.05,
       "particleColor": [ 0, 0, 1 ],
-      "externalForces": 1,
+      "externalForces": [ 0, -100, 0 ],
       "pinned": 0,
       "shaderType": 1,
-<<<<<<< HEAD
       "partColl": 1,
-=======
       "particleAveragingFactor": 0,
->>>>>>> 24a302d3bf3635cce7167c066b721cf5d9c1e1e8
       "receivedForces": [
-        {
-          "law": "r2",
-          "strengths": [ 0.0, 0.1, 0.0 ],
-          "localized": 1
-        },
-        {
-          "law": "r4",
-          "strengths": [ 0.0, -0.00001, 0.0 ],
-          "localized": 1
-        },
-        {
-          "law": "cross",
-          "strengths": [ 0.0, 0.0, 0.0 ],
-          "localized": 1
-        }
       ],
       "transformations": [ 2, 1, 1 ]
     },
     {
       "count": 0,
-      "spawnPos": [ 3, 0, 0 ],
-      "spawnRadius": 1,
+      "spawnPos": [ 0, 0, 0 ],
+      "spawnExtents": [ 1, 1, 1 ],
       "particleMass": 0.1,
       "particleRadius": 0.1,
       "collRadius": 0.1,
       "particleColor": [ 0.4, 0.4, 0.4 ],
-      "externalForces": 0,
+      "externalForces": [ 0.0, 5.0, 0.0 ],
       "pinned": 0,
       "partColl": 1,
       "shaderType": 0,

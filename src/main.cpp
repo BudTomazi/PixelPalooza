@@ -33,8 +33,9 @@ const string SPHERE = "sphere";
 const string PLANE = "plane";
 const string CLOTH = "cloth";
 const string PARTICLES = "particles";
+const string BOUNDARY = "bounds";
 
-const unordered_set<string> VALID_KEYS = {SPHERE, PLANE, CLOTH, PARTICLES};
+const unordered_set<string> VALID_KEYS = {SPHERE, PLANE, CLOTH, PARTICLES, BOUNDARY};
 
 ClothSimulator *app = nullptr;
 GLFWwindow *window = nullptr;
@@ -167,6 +168,11 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
   i >> j;
 
   std::cout << "loaded json" << "\n";
+    
+    auto boundary = j.find(BOUNDARY);
+    if (boundary == j.end()) {
+        incompleteObjectError("JSON", "boundary data");
+    }
 
   // Loop over objects in scene
   for (json::iterator it = j.begin(); it != j.end(); ++it) {
@@ -184,12 +190,14 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
 
     // Parse object depending on type (cloth, sphere, or plane)
     if (key == PARTICLES) {
-        cloth->initMarchingCubes(50, 0.2);
+        //TODO: how to do this better?
+        cloth->frames_per_sec = 90;
+        cloth->simulation_steps = 30;
         
       for (auto& particleData : object) {
           int particleCount;
           Vector3D spawnPos;
-          double spawnRadius;
+          Vector3D spawnExtents;
           ParticleProperties properties;
           
           auto temp = particleData.find("count");
@@ -207,11 +215,12 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
               incompleteObjectError("particles", "spawnPos");
           }
           
-          temp = particleData.find("spawnRadius");
+          temp = particleData.find("spawnExtents");
           if (temp != particleData.end()) {
-              spawnRadius = *temp;
+              vector<double> vec_extents = *temp;
+              spawnExtents = Vector3D(vec_extents[0], vec_extents[1], vec_extents[2]);
           } else {
-              incompleteObjectError("particles", "spawnRadius");
+              incompleteObjectError("particles", "spawnExtents");
           }
           
           temp = particleData.find("particleMass");
@@ -236,9 +245,25 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
           }
 
           temp = particleData.find("externalForces");
-          properties.external_forces = false;
-          if (temp != particleData.end() && *(temp) == 1) {
-              properties.external_forces = true;
+          if (temp != particleData.end()) {
+              vector<double> vec_forces = *temp;
+              properties.external_forces = Vector3D(vec_forces[0], vec_forces[1], vec_forces[2]);
+          } else {
+              incompleteObjectError("particles", "externalForces");
+          }
+          
+          temp = particleData.find("velocity");
+          properties.velocity = Vector3D(0);
+          if (temp != particleData.end()) {
+              vector<double> vec_vel = *temp;
+              properties.velocity = Vector3D(vec_vel[0], vec_vel[1], vec_vel[2]);
+          }
+          
+          temp = particleData.find("velocityColor");
+          properties.velocityColor = Vector3D(0);
+          if (temp != particleData.end()) {
+              vector<double> vec_vel = *temp;
+              properties.velocityColor = Vector3D(vec_vel[0], vec_vel[1], vec_vel[2]);
           }
           
           temp = particleData.find("pinned");
@@ -246,17 +271,18 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
           if (temp != particleData.end() && *(temp) == 1) {
               properties.pinned = true;
           }
-          temp = particleData.find("pinned");
+          
+          temp = particleData.find("partColl");
           if (temp != particleData.end()) {
-              if (*(temp) == 0) {
-                  properties.particle_collisions = false;
+              if (*(temp) == 1) {
+                  properties.particle_collisions = true;
               }
               else {
-                  properties.particle_collisions = true;
+                  properties.particle_collisions = false;
               }
           }
           else {
-              incompleteObjectError("particles", "pinned");
+              incompleteObjectError("particles", "partColl");
           }
           
           temp = particleData.find("shaderType");
@@ -270,6 +296,18 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
           properties.particleAveragingFactor = 0;
           if (temp != particleData.end()) {
               properties.particleAveragingFactor = *temp;
+          }
+          
+          temp = particleData.find("particleAveragingDist");
+          properties.particleAveragingDist = 0;
+          if (temp != particleData.end()) {
+              properties.particleAveragingDist = *temp;
+          }
+          
+          temp = particleData.find("particleAveragingBrightness");
+          properties.particleAveragingBrightness = 1;
+          if (temp != particleData.end()) {
+              properties.particleAveragingBrightness = *temp;
           }
           
           temp = particleData.find("particleColor");
@@ -344,7 +382,7 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
                   }
               }
               
-              cloth->spawnParticles(particleCount, spawnPos, spawnRadius, properties);
+              cloth->spawnParticles(particleCount, spawnPos, spawnExtents, properties);
           } else {
               incompleteObjectError("particles", "receivedForces");
           }
@@ -352,6 +390,42 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
 
       std::cout << "set up particles" << "\n";
         
+    } else if (key == BOUNDARY) {
+        double marchingSize;
+        double physicsBuffer;
+        int sideCellCounts[3];
+        
+        auto temp = object.find("marchingSize");
+        if (temp != object.end()) {
+            marchingSize = *temp;
+        } else {
+            incompleteObjectError("bounds", "marchingSize");
+        }
+        
+        temp = object.find("marchingCount");
+        if (temp != object.end()) {
+            vector<int> numCells = *temp;
+            sideCellCounts[0] = numCells[0];
+            sideCellCounts[1] = numCells[1];
+            sideCellCounts[2] = numCells[2];
+        } else {
+            incompleteObjectError("bounds", "marchingCount");
+        }
+        
+        temp = object.find("noTop");
+        bool noTop = false;
+        if (temp != object.end() && *temp == 1) {
+            noTop = true;
+        }
+        
+        temp = object.find("physicsBuffer");
+        if (temp != object.end()) {
+            physicsBuffer = *temp;
+        } else {
+            incompleteObjectError("bounds", "physicsBuffer");
+        }
+        
+        cloth->initMarchingCubes(sideCellCounts[0], sideCellCounts[1], sideCellCounts[2], marchingSize, physicsBuffer, noTop);
     } else if (key == SPHERE) {
       Vector3D origin;
       double radius, friction;
@@ -378,9 +452,9 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
         incompleteObjectError("sphere", "friction");
       }
 
-      for (int k = 0; k < 10; k++) {
+      for (int k = 0; k < 3; k++) {
           float a = (rand() % 100) / 100.0 - 0.5;
-          float b = (rand() % 100) / 100.0 - 0.5;
+          float b = 2 * (rand() % 100) / 100.0 - 1.4;
           float c = (rand() % 100) / 100.0 - 0.5;
           Sphere* s = new Sphere(origin + Vector3D(2 * a, 4 * b, 2 * c), radius, friction, sphere_num_lat, sphere_num_lon);
           objects->push_back(s);
@@ -557,7 +631,7 @@ int main(int argc, char **argv) {
 
     // Draw nanogui
     screen->drawContents();
-    screen->drawWidgets();
+//    screen->drawWidgets();
 
     glfwSwapBuffers(window);
 

@@ -1,0 +1,96 @@
+{
+  "bounds": {
+      "marchingSize": 0.2,
+      "marchingCount": [24, 60, 24],
+      "physicsBuffer": 0.5
+  },
+  "particles": [
+      {
+        "count": 800,
+        "spawnPos": [ 0, -0.3, 0 ],
+        "spawnExtents": [ 1, 1, 1 ],
+        "particleMass": 0.002,
+        "particleRadius": 0.05,
+        "collRadius": 0.05,
+        "particleColor": [ 0.5, 0.5, 0.2 ],
+        "externalForces": [ 0, -5, 0 ],
+        "pinned": 0,
+        "shaderType": 1,
+        "partColl": 1,
+        "particleAveragingFactor": 0,
+        "receivedForces": [
+            {
+              "law": "r2",
+              "strengths": [ 0.1, 0.0, 0.0 ],
+              "localized": 1
+            },
+            {
+              "law": "r4",
+              "strengths": [ -0.01, -0.03, 0.0 ],
+              "localized": 1
+            }
+        ],
+        "transformations": [ 1, 1, 1 ]
+      },
+    {
+
+      "count": 200,
+      "spawnPos": [ 0, 0.7, 0 ],
+      "spawnExtents": [ 1, 1, 1 ],
+      "particleMass": 0.02,
+      "particleRadius": 0.05,
+      "collRadius": 0.05,
+      "particleColor": [ 0, 0, 1 ],
+      "externalForces": [ 0, -10, 0 ],
+      "pinned": 0,
+      "shaderType": 0,
+      "partColl": 1,
+      "particleAveragingFactor": 0,
+      "receivedForces": [
+          {
+            "law": "r2",
+            "strengths": [ 0.0, 0.07, 0.0 ],
+            "localized": 1
+          },
+          {
+            "law": "r4",
+            "strengths": [ -0.03, -0.01, 0.0 ],
+            "localized": 1
+          }
+      ],
+      "transformations": [ 1, 1, 1 ]
+    },
+    {
+      "count": 0,
+      "spawnPos": [ 0, 0, 0 ],
+      "spawnExtents": [ 1, 1, 1 ],
+      "particleMass": 0.1,
+      "particleRadius": 0.1,
+      "collRadius": 0.1,
+      "particleColor": [ 0.4, 0.4, 0.4 ],
+      "externalForces": [ 0.0, 5.0, 0.0 ],
+      "pinned": 0,
+      "partColl": 1,
+      "shaderType": 0,
+      "particleAveragingFactor": 0.001,
+      "receivedForces": [
+        {
+          "law": "r2",
+          "strengths": [ 0.0, 0.0, 2.0 ],
+          "localized": 1
+        },
+        {
+          "law": "r4",
+          "strengths": [ 0.0, 0.0, 0.0 ],
+          "localized": 1
+        },
+        {
+          "law": "cross",
+          "strengths": [ 0.0, 0.0, 3.0 ],
+          "localized": 0
+        }
+      ],
+      "transformations": [ 2, 2, 2 ]
+    }
+  ]
+}

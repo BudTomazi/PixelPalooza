@@ -92,6 +92,8 @@ void SphereMesh::build_data() {
   normals = MatrixXf(4, sphere_num_indices * 3);
   uvs = MatrixXf(2, sphere_num_indices * 3);
   tangents = MatrixXf(4, sphere_num_indices * 3);
+    colors = MatrixXf(4, sphere_num_indices * 3);
+    shaderTypes = MatrixXf(1, sphere_num_indices * 3);
 
   for (int i = 0; i < sphere_num_indices; i += 3) {
     double *vPtr1 = &Vertices[VERTEX_SIZE * Indices[i]];
@@ -138,6 +140,16 @@ void SphereMesh::build_data() {
     tangents.col(i    ) << t1.x, t1.y, t1.z, 0.0;
     tangents.col(i + 1) << t2.x, t2.y, t2.z, 0.0;
     tangents.col(i + 2) << t3.x, t3.y, t3.z, 0.0;
+      
+      Vector3D color = Vector3D(0.4, 0.4, 0.4);
+      colors.col(i    ) << color.x, color.y, color.z, 0.0;
+      colors.col(i + 1) << color.x, color.y, color.z, 0.0;
+      colors.col(i + 2) <<color.x, color.y, color.z, 0.0;
+      
+      shaderTypes.col(i    ) << 0;
+      shaderTypes.col(i + 1) << 0;
+      shaderTypes.col(i + 2) << 0;
+      
   }
 }
 
@@ -153,12 +165,20 @@ void SphereMesh::draw_sphere(GLShader &shader, const Vector3D &p, double r) {
   if (shader.attrib("in_normal", false) != -1) {
     shader.uploadAttrib("in_normal", normals);
   }
-  if (shader.attrib("in_uv", false) != -1) {
-    shader.uploadAttrib("in_uv", uvs);
-  }
+//  if (shader.attrib("in_uv", false) != -1) {
+//    shader.uploadAttrib("in_uv", uvs);
+//  }
   if (shader.attrib("in_tangent", false) != -1) {
     shader.uploadAttrib("in_tangent", tangents, false);
   }
+    
+    if (shader.attrib("in_color", false) != -1) {
+        shader.uploadAttrib("in_color", colors, false);
+    }
+    
+    if (shader.attrib("in_shaderType", false) != -1) {
+    shader.uploadAttrib("in_shaderType", shaderTypes, false);
+    }
 
   shader.drawArray(GL_TRIANGLES, 0, sphere_num_indices);
 }
