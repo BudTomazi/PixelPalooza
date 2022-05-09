@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<style>
+.demopara {
+  line-height: 2 ;
+}
+h1 {text-align: center;}
+p {text-align: left; margin-right: 200px; margin-left: 200px;}
+h3 {text-align: center;}
+</style>
+<body>
+    <h1>Pixel Particle Palooza</h1>
+    <h3>By: Nathan Jew, Nicholas Nolte, Cindy Wang, Danny Yu</h3>
+    <hr>
+    <article>
+        <header>
+            <h3>Abstract</h3>
+  
+            <p class="demopara">
+               The primary goal of our project was to create a highly generalizable 3D particle simulator.  Many physically accurate particle models of water, fire, and other systems have been made, but often alone in a vacuum.  Our aim was to create a system that could handle many simulation types, as well as the interaction between them.  A tangential aim of this project was related to pixel-art animation.  Pixel-art is difficult, and animating it in a believable way even more so, but the popular indie video game dead cells found a way around this by using a 3D rendering pipeline to create 2D pixel animations.  So in addition to the particle simulation and physics, we attempt to append post-processing steps towards this secondary aim.  </p>
+        <header>
+            <h3>Technical Approach</h3>
+  		<header>
+            <h3>Json Parsing</h3>
+            <p class="demopara">
+            The first part of our overall pipeline is the creation and parsing of JSON files.  We store the data for our particle starting positions and type properties.  
+            </p>
+            <header>
+            <h3>The Particle Simulation</h3>
+            <p class="demopara">
+	Once the particle start positions and class information has been loaded the physics loop begins.  A key feature of this simulation is the ParticleProperties class which stores the forces received by particles of its type from other types.  Because we have the potential for many different particle types to be used together, we use this as a way to keep track of the class properties since we cannot hardcode any interactions.  This class maintains pointers to the necessary force functions, and also stores the force with which it operates between any 2 given particles.  
+</p>
+<p class="demopara">
+	Our final demonstration for the project was a simulation containing fire, water, and steam.  First fire appears to blaze from the ground, only to be extinguished by water, before rising up as steam.  In describing how this simulation works, we can showcase the inner workings of our simulation system.  Fire was modeled using both an external and internal force.  In our system external forces are currently a constant force vector applied 
+
+            </p>
+  
+  
+        </header>
+    </article>
+</body>
+</html>
