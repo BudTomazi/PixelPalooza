@@ -1,41 +1,71 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-<style>
-  body {
-    padding: 100px;
-    width: 1000px;
-    margin: auto;
-    text-align: left;
-    font-weight: 300;
-    font-family: 'Open Sans', sans-serif;
-    color: #121212;
-  }
-  h1, h2, h3, h4 {
-    font-family: 'Source Sans Pro', sans-serif;
-  }
-</style>
-<title>CS 184 Mesh Editor</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
-</head>
-
-
-<body>
-
-<h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2017</h1>
-<h1 align="middle">Project 4: Cloth Simulator</h1>
-<h2 align="middle">YOUR NAME, CS184-??</h2>
-
-<br><br>
-
-<div>
-
-<h2 align="middle">Overview</h2>
-<p>Give a high-level overview of what you implemented in this project. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the project.</p>
-
-<h2 align="middle">Part I: Masses and springs</h2>
-
-
-</body>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <title>CS184</title>
+        <link href="css/styles.css" rel="stylesheet" />
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+        </script>
+        <script type="text/javascript"
+            src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        </script>
+    </head>
+    <body>
+        <!-- Page content-->
+        <div class="container">
+            <div class="text-center mt-5">
+                <h1>Pixel Palooza</h1>
+                <p>CS184 Final Project: Spring 2022</p>
+                <p class="lead">Nathan Jew, Nicholas Nolte, Cindy Wang, Danny Yu</p>
+            </div>
+        </div>
+        <div class = "container my-5">
+            <h3 class = "py-2 text-center">Abstract</h3>
+            <p>
+                The primary goal of our project was to create a highly generalizable 3D particle simulator.  Many physically accurate particle models of water, fire, and other systems have been made, but often alone in a vacuum.  Our aim was to create a system that could handle many simulation types, as well as the interaction between them.  A tangential aim of this project was related to pixel-art animation.  Pixel-art is difficult, and animating it in a believable way even more so, but the popular indie video game dead cells found a way around this by using a 3D rendering pipeline to create 2D pixel animations.  So in addition to the particle simulation and physics, we attempt to append post-processing steps towards this secondary aim.
+            </p>
+        </div>
+        <div class = "container my-5">
+            <h3 class = "py-3 text-center">Technical Approach</h3>
+            <h5 class = "py-3 text-center">JSON Parsing and Setup </h5>
+            <p>
+                We designed our program around taking in JSON files to supply the parameters to define our simulation scenes. Some of the parameters that we want to control, for example, are the number of particle clouds, how many particles are in each, the masses and radii, their colors, and unique collision and attraction properties between different particle types. We can also control parameters for our Marching Cubes algorithm and the locations of primitives such as planes and spheres in the scene. *It seems like there are a lot more features since I wrote it, so feel free to change or rewrite this section*
+            </p>
+            <h5 class = "py-3 text-center">The Particle Simulation</h5>
+            <p>
+                Once the particle start positions and class information has been loaded the physics loop begins.  A key feature of this simulation is the ParticleProperties class which stores the forces received by particles of its type from other types.  Because we have the potential for many different particle types to be used together, we use this as a way to keep track of the class properties since we cannot hardcode any interactions.  This class maintains pointers to the necessary force functions, and also stores the force with which it operates between any 2 given particles.  
+            </p>
+            <figure class="text-center">
+                <img src="fws.gif" class="figure-img img-fluid rounded mx-auto" alt="Trulli">
+                <figcaption class="figure-caption">Fig.1 - Final simulation of fire water and steam.</figcaption>
+            </figure>
+            <p>
+                Our final demonstration for the project was a simulation containing fire, water, and steam.  First fire appears to blaze from the ground, only to be extinguished by water, before rising up as steam.  In describing how this simulation works, we can showcase the inner workings of our simulation system.  Fire was modeled using both an external and internal force.  In our system external forces are a constant force vector applied to the particle, while internal forces occur between particles.  Each piece calculates the forces it receives from other particles, which is dependent on their type.  Fire had an external force downward to simulate gravity, and internal upwards force that came from other particles of the same type.  This internal force was also localized, meaning that only nearby particles affected it, and not all in the simulation.  We added localized forces to reduce computation, as not all forces need to be calculated on every particle.  This was done using box hashing similar to the one used in project 4.  Overall, the force on the fire particles would be:
+            </p>
+            <p class="text-center py-2">$f = G * <0, -1, 0> + F * \sum_{n} \frac{<0, 1, 0>}{r}$</p>
+            <p>
+                where $n$ is the set of particles in the same box as the current one and $r$ is the distance between them.  Here $F$ and $G$ are strength constants defined by manual trial and error.  
+            </p>
+            <h5 class = "py-3 text-center">Marching Cubes</h5>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+        </div>
+        <div class = "container my-5">
+            <h3 class = "py-2 text-center">Results</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+        <div class = "container my-5">
+            <h3 class = "py-2 text-center">References</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+        <div class = "container my-5">
+            <h3 class = "py-2 text-center">Contributions</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+        <!-- Bootstrap core JS
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> -->
+    </body>
 </html>
