@@ -41,11 +41,55 @@ ClothSimulator *app = nullptr;
 GLFWwindow *window = nullptr;
 Screen *screen = nullptr;
 
+unsigned int fbo;
+unsigned int rectVAO;
+unsigned int textureColorbuffer;
+GLShader pixelate_shader;
+bool pixelate;
+
+// from https://www.youtube.com/watch?v=QQ3jr-9Rc1o
+float fullRect[] = {
+    // Coords    // texCoords
+     1.0f, -1.0f,  1.0f, 0.0f,
+    -1.0f, -1.0f,  0.0f, 0.0f,
+    -1.0f,  1.0f,  0.0f, 1.0f,
+
+     1.0f,  1.0f,  1.0f, 1.0f,
+     1.0f, -1.0f,  1.0f, 0.0f,
+    -1.0f,  1.0f,  0.0f, 1.0f
+};
+
 void error_callback(int error, const char* description) {
   puts(description);
 }
 
-void createGLContexts() {
+void onResize(int width, int height) {
+    if (!pixelate) return;
+    
+    // generate texture
+//    width = width * 4 / 3;
+    glGenTextures(1, &textureColorbuffer);
+    glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // Prevents edge bleeding
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Prevents edge bleeding
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+
+    // attach it to currently bound framebuffer object
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+    
+    unsigned int rbo;
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+}
+
+void createGLContexts(string project_root) {
   if (!glfwInit()) {
     return;
   }
@@ -92,6 +136,34 @@ void createGLContexts() {
   glViewport(0, 0, width, height);
   glfwSwapInterval(1);
   glfwSwapBuffers(window);
+    
+    if (!pixelate) return;
+
+    // post processing initialization
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    onResize(width, height);
+    
+    unsigned int rectVBO;
+    glGenVertexArrays(1, &rectVAO);
+    glGenBuffers(1, &rectVBO);
+    glBindVertexArray(rectVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, rectVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(fullRect), &fullRect, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    
+    pixelate_shader.initFromFiles("pixelate", project_root + "/shaders/pixelate.vert",
+        project_root + "/shaders/pixelate.frag");
+    
+    pixelate_shader.setUniform("screenTexture", 0);
 }
 
 void setGLFWCallbacks() {
@@ -137,6 +209,7 @@ void setGLFWCallbacks() {
                                  [](GLFWwindow *, int width, int height) {
                                    screen->resizeCallbackEvent(width, height);
                                    app->resizeCallbackEvent(width, height);
+                                  onResize(width, height);
                                  });
 }
 
@@ -545,7 +618,7 @@ int main(int argc, char **argv) {
   std::string file_to_load_from;
   bool file_specified = false;
   
-  while ((c = getopt (argc, argv, "f:r:a:o:")) != -1) {
+  while ((c = getopt (argc, argv, "f:r:a:o:p")) != -1) {
     switch (c) {
       case 'f': {
         file_to_load_from = optarg;
@@ -576,6 +649,10 @@ int main(int argc, char **argv) {
         sphere_num_lon = arg_int;
         break;
       }
+        case 'p': {
+            pixelate = true;
+            break;
+        }
       default: {
         usageError(argv[0]);
         break;
@@ -603,7 +680,7 @@ int main(int argc, char **argv) {
 
   glfwSetErrorCallback(error_callback);
 
-  createGLContexts();
+  createGLContexts(project_root);
 
   // Initialize the ClothSimulator object
   app = new ClothSimulator(project_root, screen);
@@ -620,9 +697,18 @@ int main(int argc, char **argv) {
   // Attach callbacks to the GLFW window
 
   setGLFWCallbacks();
+    
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    onResize(width, height);
 
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
+      
+      if (pixelate) {
+          // Bind the custom framebuffer
+          glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+      }
 
     glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -632,6 +718,17 @@ int main(int argc, char **argv) {
     // Draw nanogui
     screen->drawContents();
 //    screen->drawWidgets();
+      
+      if (pixelate) {
+          // Bind the default framebuffer
+          glBindFramebuffer(GL_FRAMEBUFFER, 0);
+          // Draw the framebuffer rectangle
+          pixelate_shader.bind();
+          glBindVertexArray(rectVAO);
+          glDisable(GL_DEPTH_TEST); // prevents framebuffer rectangle from being discarded
+          glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+          glDrawArrays(GL_TRIANGLES, 0, 6);
+      }
 
     glfwSwapBuffers(window);
 
@@ -639,6 +736,8 @@ int main(int argc, char **argv) {
       glfwSetWindowShouldClose(window, 1);
     }
   }
+    
+    glDeleteFramebuffers(1, &fbo);
 
   return 0;
 }
