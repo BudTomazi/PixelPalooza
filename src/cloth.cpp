@@ -73,11 +73,10 @@ void PlaneCollision(Vector3D planeLoc, Vector3D planeNorm, Particle& p) {
 //    }
 }
 
-const double scalingFactor = 30.0 / (64 * 3.14159);
 double smoothingKernel(Vector3D x1, Vector3D x2, double h2, double h9) {
     double hr = (h2 - (x2 - x1).norm2());
     if (hr < 0) return 0;
-    return scalingFactor * hr * hr * hr / h9;
+    return 1.5 * hr * hr * hr / h9;
 }
 
 using namespace std;
@@ -206,7 +205,7 @@ void Cloth::simulate(vector<CollisionObject*>* collision_objects) {
     Vector3D curPos;
     Vector3D newPos;
     double delta_t_sqr = delta_t * delta_t;
-    double dampingFactor = 1 - (0.01 / 100.0); // damping is arbitrary
+    double dampingFactor = 1 - (0.05 / 100.0); // damping is arbitrary
     double delta = 0.1;
     Vector3D normal;
 
@@ -420,10 +419,10 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         vector<Particle*>* localCandidates = map[hash_position(curParticle.position)];
 
         for (Particle* p : *localCandidates) {
-//            if (p == curParticle) continue;
             otherProperties = &particleProperties[p->particle_type];
-            double h2 = otherProperties->radius * otherProperties->radius;
-            double h9 = h2 * h2 * h2 * h2 * otherProperties->radius;
+            double h = otherProperties->radius * 2;
+            double h2 = h * h;
+            double h9 = h2 * h2 * h;
             curParticle.density += otherProperties->mass * smoothingKernel(curParticle.position, p->position, h2, h9);
         }
     }
@@ -468,12 +467,14 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
     ParticleProperties* curProperties;
     Vector3D curParticleColor;
 
+    double delta_t = 1.0 / frames_per_sec / simulation_steps;
+    
     int cellPos[3];
 
     for (int i = 0; i < particles.size(); i++) {
         curProperties = &particleProperties[particles[i].particle_type];
 
-        gridRadius = ceil(curProperties->radius / cellSize);
+        gridRadius = ceil(curProperties->radius / cellSize) * 2;
         particlePos = particles[i].position;
 
         cellPos[0] = floor((particlePos.x + borderDist.x) / cellSize);
@@ -490,12 +491,13 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         offset = particlePos - cells[startIndex].pos;
         curParticleColor = curProperties->color;
         if (curProperties->velocityColor.norm2() > 0) {
-            curParticleColor += curProperties->velocityColor * particles[i].velocity(1 / frames_per_sec / simulation_steps).norm2();
+            curParticleColor += curProperties->velocityColor * particles[i].velocity(delta_t).norm2();
         }
 
         //TODO: can probably be optimized!!!!
-        double h2 = curProperties->radius;
-        double h9 = h2 * h2 * h2 * h2 * curProperties->radius;
+        double h = curProperties->radius * 2;
+        double h2 = h * h;
+        double h9 = h2 * h2 * h;
 
         for (int dx = -gridRadius; dx <= gridRadius; dx++) {
             if (dx < -cellPos[0] || dx >= numX - cellPos[0]) continue;
@@ -506,7 +508,7 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
                 curIndex = startIndex + dx * yz + dy * numZ - gridRadius;
                 for (int dz = -gridRadius; dz <= gridRadius; dz++) {
                     if (dz >= -cellPos[2] && dz < numZ - cellPos[2]) {
-                        particleStrength = curProperties->mass * smoothingKernel(cellSize * Vector3D(dx, dy, dz), offset, h2, h9) / particles[i].density;
+                        particleStrength = smoothingKernel(cells[curIndex].pos, particlePos, h2, h9);
 
 //                        dist = (cellSize * Vector3D(dx, dy, dz) - offset).norm();
 //
@@ -515,7 +517,8 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
 //                        } else {
 //                            particleStrength = (cellSize / 100) / (dist * dist * dist);
 //                        }
-                        if (particleStrength > 0) {
+                        
+                        if (particleStrength > 0.000001) {
                             newVal = cells[curIndex].value + particleStrength;
                             cells[curIndex].color = (cells[curIndex].value / newVal) * cells[curIndex].color + (particleStrength / newVal) * curParticleColor;
                             cells[curIndex].value = newVal;
@@ -561,7 +564,6 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
                     if (curProperties->shaderType > cells[curIndex].shaderType) {
                         cells[curIndex].shaderType = curProperties->shaderType;
                     }
-
                 }
             }
         }

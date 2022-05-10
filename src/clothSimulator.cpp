@@ -321,7 +321,7 @@ void ClothSimulator::drawWireframe(GLShader& shader) {
 
 void ClothSimulator::drawNormals(GLShader& shader) {
     int num_tris;
-    MeshTriangle* triangles = cloth->getMarchingCubeMesh(num_tris);
+    MeshTriangle* triangles = cloth->getTrianglesMesh(num_tris);
 
     MatrixXf positions(4, num_tris * 3);
     MatrixXf normals(4, num_tris * 3);
@@ -579,6 +579,14 @@ bool ClothSimulator::keyCallbackEvent(int key, int scancode, int action,
                 is_paused = true;
             }
             break;
+        case 'x':
+        case 'X':
+                active_shader_idx = 5;
+                break;
+        case 'c':
+        case 'C':
+                active_shader_idx = 1;
+                break;
         }
     }
 

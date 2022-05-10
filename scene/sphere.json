@@ -23,7 +23,7 @@
       "pinned": 0,
       "shaderType": 1,
       "partColl": 1,
-      "particleAveragingFactor": 0.05,
+      "particleAveragingFactor": 0.01,
       "particleAveragingDist": 0.3,
       "receivedForces": [
         {
