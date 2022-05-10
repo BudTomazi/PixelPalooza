@@ -1,7 +1,7 @@
 {
     "bounds": {
-        "marchingSize": 0.1,
-        "marchingCount": [35, 80, 35],
+        "marchingSize": 0.06,
+        "marchingCount": [50, 120, 50],
         "physicsBuffer": 0.1,
         "noTop": 1
     },
@@ -39,7 +39,7 @@
       "spawnPos": [ 0, -2, 0 ],
       "spawnExtents": [ 0, 0, 0 ],
       "particleMass": 2.0,
-      "particleRadius": 0.04,
+      "particleRadius": 0.06,
       "collRadius": 0.3,
       "particleColor": [ 0.4, 0.3, 0.1 ],
       "partColl": 0,
@@ -47,7 +47,7 @@
       "pinned": 1,
       "shaderType": 0,
       "particleAveragingFactor": 0.02,
-      "particleAveragingDist": 0.2,
+      "particleAveragingDist": 0.4,
       "particleAveragingBrightness": 0.7,
       "receivedForces": [
       ],
@@ -65,7 +65,7 @@
       "externalForces": [ 0, 0, 0 ],
       "pinned": 1,
       "shaderType": 0,
-      "particleAveragingFactor": 0.02,
+      "particleAveragingFactor": 0.04,
       "particleAveragingDist": 0.3,
       "particleAveragingBrightness": 0.7,
       "receivedForces": [

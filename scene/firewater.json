@@ -40,7 +40,7 @@
     },
     {
 
-      "count": 1000,
+      "count": 600,
       "spawnPos": [ 0, 150, 0 ],
       "spawnExtents": [ 1, 2, 1 ],
       "particleMass": 0.02,
@@ -51,7 +51,7 @@
       "pinned": 0,
       "shaderType": 1,
       "partColl": 1,
-      "particleAveragingFactor": 0,
+      "particleAveragingFactor": 0.001,
       "receivedForces": [
       ],
       "transformations": [ 2, 1, 1 ]

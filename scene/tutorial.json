@@ -38,7 +38,7 @@
         "spawnExtents": [ 0.9, 0.9, 0.9 ],
         "particleMass": 0.01,
         "particleRadius": 0.05,
-        "collRadius": 0.2,
+        "collRadius": 0.15,
         "particleColor": [ 1.0, 0.0, 0.0 ],
         "externalForces": [ 0, 0, 0 ],
         "pinned": 0,
@@ -57,7 +57,7 @@
             "localized": 0
           }
         ],
-        "transformations": [ 1, 1 ]
+        "transformations": [ 0, 0 ]
       }
   ]
 }
