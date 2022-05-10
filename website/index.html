@@ -35,22 +35,50 @@
             </p>
             <h5 class = "py-3 text-center">The Particle Simulation</h5>
             <p>
-                Once the particle start positions and class information has been loaded the physics loop begins.  A key feature of this simulation is the ParticleProperties class which stores the forces received by particles of its type from other types.  Because we have the potential for many different particle types to be used together, we use this as a way to keep track of the class properties since we cannot hardcode any interactions.  This class maintains pointers to the necessary force functions, and also stores the force with which it operates between any 2 given particles.  
+                Once the particle start positions and class information has been loaded the physics loop begins.  A key feature of this simulation is the ParticleProperties class, which stores the forces received by particles of its type from other types.  Because we have the potential for many different particle types to be used together, we use this as a way to keep track of the class properties since we cannot hardcode any interactions.  This class maintains pointers to the necessary force functions, and also stores the force with which it operates between any 2 given particles.
+            </p>
+
+            <p>
+                The reason we have separate Particle and ParticleProperties classes is because there can be hundreds of individual particles, but many of them will share the same base physical properties.  The ParticleProperties class abstracts away the static data which is consistent between particles, while the Particle class itself tracks properties which are unique to each individual particle (such as position and forces).
             </p>
             <figure class="text-center">
                 <img src="fws.gif" class="figure-img img-fluid rounded mx-auto" alt="Trulli">
                 <figcaption class="figure-caption">Fig.1 - Final simulation of fire water and steam.</figcaption>
             </figure>
             <p>
-                Our final demonstration for the project was a simulation containing fire, water, and steam.  First fire appears to blaze from the ground, only to be extinguished by water, before rising up as steam.  In describing how this simulation works, we can showcase the inner workings of our simulation system.  Fire was modeled using both an external and internal force.  In our system external forces are a constant force vector applied to the particle, while internal forces occur between particles.  Each piece calculates the forces it receives from other particles, which is dependent on their type.  Fire had an external force downward to simulate gravity, and internal upwards force that came from other particles of the same type.  This internal force was also localized, meaning that only nearby particles affected it, and not all in the simulation.  We added localized forces to reduce computation, as not all forces need to be calculated on every particle.  This was done using box hashing similar to the one used in project 4.  Overall, the force on the fire particles would be:
+                Our final demonstration for the project was a simulation containing fire, water, and steam.  First fire appears to blaze from the ground, only to be extinguished by water, before rising up as steam.
             </p>
-            <p class="text-center py-2">$f = G * <0, -1, 0> + F * \sum_{n} \frac{<0, 1, 0>}{r}$</p>
             <p>
-                where $n$ is the set of particles in the same box as the current one and $r$ is the distance between them.  Here $F$ and $G$ are strength constants defined by manual trial and error.  
+                In describing how this simulation works, we can showcase the inner workings of our simulation system.  Fire was modeled using both an external and internal force.  In our system external forces are a constant force vector applied to the particle, while internal forces occur between particles.  Each piece calculates the forces it receives from other particles, which is dependent on their type.  Fire had an external force downward to simulate gravity, and internal upwards force that came from other particles of the same type.  This internal force was also localized, meaning that only nearby particles affected it, and not all in the simulation.  We added localized forces to reduce computation, as not all forces need to be calculated on every particle.  This was done using box hashing similar to the one used in project 4.  Overall, the force on the fire particles would be:
+            </p>
+            <p class="text-center py-2">$f = G$ $* <0, -1, 0> +$ $F * \sum_{n} \frac{<0, 1, 0>}{r}$</p>
+            <p>
+                where $n$ is the set of particles in the same box as the current one and $r$ is the distance between them.  Here $F$ and $G$ are strength constants defined by manual trial and error.
             </p>
             <h5 class = "py-3 text-center">Marching Cubes</h5>
             <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                Another major feature of our particle simulator was the fact that we wanted to render the particles as a cohesive group with an overall shape, rather than as a bunch of separate points (which is how they exist in code).  In order to do so, we opted to use the Marching Cubes algorithm, which is commonly used for fluid simulation and other similar applications.  The Marching Cubes algorithm operates on a scalar field, which essentially means that it takes in a function where there is some scalar value associated with every 3D point in the world.  Given that function, it can define a surface which separates high valued areas from low valued areas such that high values are "inside" of the mesh, and low values are "outside".
+            </p>
+
+            <p>
+                For our purposes, this meant that we needed to first define a scalar field which had high values in areas with lots of points, and zero values elsewhere.  For this, we found <a href="https://faculty.cc.gatech.edu/~turk/my_papers/sph_surfaces.pdf">an article</a> with this density-based scalar field, which first computes the density at each point, and then uses that density to determine the strength of the scalar field.
+            </p>
+
+            <p class="text-center py-2">$W(r, h) = \sigma\frac{(h^2 - r^2)^3}{h^9}$</p>
+            <p class="text-center py-2">$\rho_i = \sum_jm_jW(x_j - x_i, h_j)$</p>
+            <p class="text-center py-2">$\phi(x) = \sum_j\frac{m_j}{\rho_j}W(x - x_j, h_j)$</p>
+
+            <p>
+                where $W(r, h)$ is a kernel function (inspired by this previous <a href="https://yidingjiang.github.io/cs184sp18_final/">CS184 project</a>) with $\sigma = 0.15$ somewhat arbitrarily, $\rho_i$ is the density for particle $i$ based on its neighbors, and $\phi(x)$ is the final scalar function (taking in input coordinate $x$). We decided that $h$ would be the radius of the particle, but this ended up not being exactly the case in most renderings.
+            </p>
+
+            <p>
+                Then, when we apply the Marching Cubes algorithm, we get a mesh which separates our particle clusters from the rest of the space, resulting in a dynamic cloud shape which surrounds the particles based on their radii. We adapted <a href="https://www.angelfire.com/linux/myp/MCAdvanced/MCImproved.html">this implementation</a> (specifically the non-recursive approach) for our project, which not only generates a mesh, but also computes vertex normals for smoother shading.  However, in addition to computing a normal for each vertex, we also modified the algorithm so that the scalar field also tracks which particles are most prevalent at each location (in addition to a raw density value for the main algorithm to use).  This allows us to color the triangles based on the particle types present (and even apply different shaders), since there is a single mesh used for the entire particle simulation.  In places where there are multiple particle types present, the colors blend slightly for a smoother appearance.
+            </p>
+
+            <h5 class = "py-3 text-center">Particle Averaging</h5>
+            <p>
+                In general though, we found that often times simulations that replicated more "physical" phenomena benefitted from having more particles to result in a smoother, more full mesh.  However, this of course increased the computational complexity of our physics and density calculations, and often times resulted in collisions which we did not want.  To create more 
             </p>
         </div>
         <div class = "container my-5">
