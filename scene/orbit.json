@@ -39,7 +39,7 @@
       "spawnPos": [ 0, 0, 0 ],
       "spawnExtents": [ 0.3, 0.3, 0.3 ],
       "particleMass": 1000,
-      "particleRadius": 0.1,
+      "particleRadius": 0.11,
       "collRadius": 0.2,
       "particleColor": [ 0.1, 0.1, 0.1 ],
       "externalForces": [ 0, 0, 0 ],

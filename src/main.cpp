@@ -491,6 +491,13 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
             noTop = true;
         }
         
+        temp = object.find("damping");
+        double damping = 0.01;
+        if (temp != object.end()) {
+            damping = *temp;
+        }
+        cloth->damping = damping;
+        
         temp = object.find("physicsBuffer");
         if (temp != object.end()) {
             physicsBuffer = *temp;
