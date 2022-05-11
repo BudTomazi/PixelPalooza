@@ -728,7 +728,6 @@ int main(int argc, char **argv) {
           glBindFramebuffer(GL_FRAMEBUFFER, 0);
       }
 
-      cerr << "b: " << bgColor.x << "\n";
     glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
