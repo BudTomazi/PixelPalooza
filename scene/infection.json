@@ -4,7 +4,8 @@
         "marchingCount": [35, 80, 35],
         "physicsBuffer": 0.5,
         "noTop": 1,
-        "useDensity": 1
+        "useDensity": 1,
+        "bg": [0.1, 0, 0.02]
     },
   "particles": [
     {

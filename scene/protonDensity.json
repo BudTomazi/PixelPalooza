@@ -1,10 +1,10 @@
 {
   "bounds": {
-      "marchingSize": 0.05,
-      "marchingCount": [120, 80, 80],
+      "marchingSize": 0.1,
+      "marchingCount": [60, 40, 40],
       "physicsBuffer": 0.5,
       "damping": 0.01,
-      "bg": [0.4, 0.3, 0.4]
+      "useDensity": 1
   },
   "particles": [
       {
@@ -12,7 +12,7 @@
         "spawnPos": [ -0.3, -0.5, 0 ],
         "spawnExtents": [ 0.6, 0.3, 0.3 ],
         "particleMass": 0.1,
-        "particleRadius": 0.1,
+        "particleRadius": 0.25,
         "collRadius": 0.2,
         "particleColor": [ 0, 0.5, 1 ],
         "externalForces": [ 0, 0, 0 ],
@@ -39,7 +39,7 @@
         "spawnPos": [ 0.3, 0.5, 0 ],
         "spawnExtents": [ 0.6, 0.3, 0.3 ],
         "particleMass": 0.1,
-        "particleRadius": 0.05,
+        "particleRadius": 0.21,
         "collRadius": 0.2,
         "particleColor": [ 1.0, 0.0, 0.0 ],
         "externalForces": [ 0, 0, 0 ],
@@ -55,7 +55,7 @@
           },
           {
             "law": "r4",
-            "strengths": [ -0.01, -0.015 ],
+            "strengths": [ -0.02, -0.03 ],
             "localized": 0
           }
         ],

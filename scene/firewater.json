@@ -4,7 +4,7 @@
       "marchingCount": [24, 30, 24],
       "physicsBuffer": 0.5,
       "noTop": 1,
-      "damping": 0.012,
+      "damping": 0.01,
       "bg": [0.1, 0.1, 0.2],
       "useDensity": 1
   },
@@ -21,7 +21,7 @@
       "pinned": 0,
       "shaderType": 2,
       "partColl": 1,
-      "particleAveragingFactor": 0.01,
+      "particleAveragingFactor": 0.007,
       "receivedForces": [
         {
           "law": "r2",
@@ -45,7 +45,7 @@
 
       "count": 729,
       "spawnPos": [ 0, 150, 0 ],
-      "spawnExtents": [ 0.7, 1.5, 0.7 ],
+      "spawnExtents": [ 0.6, 1.5, 0.6 ],
       "particleMass": 0.02,
       "particleRadius": 0.21,
       "collRadius": 0.1,
@@ -54,7 +54,7 @@
       "pinned": 0,
       "shaderType": 1,
       "partColl": 1,
-      "particleAveragingFactor": 0.00001,
+      "particleAveragingFactor": 0.000005,
       "receivedForces": [
           {
             "law": "r4",

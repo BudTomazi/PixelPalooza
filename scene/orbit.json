@@ -3,7 +3,8 @@
       "marchingSize": 0.1,
       "marchingCount": [50, 40, 50],
       "physicsBuffer": 0.1,
-      "useDensity": 1
+      "useDensity": 1,
+      "bg": [0.07, 0.05, 0.06]
   },
   "particles": [
     {
@@ -43,7 +44,7 @@
       "particleMass": 10,
       "particleRadius": 0.23,
       "collRadius": 0.2,
-      "particleColor": [ 0.1, 0.1, 0.1 ],
+      "particleColor": [ 0.2, 0.2, 0.2 ],
       "externalForces": [ 0, 0, 0 ],
       "pinned": 1,
       "shaderType": 0,
