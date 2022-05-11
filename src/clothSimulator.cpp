@@ -579,14 +579,18 @@ bool ClothSimulator::keyCallbackEvent(int key, int scancode, int action,
                 is_paused = true;
             }
             break;
-        case 'x':
-        case 'X':
+        case 'v':
+        case 'V':
                 active_shader_idx = 5;
                 break;
         case 'c':
         case 'C':
                 active_shader_idx = 1;
                 break;
+        case 'x':
+        case 'X':
+            should_pixelate = !should_pixelate;
+            break;
         }
     }
 

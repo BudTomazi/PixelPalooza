@@ -45,7 +45,8 @@ unsigned int fbo;
 unsigned int rectVAO;
 unsigned int textureColorbuffer;
 GLShader pixelate_shader;
-bool pixelate;
+
+Vector3D bgColor;
 
 // from https://www.youtube.com/watch?v=QQ3jr-9Rc1o
 float fullRect[] = {
@@ -64,13 +65,11 @@ void error_callback(int error, const char* description) {
 }
 
 void onResize(int width, int height) {
-    if (!pixelate) return;
-    
     // generate texture
-//    width = width * 4 / 3;
+//    width = width * 3 / 4;
     glGenTextures(1, &textureColorbuffer);
     glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, height, width, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // Prevents edge bleeding
@@ -83,7 +82,7 @@ void onResize(int width, int height) {
     unsigned int rbo;
     glGenRenderbuffers(1, &rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, height, width);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
     
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
@@ -137,8 +136,6 @@ void createGLContexts(string project_root) {
   glfwSwapInterval(1);
   glfwSwapBuffers(window);
     
-    if (!pixelate) return;
-
     // post processing initialization
     glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -505,6 +502,19 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
             incompleteObjectError("bounds", "physicsBuffer");
         }
         
+        temp = object.find("inSphere");
+        cloth->isInSphere = false;
+        if (temp != object.end() && *temp == 1) {
+            cloth->isInSphere = true;
+        }
+        
+        bgColor = Vector3D(0.25);
+        temp = object.find("bg");
+        if (temp != object.end()) {
+            vector<double> vec_bg = *temp;
+            bgColor = Vector3D(vec_bg[0], vec_bg[1], vec_bg[2]);
+        }
+        
         cloth->initMarchingCubes(sideCellCounts[0], sideCellCounts[1], sideCellCounts[2], marchingSize, physicsBuffer, noTop);
     } else if (key == SPHERE) {
       Vector3D origin;
@@ -539,6 +549,7 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
           Sphere* s = new Sphere(origin + Vector3D(2 * a, 4 * b, 2 * c), radius, friction, sphere_num_lat, sphere_num_lon);
           objects->push_back(s);
       }
+        
       
     } else if (key == PLANE) { // PLANE
       Vector3D point, normal;
@@ -656,10 +667,6 @@ int main(int argc, char **argv) {
         sphere_num_lon = arg_int;
         break;
       }
-        case 'p': {
-            pixelate = true;
-            break;
-        }
       default: {
         usageError(argv[0]);
         break;
@@ -708,16 +715,21 @@ int main(int argc, char **argv) {
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
     onResize(width, height);
+    
+    app->should_pixelate = false;
 
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
-      
-      if (pixelate) {
+            
+      if (app->should_pixelate) {
           // Bind the custom framebuffer
           glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+      } else {
+          glBindFramebuffer(GL_FRAMEBUFFER, 0);
       }
 
-    glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
+      cerr << "b: " << bgColor.x << "\n";
+    glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     app->drawContents();
@@ -726,7 +738,7 @@ int main(int argc, char **argv) {
     screen->drawContents();
 //    screen->drawWidgets();
       
-      if (pixelate) {
+      if (app->should_pixelate) {
           // Bind the default framebuffer
           glBindFramebuffer(GL_FRAMEBUFFER, 0);
           // Draw the framebuffer rectangle
