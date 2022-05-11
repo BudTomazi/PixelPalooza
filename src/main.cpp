@@ -508,6 +508,12 @@ bool loadObjectsFromFile(string filename, Cloth *cloth, ClothParameters *cp, vec
             cloth->isInSphere = true;
         }
         
+        temp = object.find("useDensity");
+        cloth->useDensity = false;
+        if (temp != object.end() && *temp == 1) {
+            cloth->useDensity = true;
+        }
+        
         bgColor = Vector3D(0.25);
         temp = object.find("bg");
         if (temp != object.end()) {

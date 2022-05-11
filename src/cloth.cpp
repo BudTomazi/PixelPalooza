@@ -220,7 +220,7 @@ void Cloth::simulate(vector<CollisionObject*>* collision_objects) {
     Vector3D curPos;
     Vector3D newPos;
     double delta_t_sqr = delta_t * delta_t;
-    double dampingFactor = 1 - (damping / 100.0); // damping is arbitrary
+    double dampingFactor = 1 - (damping / 100.0);
     double delta = 0.1;
     Vector3D normal;
 
@@ -431,18 +431,22 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
         cells[i].shaderType = -1;
     }
 
-    build_spatial_map();
-    ParticleProperties* otherProperties;
-    for (Particle& curParticle : particles) {
-        curParticle.density = 0;
-        vector<Particle*>* localCandidates = map[hash_position(curParticle.position)];
+    if (useDensity) {
+        build_spatial_map();
+        ParticleProperties* curProperties;
+        for (Particle& curParticle : particles) {
+            curParticle.density = 0;
+            vector<Particle*>* localCandidates = map[hash_position(curParticle.position)];
 
-        for (Particle* p : *localCandidates) {
-            otherProperties = &particleProperties[p->particle_type];
-            double h = otherProperties->radius * 2;
-            double h2 = h * h;
-            double h9 = h2 * h2 * h;
-            curParticle.density += otherProperties->mass * smoothingKernel(curParticle.position, p->position, h2, h9);
+            curProperties = &particleProperties[curParticle.particle_type];
+            for (Particle* p : *localCandidates) {
+                if (p->particle_type != curParticle.particle_type) continue;
+                
+                double h = curProperties->radius * 2;
+                double h2 = h * h;
+                double h9 = h2 * h2 * h2 * h2 * h;
+                curParticle.density += curProperties->mass * smoothingKernel(curParticle.position, p->position, h2, h9);
+            }
         }
     }
 
@@ -527,7 +531,11 @@ MeshTriangle* Cloth::getMarchingCubeMesh(int& numTriangles) {
                 curIndex = startIndex + dx * yz + dy * numZ - gridRadius;
                 for (int dz = -gridRadius; dz <= gridRadius; dz++) {
                     if (dz >= -cellPos[2] && dz < numZ - cellPos[2]) {
-                        particleStrength = smoothingKernel(cells[curIndex].pos, particlePos, h2, h9);
+                        if (useDensity) {
+                            particleStrength = smoothingKernel(cells[curIndex].pos, particlePos, h2, h9) * curProperties->mass / particles[i].density;
+                        } else {
+                            particleStrength = smoothingKernel(cells[curIndex].pos, particlePos, h2, h9);
+                        }
 
 //                        dist = (cellSize * Vector3D(dx, dy, dz) - offset).norm();
 //

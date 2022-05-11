@@ -64,6 +64,7 @@ struct Cloth {
     // Cloth components
     vector<Particle> particles;
     double damping;
+    bool useDensity;
     
     bool isInSphere;
     double sphereRad;

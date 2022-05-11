@@ -1,0 +1,84 @@
+{
+  "bounds": {
+      "marchingSize": 0.1,
+      "marchingCount": [60, 80, 60],
+      "physicsBuffer": 1.0,
+      "inSphere": 1,
+      "bg": [0.0, 0.0, 0.1],
+      "useDensity": 1
+  },
+  "particles": [
+    {
+      "count": 27,
+      "spawnPos": [ -1.2, 0, -1.6 ],
+      "spawnExtents": [ 0.6, 0.6, 0.6 ],
+      "particleMass": 0.1,
+      "particleRadius": 0.22,
+      "collRadius": 0.12,
+      "particleColor": [ 0.5, 0.3, 0 ],
+      "velocityColor": [ 0.008, 0.0012, 0.0012 ],
+      "externalForces": [ 0, 0, 0 ],
+      "pinned": 0,
+      "shaderType": 0,
+      "partColl": 0,
+      "particleAveragingFactor": 0.02,
+      "particleAveragingDist": 0.3,
+      "receivedForces": [
+        {
+          "law": "r2",
+          "strengths": [ -0.01, 0.3, -0.4 ],
+          "localized": 0
+        }
+      ],
+      "transformations": [ 0, 0, 2 ]
+    },
+    {
+      "count": 27,
+      "spawnPos": [ -1.2, 0, 1.6 ],
+      "spawnExtents": [ 0.6, 0.6, 0.6 ],
+      "particleMass": 0.1,
+      "particleRadius": 0.22,
+      "collRadius": 0.12,
+      "particleColor": [ 0, 0.5, 0.3 ],
+      "velocityColor": [ 0.0012, 0.008, 0.0012 ],
+      "externalForces": [ 0, 0, 0 ],
+      "pinned": 0,
+      "shaderType": 0,
+      "partColl": 0,
+      "particleAveragingFactor": 0.02,
+      "particleAveragingDist": 0.3,
+      "receivedForces": [
+        {
+          "law": "r2",
+          "strengths": [ -0.4, -0.01, 0.3 ],
+          "localized": 0
+        }
+      ],
+      "transformations": [ 0, 1, 1 ]
+    },
+    {
+      "count": 27,
+      "spawnPos": [ 1.2, 0, 0 ],
+      "spawnExtents": [ 0.6, 0.6, 0.6 ],
+      "particleMass": 0.1,
+      "particleRadius": 0.22,
+      "collRadius": 0.12,
+      "particleColor": [ 0.3, 0, 0.5 ],
+      "velocityColor": [ 0.0012, 0.0012, 0.008 ],
+      "externalForces": [ 0, 0, 0 ],
+      "pinned": 0,
+      "shaderType": 0,
+      "partColl": 0,
+      "particleAveragingFactor": 0.02,
+      "particleAveragingDist": 0.3,
+      "receivedForces": [
+        {
+          "law": "r2",
+          "strengths": [ 0.3, -0.4, -0.01 ],
+          "localized": 0
+        }
+      ],
+      "transformations": [ 2, 1, 2 ]
+    }
+  ]
+}

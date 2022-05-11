@@ -1,0 +1,44 @@
+{
+  "bounds": {
+      "marchingSize": 0.2,
+      "marchingCount": [24, 30, 24],
+      "physicsBuffer": 0.5,
+      "noTop": 1,
+      "damping": 0.01,
+      "bg": [0.1, 0.1, 0.2]
+  },
+  "particles": [
+    {
+      "count": 150,
+      "spawnPos": [ 0, -0.5, 0 ],
+      "spawnExtents": [ 2, 2, 2 ],
+      "particleMass": 0.01,
+      "particleRadius": 0.15,
+      "collRadius": 0.2,
+      "particleColor": [ 1, 0, 0 ],
+      "externalForces": [ 0, -100.0, 0 ],
+      "pinned": 0,
+      "shaderType": 2,
+      "partColl": 1,
+      "particleAveragingFactor": 0.006,
+      "receivedForces": [
+        {
+          "law": "r2",
+          "strengths": [ 0.1, 0.0, 0.0 ],
+          "localized": 1
+        },
+        {
+          "law": "fireForce",
+          "strengths": [ 1.4, 0.0, 0.0 ],
+          "localized": 0
+        },
+        {
+          "law": "cross",
+          "strengths": [ 0.0, 0.0, 0.0 ],
+          "localized": 0
+        }
+      ],
+      "transformations": [ 0, 2, 0 ]
+    }
+  ]
+}

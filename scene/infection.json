@@ -3,7 +3,8 @@
         "marchingSize": 0.1,
         "marchingCount": [35, 80, 35],
         "physicsBuffer": 0.5,
-        "noTop": 1
+        "noTop": 1,
+        "useDensity": 1
     },
   "particles": [
     {
@@ -11,8 +12,8 @@
       "spawnPos": [ 0, -2, 0 ],
       "spawnExtents": [ 0, 0, 0 ],
       "particleMass": 2.0,
-      "particleRadius": 0.15,
-      "collRadius": 0.1,
+      "particleRadius": 0.22,
+      "collRadius": 0.08,
       "particleColor": [ 0.7, 0.2, 0 ],
       "externalForces": [ 0, 0, 0 ],
       "partColl": 0,
@@ -44,7 +45,7 @@
       "spawnPos": [ 0, 1, 0 ],
       "spawnExtents": [ 1, 1, 1 ],
       "particleMass": 0.1,
-      "particleRadius": 0.13,
+      "particleRadius": 0.2,
       "collRadius": 0.1,
       "particleColor": [ 0.4, 0.4, 0.6 ],
       "externalForces": [ 0, 0, 0 ],
@@ -77,7 +78,7 @@
       "spawnPos": [ 0, -2.6, 0 ],
       "spawnExtents": [ 0, 0, 0 ],
       "particleMass": 2.0,
-      "particleRadius": 0.1,
+      "particleRadius": 0.21,
       "collRadius": 0.1,
       "particleColor": [ 0, 1, 0 ],
       "partColl": 0,

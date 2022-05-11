@@ -1,18 +1,18 @@
 {
     "bounds": {
-        "marchingSize": 0.06,
-        "marchingCount": [50, 120, 50],
+        "marchingSize": 0.1,
+        "marchingCount": [30, 80, 30],
         "physicsBuffer": 0.1,
         "noTop": 1,
-        "useDensity": 0
+        "useDensity": 1
     },
   "particles": [
     {
       "count": 100,
       "spawnPos": [ 0, 5, 0 ],
-      "spawnExtents": [ 1, 5, 1 ],
+      "spawnExtents": [ 1.2, 5, 1.2 ],
       "particleMass": 0.3,
-      "particleRadius": 0.04,
+      "particleRadius": 0.2,
       "collRadius": 0.1,
       "particleColor": [ 0.7, 0.9, 0.9 ],
       "externalForces": [ 0, 0, 0 ],
@@ -40,7 +40,7 @@
       "spawnPos": [ 0, -2, 0 ],
       "spawnExtents": [ 0, 0, 0 ],
       "particleMass": 2.0,
-      "particleRadius": 0.06,
+      "particleRadius": 0.21,
       "collRadius": 0.3,
       "particleColor": [ 0.4, 0.3, 0.1 ],
       "partColl": 0,
@@ -58,15 +58,15 @@
       "count": 0,
       "spawnPos": [ 0, -2, 0 ],
       "spawnExtents": [ 0, 0, 0 ],
-      "particleMass": 2.0,
-      "particleRadius": 0.04,
+      "particleMass": 1.0,
+      "particleRadius": 0.15,
       "collRadius": 0.3,
       "particleColor": [ 0, 0.6, 0 ],
       "partColl": 0,
       "externalForces": [ 0, 0, 0 ],
       "pinned": 1,
       "shaderType": 0,
-      "particleAveragingFactor": 0.02,
+      "particleAveragingFactor": 0.01,
       "particleAveragingDist": 0.2,
       "particleAveragingBrightness": 0.7,
       "receivedForces": [
