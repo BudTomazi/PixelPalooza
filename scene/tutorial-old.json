@@ -2,7 +2,8 @@
   "bounds": {
       "marchingSize": 0.05,
       "marchingCount": [120, 80, 80],
-      "physicsBuffer": 0.5
+      "physicsBuffer": 0.5,
+      "damping": 0.05
   },
   "particles": [
       {

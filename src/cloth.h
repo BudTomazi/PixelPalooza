@@ -63,6 +63,7 @@ struct Cloth {
     
     // Cloth components
     vector<Particle> particles;
+    double damping;
 
     // Particle properties
     vector<ParticleProperties> particleProperties;

@@ -15,10 +15,10 @@
       "collRadius": 0.1,
       "particleColor": [ 0.7, 0.2, 0 ],
       "externalForces": [ 0, 0, 0 ],
-      "partColl": 1,
+      "partColl": 0,
       "pinned": 0,
       "shaderType": 0,
-      "particleAveragingFactor": 0.02,
+      "particleAveragingFactor": 0,
       "particleAveragingDist": 0.3,
       "receivedForces": [
         {
