@@ -55,6 +55,9 @@
             <p>
                 where $n$ is the set of particles in the same box as the current one and $r$ is the distance between them.  Here $F$ and $G$ are strength constants defined by manual trial and error.
             </p>
+<p>
+The water in the video starts a large distance above the fire and falls under the external force of gravity.  Our water is modeled very simply, only being affected by particle to particle collisons and a localized internal attraction to approximate surface tension.  One of the main features of water in this simulation is that when it collides with fire, both the fire and water particles turn into steam particles.  This feature of particles transforming into other types is one of the key features we used to make interesting simulations.  
+</p>
             <h5 class = "py-3 text-center">Marching Cubes</h5>
             <p>
                 Another major feature of our particle simulator was the fact that we wanted to render the particles as a cohesive group with an overall shape, rather than as a bunch of separate points (which is how they exist in code).  In order to do so, we opted to use the Marching Cubes algorithm, which is commonly used for fluid simulation and other similar applications.  The Marching Cubes algorithm operates on a scalar field, which essentially means that it takes in a function where there is some scalar value associated with every 3D point in the world.  Given that function, it can define a surface which separates high valued areas from low valued areas such that high values are "inside" of the mesh, and low values are "outside".
@@ -78,7 +81,7 @@
 
             <h5 class = "py-3 text-center">Particle Averaging</h5>
             <p>
-                In general though, we found that often times simulations that replicated more "physical" phenomena benefitted from having more particles to result in a smoother, more full mesh.  However, this of course increased the computational complexity of our physics and density calculations, and often times resulted in collisions which we did not want.  To create more 
+                In general though, we found that often times simulations that replicated more "physical" phenomena benefitted from having more particles to result in a smoother, more full mesh.  However, this of course increased the computational complexity of our physics and density calculations, and often times resulted in collisions which we did not want.  To create more
             </p>
         </div>
         <div class = "container my-5">
@@ -91,7 +94,10 @@
         </div>
         <div class = "container my-5">
             <h3 class = "py-2 text-center">Contributions</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p><b>Nate</b>: Adapted implementation of marching cubes to work with our system.  Wrote the code to generate the scalar field from the particle positions.  Combined marching cubes with the shader system to allow for altering the appearances of different particle types.</p>
+	    <p><b>Nick</b>:Wrote physics simulation based on the project 4 code.  Created parameters for several of the final simulations.</p>
+	    <p><b>Cindy</b>:Wrote the cel-shading code.</p>
+	    <p><b>Danny</b>:Wrote system to parse particle starting conditions and properties from JSON files.</p>
         </div>
         <!-- Bootstrap core JS
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> -->

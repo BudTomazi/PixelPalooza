@@ -40,9 +40,9 @@
     },
     {
 
-      "count": 600,
+      "count": 729,
       "spawnPos": [ 0, 150, 0 ],
-      "spawnExtents": [ 1, 2, 1 ],
+      "spawnExtents": [ 1, 1, 1 ],
       "particleMass": 0.02,
       "particleRadius": 0.05,
       "collRadius": 0.05,
@@ -63,7 +63,7 @@
       "particleMass": 0.1,
       "particleRadius": 0.1,
       "collRadius": 0.1,
-      "particleColor": [ 0.4, 0.4, 0.4 ],
+      "particleColor": [ 0.8, 0.8, 0.8 ],
       "externalForces": [ 0.0, 5.0, 0.0 ],
       "pinned": 0,
       "partColl": 1,
