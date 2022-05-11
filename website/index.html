@@ -44,10 +44,19 @@
             <p>
                 The reason we have separate Particle and ParticleProperties classes is because there can be hundreds of individual particles, but many of them will share the same base physical properties.  The ParticleProperties class abstracts away the static data which is consistent between particles, while the regular Particle class itself tracks properties which are unique to each individual particle (such as position and forces).
             </p>
-            <figure class="text-center">
-                <img src="fws.gif" class="figure-img img-fluid rounded mx-auto" alt="Trulli">
-                <figcaption class="figure-caption">Fig.1 - Final simulation of fire water and steam.</figcaption>
-            </figure>
+
+            <table class="table table-responsive">
+    			<tr style="border:none;">
+    				<td style="border:none;"><figure class="text-center">
+                    <img src="fwsp.gif" class="figure-img img-fluid rounded mx-auto" alt="Trulli" width="500px">
+                    <figcaption class="figure-caption">Fig.1 - Fire being extinguished by water and rising as steam.</figcaption>
+                </figure></td>
+    				<td style="border:none;"><figure class="text-center">
+                    <img src="fws.gif" class="figure-img img-fluid rounded mx-auto" alt="Trulli" width="500px">
+                    <figcaption class="figure-caption">Fig.2 - The same simulation but without pixelation, for reference.</figcaption>
+                </figure></td>
+    			</tr>
+            </table>
             <p>
                 Our highlight demonstration for this project was a simulation containing fire, water, and steam.  First, fire appears to blaze from the ground, only to be extinguished by water, before rising up as steam. In describing how this simulation works, we can showcase the inner workings of our simulation system.
             </p>
@@ -80,6 +89,19 @@
                 Finally, when we applied the Marching Cubes algorithm, we got a mesh which separated our particle clusters from the rest of the space, resulting in a dynamic cloud shape surrounding the particles based on their radii. We adapted <a href="https://www.angelfire.com/linux/myp/MCAdvanced/MCImproved.html">this implementation</a> (specifically the non-recursive approach) for our project, which not only generates a mesh, but also computes vertex normals for smoother shading.  However, in order to get the results we wanted, we also modified the algorithm so that the scalar field also tracked which particles were most prevalent at each location (in addition to a raw density value for the main algorithm to use).  This allowed us to color the triangles based on the particle types present (and even apply different shaders), since there is a single mesh used for the entire particle simulation.  In places where there are multiple particle types present, the colors blend slightly for a smoother appearance.
             </p>
 
+            <table class="table table-responsive">
+    			<tr style="border:none;">
+    				<td style="border:none;"><figure class="text-center">
+                    <img src="march_triangles.gif" class="figure-img img-fluid rounded mx-auto" alt="Trulli" width="500px">
+                    <figcaption class="figure-caption">An example simulation with a triangle for each particle</figcaption>
+                </figure></td>
+    				<td style="border:none;"><figure class="text-center">
+                    <img src="march_march.gif" class="figure-img img-fluid rounded mx-auto" alt="Trulli" width="500px">
+                    <figcaption class="figure-caption">The same simulation with marching cubes.</figcaption>
+                </figure></td>
+    			</tr>
+            </table>
+
             <h5 class = "py-3 text-center">Particle Averaging</h5>
             <p>
                 In general, we found that often times simulations that replicated more "physical" phenomena benefitted from having more particles to result in a smoother, more full mesh.  However, this of course increased the computational complexity of our physics and density calculations, and often times resulted in collisions which we did not want.  So to create more volumetric shapes with fullness, we used a particle averaging technique to essentially update the scalar field into thinking that there were small, "virtual particles" between every pair of particles.  These virtual particles would have no physics, but could fill out the space between particles so that the substance didn't look disjointed.  We were somewhat inspired by the principles of hair simulation, where some hairs' physics are entirely derived from a few leader hairs.
@@ -106,21 +128,31 @@
 			<tr style="border:none;">
 				<td style="border:none;"><figure class="text-center">
                 <img src="fwsp.gif" class="figure-img img-fluid rounded mx-auto" alt="Trulli" width="500px">
-                <figcaption class="figure-caption">Fig.2 - Fire being extinguished by water and rising as steam.</figcaption>
+                <figcaption class="figure-caption">Fig.3 - Fire being extinguished by water and rising as steam.</figcaption>
             </figure></td>
 				<td style="border:none;"><figure class="text-center">
                 <img src="wsc.gif" class="figure-img img-fluid rounded mx-auto" alt="Trulli" width="500px">
-                <figcaption class="figure-caption">Fig.3 - Water colliding with sphere primitives.</figcaption>
+                <figcaption class="figure-caption">Fig.4 - Water colliding with sphere primitives.</figcaption>
             </figure></td>
 			</tr>
 			<tr style="border:none;">
 				<td style="border:none;"><figure class="text-center">
                 <img src="ztp.gif" class="figure-img img-fluid rounded mx-auto" alt="Trulli" width="500px">
-                <figcaption class="figure-caption">Fig.4 - Particles playing a version of zombie tag.</figcaption>
+                <figcaption class="figure-caption">Fig.5 - Particles playing a version of zombie tag.</figcaption>
             </figure></td>
 				<td style="border:none;"><figure class="text-center">
                 <img src="bbp.gif" class="figure-img img-fluid rounded mx-auto" alt="Trulli" width="500px">
-                <figcaption class="figure-caption">Fig.5 - Bullet shatering a block.</figcaption>
+                <figcaption class="figure-caption">Fig.6 - Bullet shatering a block.</figcaption>
+            </figure></td>
+			</tr>
+            <tr style="border:none;">
+				<td style="border:none;"><figure class="text-center">
+                <img src="pne.gif" class="figure-img img-fluid rounded mx-auto" alt="Trulli" width="500px">
+                <figcaption class="figure-caption">Fig.7 - Proton/electron simulation.</figcaption>
+            </figure></td>
+				<td style="border:none;"><figure class="text-center">
+                <img src="tre.gif" class="figure-img img-fluid rounded mx-auto" alt="Trulli" width="500px">
+                <figcaption class="figure-caption">Fig.8 - Abstract "tree"-growing simulation.</figcaption>
             </figure></td>
 			</tr>
 		</table>
