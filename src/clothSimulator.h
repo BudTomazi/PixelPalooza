@@ -34,6 +34,8 @@ public:
   virtual bool dropCallbackEvent(int count, const char **filenames);
   virtual bool scrollCallbackEvent(double x, double y);
   virtual bool resizeCallbackEvent(int width, int height);
+    
+    bool should_pixelate;
 
 private:
   virtual void initGUI(Screen *screen);

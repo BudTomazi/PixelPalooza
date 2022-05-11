@@ -125,12 +125,13 @@ void Cloth::simulate(vector<CollisionObject*>* collision_objects) {
     //Particle force calculations-----------------------------
     double delta_t = 1.0f / frames_per_sec / simulation_steps;
     double distSqr;
-    Vector3D dir;
     ParticleProperties* curProperties;
     Particle* curParticle;
     Particle* otherParticle;
     Vector3D forces;
     double collDist;
+    
+    Vector3D dir;
 
     //loop over all pairs of particles and compute forces
     build_spatial_map();
@@ -190,9 +191,23 @@ void Cloth::simulate(vector<CollisionObject*>* collision_objects) {
 
     }
 
-    for (int i = 0; i < planeNorms.size(); i++) {
-        for (int j = 0; j < particles.size(); j++) {
-            PlaneCollision(planeLocs[i], planeNorms[i], particles[j]);
+    if (!isInSphere) {
+        for (int i = 0; i < planeNorms.size(); i++) {
+            for (int j = 0; j < particles.size(); j++) {
+                PlaneCollision(planeLocs[i], planeNorms[i], particles[j]);
+            }
+        }
+    } else {
+        Vector3D posDir;
+
+        for (Particle& curParticle : particles) {
+            posDir = curParticle.position.unit();
+
+            if (curParticle.position.norm() >= sphereRad) {
+                
+                curParticle.forces += dot(curParticle.forces, posDir) * posDir;
+                curParticle.last_position -= dot(curParticle.last_position - curParticle.position, posDir) * posDir;
+            }
         }
     }
 
@@ -205,7 +220,7 @@ void Cloth::simulate(vector<CollisionObject*>* collision_objects) {
     Vector3D curPos;
     Vector3D newPos;
     double delta_t_sqr = delta_t * delta_t;
-    double dampingFactor = 1 - (0.05 / 100.0); // damping is arbitrary
+    double dampingFactor = 1 - (damping / 100.0); // damping is arbitrary
     double delta = 0.1;
     Vector3D normal;
 
@@ -340,19 +355,23 @@ void Cloth::initMarchingCubes(int numCellsX, int numCellsY, int numCellsZ, doubl
     int yz = numPoints[1] * numPoints[2];        //for little extra speed
 
     physicsBorder = borderDist - Vector3D(physicsBuffer);
-    planeLocs.emplace_back(Vector3D(physicsBorder.x, 0.0, 0.0));
-    planeLocs.emplace_back(Vector3D(-physicsBorder.x, 0.0, 0.0));
-    if (!noTop) planeLocs.emplace_back(Vector3D(0.0, physicsBorder.y, 0.0));
-    planeLocs.emplace_back(Vector3D(0.0, -physicsBorder.y, 0.0));
-    planeLocs.emplace_back(Vector3D(0.0, 0.0, physicsBorder.z));
-    planeLocs.emplace_back(Vector3D(0.0, 0.0, -physicsBorder.z));
+    if (!isInSphere) {
+        planeLocs.emplace_back(Vector3D(physicsBorder.x, 0.0, 0.0));
+        planeLocs.emplace_back(Vector3D(-physicsBorder.x, 0.0, 0.0));
+        if (!noTop) planeLocs.emplace_back(Vector3D(0.0, physicsBorder.y, 0.0));
+        planeLocs.emplace_back(Vector3D(0.0, -physicsBorder.y, 0.0));
+        planeLocs.emplace_back(Vector3D(0.0, 0.0, physicsBorder.z));
+        planeLocs.emplace_back(Vector3D(0.0, 0.0, -physicsBorder.z));
 
-    planeNorms.emplace_back(Vector3D(-1.0, 0.0, 0.0));
-    planeNorms.emplace_back(Vector3D(1.0, 0.0, 0.0));
-    if (!noTop) planeNorms.emplace_back(Vector3D(0.0, -1.0, 0.0));
-    planeNorms.emplace_back(Vector3D(0.0, 1.0, 0.0));
-    planeNorms.emplace_back(Vector3D(0.0, 0.0, -1.0));
-    planeNorms.emplace_back(Vector3D(0.0, 0.0, 1.0));
+        planeNorms.emplace_back(Vector3D(-1.0, 0.0, 0.0));
+        planeNorms.emplace_back(Vector3D(1.0, 0.0, 0.0));
+        if (!noTop) planeNorms.emplace_back(Vector3D(0.0, -1.0, 0.0));
+        planeNorms.emplace_back(Vector3D(0.0, 1.0, 0.0));
+        planeNorms.emplace_back(Vector3D(0.0, 0.0, -1.0));
+        planeNorms.emplace_back(Vector3D(0.0, 0.0, 1.0));
+    } else {
+        sphereRad = min(physicsBorder.x, min(physicsBorder.y, physicsBorder.z));
+    }
 
     totalVertexCount = numPoints[0] * numPoints[1] * numPoints[2];
     cells = new ScalarLoc[totalVertexCount];
